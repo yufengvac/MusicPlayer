@@ -23,9 +23,11 @@ import android.widget.TextView;
 import com.vac.musicplayer.adapter.MyPagerAdapter;
 import com.vac.musicplayer.fragment.Albumfra;
 import com.vac.musicplayer.fragment.LocalMusicfra;
+import com.vac.musicplayer.fragment.LocalMusicfra.onMusicTotalCountListener;
 import com.vac.musicplayer.fragment.Singerfra;
 
-public class MainActivity extends FragmentActivity implements OnCheckedChangeListener,OnPageChangeListener {
+public class MainActivity extends FragmentActivity implements 
+OnCheckedChangeListener,OnPageChangeListener,onMusicTotalCountListener {
 
 	private ViewPager viewPager;
 	private RadioGroup rg;
@@ -35,6 +37,7 @@ public class MainActivity extends FragmentActivity implements OnCheckedChangeLis
 	private TextView title_of_top;
 	private ImageView more_functions;//更多
 	private PopupMenu popupMenu=null;
+	private int totalMusic=0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -149,7 +152,7 @@ public class MainActivity extends FragmentActivity implements OnCheckedChangeLis
 		switch (arg0) {
 		case 0:
 			rb1.setChecked(true);
-			title_of_top.setText("本地音乐(0)");
+			title_of_top.setText("本地音乐("+totalMusic+")");
 			break;
 		case 1:
 			rb2.setChecked(true);
@@ -162,6 +165,14 @@ public class MainActivity extends FragmentActivity implements OnCheckedChangeLis
 
 		default:
 			break;
+		}
+	}
+
+	@Override
+	public void musicTotalCount(int total) {
+		totalMusic = total;
+		if (viewPager.getCurrentItem()==0) {
+			title_of_top.setText("本地音乐("+totalMusic+")");
 		}
 	}
 }
