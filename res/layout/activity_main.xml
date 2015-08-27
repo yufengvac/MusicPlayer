@@ -1,0 +1,58 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg"
+    android:orientation="vertical"
+    tools:context="com.vac.musicplayer.MainActivity"
+    tools:ignore="MergeRootFrame" >
+
+    <include
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        layout="@layout/top_of_local_music" />
+
+    <RadioGroup
+        android:id="@+id/activity_rg_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:paddingTop="15dp"
+        android:paddingBottom="15dp"
+        android:orientation="horizontal" >
+
+        <RadioButton
+            android:id="@+id/activity_rb_localmusic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:button="@null"
+            android:text="歌曲"
+            android:checked="true"
+            android:textColor="@drawable/navigation_text_check" />
+
+        <RadioButton
+            android:id="@+id/activity_rb_singer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:button="@null"
+            android:text="歌手"
+            android:layout_marginLeft="40dp"
+            android:layout_marginRight="40dp"
+            android:textColor="@drawable/navigation_text_check" />
+
+        <RadioButton
+            android:id="@+id/activity_rb_alblum"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:button="@null"
+            android:text="专辑"
+            android:textColor="@drawable/navigation_text_check" />
+    </RadioGroup>
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/activity_viewPager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</LinearLayout>
