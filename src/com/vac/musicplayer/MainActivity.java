@@ -3,12 +3,14 @@ package com.vac.musicplayer;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -20,15 +22,19 @@ import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
 
+import com.vac.musicplayer.adapter.MusicListAdapter;
 import com.vac.musicplayer.adapter.MyPagerAdapter;
+import com.vac.musicplayer.bean.Constant;
 import com.vac.musicplayer.fragment.Albumfra;
 import com.vac.musicplayer.fragment.LocalMusicfra;
 import com.vac.musicplayer.fragment.LocalMusicfra.onMusicTotalCountListener;
 import com.vac.musicplayer.fragment.Singerfra;
+import com.vac.musicplayer.service.MusicService;
 
 public class MainActivity extends FragmentActivity implements 
 OnCheckedChangeListener,OnPageChangeListener,onMusicTotalCountListener {
 
+	private static final String TAG = MainActivity.class.getName();
 	private ViewPager viewPager;
 	private RadioGroup rg;
 	private RadioButton rb1,rb2,rb3;
@@ -39,6 +45,7 @@ OnCheckedChangeListener,OnPageChangeListener,onMusicTotalCountListener {
 	private PopupMenu popupMenu=null;
 	private int totalMusic=0;
 	private ImageView switch_to_player;//去播放页
+	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -105,7 +112,9 @@ OnCheckedChangeListener,OnPageChangeListener,onMusicTotalCountListener {
 			
 			@Override
 			public void onClick(View arg0) {
-				
+				Intent intent = new Intent(MainActivity.this,PlayMusic.class);
+				intent.putExtra(Constant.PLAYLIST_MUISC, MusicListAdapter.getData());
+				startActivity(intent);
 			}
 		});
     }
@@ -185,5 +194,14 @@ OnCheckedChangeListener,OnPageChangeListener,onMusicTotalCountListener {
 		if (viewPager.getCurrentItem()==0) {
 			title_of_top.setText("歌曲("+totalMusic+")");
 		}
+		Intent intent = new Intent(MainActivity.this,MusicService.class);
+		intent.setAction(MusicService.ACTION_INIT);
+		intent.putExtra(Constant.CLICK_MUSIC_LIST, false);
+		startService(intent);//启动服务
+	}
+	
+	@Override
+	protected void onStart() {
+		super.onStart();
 	}
 }

@@ -3,6 +3,7 @@ package com.vac.musicplayer.fragment;
 import java.util.List;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -20,8 +21,10 @@ import android.widget.Toast;
 import com.vac.musicplayer.MainActivity;
 import com.vac.musicplayer.R;
 import com.vac.musicplayer.adapter.MusicListAdapter;
+import com.vac.musicplayer.bean.Constant;
 import com.vac.musicplayer.bean.Music;
 import com.vac.musicplayer.loader.MusicLoader;
+import com.vac.musicplayer.service.MusicService;
 
 public class LocalMusicfra extends Fragment implements android.widget.AdapterView.OnItemClickListener {
 
@@ -98,6 +101,11 @@ public class LocalMusicfra extends Fragment implements android.widget.AdapterVie
 		}
 	}
 	
+	/**
+	 * 这是当AsyncTaskLoader扫描完本地的音乐文件后的回调接口，返回音乐的总条数
+	 * @author vac
+	 *
+	 */
 	public interface onMusicTotalCountListener{
 		public abstract void musicTotalCount(int total);
 	}
@@ -105,5 +113,9 @@ public class LocalMusicfra extends Fragment implements android.widget.AdapterVie
 	@Override
 	public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
 		mAdapter.setSpecifiedIndicator(MusicListAdapter.ANIMATION_START,position);
+		Intent intent = new Intent(getActivity(),MusicService.class);
+		intent.setAction(MusicService.ACTION_PLAY);
+		intent.putExtra(Constant.CLICK_MUSIC_LIST, true);
+		getActivity().startService(intent);//启动服务
 	}
 }

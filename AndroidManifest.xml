@@ -23,6 +23,19 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name="com.vac.musicplayer.PlayMusic"></activity>
+        
+        <service android:name="com.vac.musicplayer.service.MusicService" 
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.vac.musicplayer.service.initservice"></action>
+                <action android:name="com.vac.musicplayer.service.play"></action>
+                <action android:name="com.vac.musicplayer.service.pause"></action>
+                <action android:name="com.vac.musicplayer.service.stop"></action>
+                <action android:name="com.vac.musicplayer.service.privious"></action>
+                <action android:name="com.vac.musicplayer.service.next"></action>
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>
