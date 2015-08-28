@@ -6,7 +6,6 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.provider.MediaStore.Audio.Playlists;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
@@ -14,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -23,7 +23,7 @@ import com.vac.musicplayer.adapter.MusicListAdapter;
 import com.vac.musicplayer.bean.Music;
 import com.vac.musicplayer.loader.MusicLoader;
 
-public class LocalMusicfra extends Fragment {
+public class LocalMusicfra extends Fragment implements android.widget.AdapterView.OnItemClickListener {
 
 	private static final int PRIVATE_LOCAL_MUSIC=0;
 	private static final String TAG = LocalMusicfra.class.getSimpleName();
@@ -52,6 +52,8 @@ public class LocalMusicfra extends Fragment {
 		listView = (ListView) v.findViewById(R.id.localmusic_lv);
 		mAdapter = new MusicListAdapter(getActivity());
 		listView.setAdapter(mAdapter);
+		
+		listView.setOnItemClickListener(this);
 	}
 	
 	@Override
@@ -98,5 +100,10 @@ public class LocalMusicfra extends Fragment {
 	
 	public interface onMusicTotalCountListener{
 		public abstract void musicTotalCount(int total);
+	}
+
+	@Override
+	public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
+		mAdapter.setSpecifiedIndicator(MusicListAdapter.ANIMATION_START,position);
 	}
 }

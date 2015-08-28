@@ -4,19 +4,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
+import android.graphics.drawable.AnimationDrawable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.vac.musicplayer.R;
 import com.vac.musicplayer.bean.Music;
 
 /**
- * @author lq 2013-6-1 lq2625304@gmail.com
+ * 
  * */
 public class MusicListAdapter extends BaseAdapter implements OnClickListener {
 	private Context mContext = null;
@@ -25,6 +27,12 @@ public class MusicListAdapter extends BaseAdapter implements OnClickListener {
 
 	/** 播放时为相应播放条目显示一个播放标记 */
 	private int mActivateItemPos = -1;
+	
+	private AnimationDrawable animaiton=null;
+
+	public static final int ANIMATION_START=0;
+	public static final int ANIAMTION_PAUSE=1;
+	private int musicAnimation =-1;
 
 	public MusicListAdapter(Context context) {
 		mContext = context;
@@ -45,10 +53,12 @@ public class MusicListAdapter extends BaseAdapter implements OnClickListener {
 	}
 
 	/** 让指定位置的条目显示一个正在播放标记（活动状态标记） */
-	public void setSpecifiedIndicator(int position) {
+	public void setSpecifiedIndicator(int state,int position) {
+		musicAnimation = state;
 		mActivateItemPos = position;
 		notifyDataSetChanged();
 	}
+	
 
 	@Override
 	public boolean isEmpty() {
@@ -62,7 +72,7 @@ public class MusicListAdapter extends BaseAdapter implements OnClickListener {
 
 	@Override
 	public Music getItem(int position) {
-		return mData.get((int) getItemId(position));
+		return mData.get(position);
 	}
 
 	@Override
@@ -82,16 +92,17 @@ public class MusicListAdapter extends BaseAdapter implements OnClickListener {
 					.findViewById(R.id.textview_music_title);
 			holder.artist = (TextView) convertView
 					.findViewById(R.id.textview_music_singer);
-			holder.popup_menu = (ImageButton) convertView
+			holder.popup_menu = (ImageView) convertView
 					.findViewById(R.id.track_popup_menu);
 			convertView.setTag(holder);
 		} else {
 			holder = (ViewHolder) convertView.getTag();
 		}
 		if (mActivateItemPos == position) {
-			holder.indicator.setVisibility(View.VISIBLE);
+			holder.popup_menu.setVisibility(View.VISIBLE);
+			startMusicAnimation(musicAnimation,holder.popup_menu);
 		} else {
-			holder.indicator.setVisibility(View.INVISIBLE);
+			holder.popup_menu.setVisibility(View.GONE);
 		}
 		holder.title.setText(getItem(position).getTitle());
 
@@ -109,11 +120,38 @@ public class MusicListAdapter extends BaseAdapter implements OnClickListener {
 		TextView title;
 		TextView artist;
 		View indicator;
-		ImageButton popup_menu;
+		ImageView popup_menu;
 	}
 
 	@Override
 	public void onClick(View v) {
 		v.showContextMenu();
+	}
+	
+	private void startMusicAnimation(int animationState,ImageView imageview){
+
+		if(animationState==ANIMATION_START){
+			startImageAni(imageview);
+		}else if(animationState==ANIAMTION_PAUSE){
+			stopMusicAnimation(imageview);
+		}
+		
+	}
+	
+	private void stopMusicAnimation(ImageView imageView){
+		Log.i("TAG", "停止了动画");
+		if(animaiton==null){
+			animaiton = (AnimationDrawable) imageView.getBackground();  
+		}
+		animaiton.stop();  
+	}
+	
+	private void startImageAni(ImageView imageView){
+		Log.i("TAG", "启动了动画");
+		if(animaiton==null){
+			animaiton = (AnimationDrawable) imageView.getBackground();
+		}
+		 imageView.setImageDrawable(null);
+		animaiton.start();
 	}
 }

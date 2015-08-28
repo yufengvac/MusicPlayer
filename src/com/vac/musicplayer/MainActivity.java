@@ -38,6 +38,7 @@ OnCheckedChangeListener,OnPageChangeListener,onMusicTotalCountListener {
 	private ImageView more_functions;//更多
 	private PopupMenu popupMenu=null;
 	private int totalMusic=0;
+	private ImageView switch_to_player;//去播放页
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,7 +60,7 @@ OnCheckedChangeListener,OnPageChangeListener,onMusicTotalCountListener {
     	rb3 = (RadioButton) findViewById(R.id.activity_rb_alblum);
     	
     	title_of_top = (TextView) findViewById(R.id.title_of_top);
-    	title_of_top.setText("本地音乐(0)");
+    	title_of_top.setText("歌曲(0)");
     	
     	more_functions = (ImageView) findViewById(R.id.more_functions);
     	popupMenu = new PopupMenu(this,more_functions);
@@ -72,6 +73,7 @@ OnCheckedChangeListener,OnPageChangeListener,onMusicTotalCountListener {
 				popupMenu.show();
 			}
 		});
+    	
     	
     	popupMenu.setOnMenuItemClickListener(new OnMenuItemClickListener() {
 			
@@ -95,6 +97,15 @@ OnCheckedChangeListener,OnPageChangeListener,onMusicTotalCountListener {
 					break;
 				}
 				return false;
+			}
+		});
+    	
+    	switch_to_player = (ImageView) findViewById(R.id.switch_to_player);
+    	switch_to_player.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				
 			}
 		});
     }
@@ -152,7 +163,7 @@ OnCheckedChangeListener,OnPageChangeListener,onMusicTotalCountListener {
 		switch (arg0) {
 		case 0:
 			rb1.setChecked(true);
-			title_of_top.setText("本地音乐("+totalMusic+")");
+			title_of_top.setText("歌曲("+totalMusic+")");
 			break;
 		case 1:
 			rb2.setChecked(true);
@@ -172,7 +183,7 @@ OnCheckedChangeListener,OnPageChangeListener,onMusicTotalCountListener {
 	public void musicTotalCount(int total) {
 		totalMusic = total;
 		if (viewPager.getCurrentItem()==0) {
-			title_of_top.setText("本地音乐("+totalMusic+")");
+			title_of_top.setText("歌曲("+totalMusic+")");
 		}
 	}
 }

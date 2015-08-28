@@ -37,7 +37,7 @@
                 android:clickable="true"
                 android:contentDescription="@string/app_name"
                 android:scaleType="centerInside"
-                android:src="@drawable/go_to_play" />
+                android:src="@drawable/go_to_play_white" />
 
             <ImageView
                 android:id="@+id/more_functions"
