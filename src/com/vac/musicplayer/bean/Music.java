@@ -1,13 +1,14 @@
 package com.vac.musicplayer.bean;
 
-import java.io.Serializable;
+import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-public class Music implements Serializable{
+public class Music implements Parcelable{
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L;
 	private int id ;//歌曲编号
 	private String title;//歌曲标题
 	private String album;//歌曲专辑
@@ -17,6 +18,8 @@ public class Music implements Serializable{
 	private long size;//歌曲文件的总大小
 	private long date_add;
 	private long data_modify;
+	
+	public Music(){}
 	public long getDate_add() {
 		return date_add;
 	}
@@ -78,5 +81,48 @@ public class Music implements Serializable{
 				+ ", artist=" + artist + ", data=" + data + ", duration="
 				+ duration + ", size=" + size + ", date_add=" + date_add
 				+ ", data_modify=" + data_modify + "]";
+	}
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		Bundle bundle = new Bundle();
+		bundle.putInt("id", id);
+		bundle.putString("title", title);
+		bundle.putString("album", album);
+		bundle.putString("artist", artist);
+		bundle.putString("data", data);
+		bundle.putLong("size", size);
+		bundle.putInt("duration", duration);
+		bundle.putLong("date_add", date_add);
+		bundle.putLong("data_modify", data_modify);
+		dest.writeBundle(bundle);
+	}
+	
+	// 用来创建自定义的Parcelable的对象
+	public static final Parcelable.Creator<Music> CREATOR = new Parcelable.Creator<Music>() {
+		public Music createFromParcel(Parcel in) {
+			return new Music(in);
+		}
+
+		public Music[] newArray(int size) {
+			return new Music[size];
+		}
+	};
+	
+	// 读数据进行恢复
+	private Music(Parcel in) {
+		Bundle bundle = in.readBundle();
+		id = bundle.getInt("id");
+		title = bundle.getString("title");
+		album = bundle.getString("album");
+		artist = bundle.getString("artist");
+		data = bundle.getString("data");
+		size = bundle.getLong("size");
+		duration = bundle.getInt("duration");
+		date_add = bundle.getLong("date_add");
+		data_modify = bundle.getLong("data_modify");
 	}
 }

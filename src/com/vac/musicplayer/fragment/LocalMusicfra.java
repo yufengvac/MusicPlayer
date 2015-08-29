@@ -116,6 +116,7 @@ public class LocalMusicfra extends Fragment implements android.widget.AdapterVie
 		Intent intent = new Intent(getActivity(),MusicService.class);
 		intent.setAction(MusicService.ACTION_PLAY);
 		intent.putExtra(Constant.CLICK_MUSIC_LIST, true);
+		intent.putExtra(Constant.PLAYLIST_MUSIC_REQUEST_ID, mAdapter.getItemId(position));
 		getActivity().startService(intent);//启动服务
 	}
 }

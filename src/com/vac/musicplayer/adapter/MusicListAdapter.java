@@ -78,7 +78,7 @@ public class MusicListAdapter extends BaseAdapter implements OnClickListener {
 
 	@Override
 	public long getItemId(int position) {
-		return position;
+		return mData.get(position).getId();
 	}
 
 	@Override
