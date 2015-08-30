@@ -1,5 +1,6 @@
 package com.vac.musicplayer.service;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,7 +14,9 @@ import android.media.MediaPlayer.OnErrorListener;
 import android.media.MediaPlayer.OnPreparedListener;
 import android.os.Binder;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.provider.MediaStore.Audio.Media;
 import android.util.Log;
 
@@ -45,8 +48,12 @@ public class MusicService extends Service implements OnPreparedListener,OnComple
 	public static final String ACTION_PRIVIOUS= "com.vac.musicplayer.service.privious";
 	public static final String ACTION_NEXT ="com.vac.musicplayer.service.next";
 	
+	
+	/**handler消息类型*/
+	public static final int MESSAGE_UPDATE_PLAYING_SONG_PROGRESS = 1;
+	
 	/**播放状态*/
-	static class PlayState{
+	public static class PlayState{
 		public static final int Stopped =0;
 		public static final int Prepraing=1;
 		public static final int Playing=2;
@@ -76,7 +83,40 @@ public class MusicService extends Service implements OnPreparedListener,OnComple
 	private static final float DUCK_VOLUME_HIGH= 1.0f;
 	
 	/**记录当前的播放音乐的ID*/
-	private int mRequestPlayMusicId = -1;
+	private long mRequestPlayMusicId = -1l;
+	
+	/**发送消息的handler*/
+	private ServiceHandler mServiceHandler = new ServiceHandler(this);
+	
+	private static class ServiceHandler extends Handler{
+		
+		WeakReference<MusicService> mServiceWeakReference=null;
+		MusicService mMusicService=null;
+		public ServiceHandler(MusicService musicService){
+			mServiceWeakReference  = new WeakReference<MusicService>(musicService);
+			mMusicService = mServiceWeakReference.get();
+		}
+		
+		@Override
+		public void handleMessage(Message msg) {
+			super.handleMessage(msg);
+			switch (msg.what) {
+			case MESSAGE_UPDATE_PLAYING_SONG_PROGRESS://更新进度
+				if(mMusicService.mState==PlayState.Playing){
+					int currentProgressMilli =mMusicService.mPlayer.getCurrentPosition();
+					for(int i=0;i<mMusicService.mPlayMusicStateListenerList.size();i++){
+						mMusicService.mPlayMusicStateListenerList.get(i).onPlayProgressUpdate(currentProgressMilli);
+					}
+					mMusicService.mServiceHandler.sendEmptyMessageDelayed(MESSAGE_UPDATE_PLAYING_SONG_PROGRESS, 500);
+				}
+				break;
+
+			default:
+				break;
+			}
+		}
+	}
+	
 	
 	/**
 	 * 绑定服务时 本地服务的Binder对象
@@ -132,6 +172,47 @@ public class MusicService extends Service implements OnPreparedListener,OnComple
 				mCurrentPlayList.addAll(list);
 			}
 		}
+		
+		/**
+		 * 下一首
+		 */
+		public void playNext(){
+			requestToPlayNext(true);
+		}
+		
+		/**
+		 * 上一首
+		 */
+		public void playPre(){
+			requestToPlayPrevious(true);
+		}
+		
+		/**
+		 * 暂停
+		 */
+		public void playPause(){
+			requestToPause();
+		}
+		
+		/**
+		 * 播放
+		 */
+		public void playToPlay(){
+			mRequestPlayMusicId = mCurrentPlayList.get(mRequestMusicPosition).getId();
+			requestToPlay();
+		}
+		
+		/**
+		 * 让MediaPlayer将当前播放跳转到指定播放位置
+		 * 
+		 * @param milliSeconds
+		 *            指定的已播放的毫秒数
+		 * */
+		public void seekToSpecifiedPosition(int milliSeconds) {
+			if (mState != PlayState.Stopped) {
+				mPlayer.seekTo(milliSeconds);
+			}
+		}
 	}
 	
 	@Override
@@ -152,9 +233,8 @@ public class MusicService extends Service implements OnPreparedListener,OnComple
 		if(action.equals(ACTION_PLAY)){//播放音乐的消息
 
 			if(intent.getBooleanExtra(Constant.CLICK_MUSIC_LIST, false)){//如果是从播放列表点击
-				mRequestPlayMusicId = intent.getIntExtra(Constant.PLAYLIST_MUSIC_REQUEST_ID, -1);
+				mRequestPlayMusicId = intent.getLongExtra(Constant.PLAYLIST_MUSIC_REQUEST_ID, -1);
 				mRequestMusicPosition = findPositionByMusicId(mCurrentPlayList, mRequestPlayMusicId);
-				requestToPlay();
 			}else{
 				mRequestPlayMusicId = mCurrentPlayList.get(mRequestMusicPosition).getId();
 			}
@@ -184,30 +264,41 @@ public class MusicService extends Service implements OnPreparedListener,OnComple
 	 * 
 	 */
 	private void requestToPlay(){
+		Log.d(TAG, "这是请求播放动作时的音乐播放状态-------="+mState
+				+",请求的音乐播放位置mRequestMusicPosition="+mRequestMusicPosition
+				+",当前服务中的音乐播放位置mPlayingMusicPostion="+mPlayingMusicPostion);
 		mAudioFocusHelper.tryToGetAudioFocus();
 		if(mState==PlayState.Stopped){//如果播放器处于停止状态
 			mPlayingMusicPostion = mRequestMusicPosition;//播放用户请求的歌曲
 			playSong();//开始播放音乐
+			Log.d(TAG, "播放器处于停止状态,开始播放音乐");
 		}else if(mState==PlayState.Paused){//如果播放器处于暂停状态
 			if(mPlayingMusicPostion==mRequestMusicPosition){//用户请求的播放歌曲 和 当前播放歌曲相同
 				//继续播放音乐吧，由暂停状态转成播放状态
 				mState =PlayState.Playing;
 				configAndStartMediaPlayer();
-				
-			}else if(mRequestPlayMusicId == mPlayingMusic.getId()){//用户请求的播放歌曲 和 当前播放歌曲 不 相同
+				Log.d(TAG, "播放器处于暂停状态,播放歌曲 和 当前播放歌曲相同,继续播放音乐吧，由暂停状态转成播放状态");
+			}else if(mRequestPlayMusicId != mPlayingMusic.getId()){//用户请求的播放歌曲 和 当前播放歌曲 不 相同
 				mPlayingMusicPostion = mRequestMusicPosition;//播放用户请求的歌曲
 				playSong();//开始播放音乐
+				Log.d(TAG, "播放器处于暂停状态,播放歌曲 和 当前播放歌曲  不  相同,播放用户请求的歌曲");
 			}
 		}else if(mState==PlayState.Playing){//如果播放器处于播放状态
 			if(mPlayingMusicPostion==mRequestMusicPosition){//用户请求的播放歌曲 和 当前播放歌曲相同
 				//暂停播放音乐吧，由播放状态转成暂停状态
-				mState = PlayState.Paused;
 				requestToPause();
-				
-			}else if(mRequestPlayMusicId == mPlayingMusic.getId()){//用户请求的播放歌曲 和 当前播放歌曲 不 相同
+				Log.d(TAG, "播放器处于播放状态,播放歌曲 和 当前播放歌曲相同,暂停播放音乐吧，由播放状态转成暂停状态");
+				return;
+			}else if(mRequestPlayMusicId != mPlayingMusic.getId()){//用户请求的播放歌曲 和 当前播放歌曲 不 相同
 				mPlayingMusicPostion = mRequestMusicPosition;//播放用户请求的歌曲
 				playSong();//开始播放音乐
+				Log.d(TAG, "播放器处于播放状态,播放歌曲 和 当前播放歌曲不 相同,播放用户请求的歌曲");
 			}
+		}
+		
+		/**通知回调接口，开始播放*/
+		for(int i=0;i<mPlayMusicStateListenerList.size();i++){
+			mPlayMusicStateListenerList.get(i).onMuiscPlayed(mPlayingMusic);
 		}
 		
 	}
@@ -217,10 +308,15 @@ public class MusicService extends Service implements OnPreparedListener,OnComple
 	 * 请求一个暂停的动作
 	 */
 	private void requestToPause(){
+		Log.d(TAG, "音乐暂停---requestToPause,mState="+mState);
 		if(mState==PlayState.Playing){
 			mState =PlayState.Paused;
 			mPlayer.pause();
 			releaseResource(false);//MeidaPlayer对象不释放
+		}
+		
+		for(int i =0;i<mPlayMusicStateListenerList.size();i++){
+			mPlayMusicStateListenerList.get(i).onMusicPaused(mPlayingMusic);
 		}
 	}
 	
@@ -248,7 +344,7 @@ public class MusicService extends Service implements OnPreparedListener,OnComple
 	 */
 	private void requestToPlayPrevious(boolean isUserClick){
 		if(mState!=PlayState.Prepraing){
-			if(--mPlayingMusicPostion<0){
+			if(--mRequestMusicPosition<0){
 				mRequestPlayMusicId = mCurrentPlayList.size()-1;//如果是第一首歌曲，那么将从最后一首歌曲开始播放
 			}
 		}
@@ -302,7 +398,7 @@ public class MusicService extends Service implements OnPreparedListener,OnComple
 	 * @return int 该_id歌曲在当前播放列表中的位置   -1表示未找到
 	 * @date 2015年8月29日17:00:24
 	 */
-	private int findPositionByMusicId(List<Music> list,int _id){
+	public static int findPositionByMusicId(List<Music> list,long _id){
 		if(list!=null){
 			for(int i=0;i<list.size();i++){
 				if(list.get(i).getId()==_id){
@@ -331,7 +427,11 @@ public class MusicService extends Service implements OnPreparedListener,OnComple
 		} catch (Exception e) {
 			e.printStackTrace();
 			Log.e(TAG, "paly song Exception"+e.getMessage());
-		} 
+		}
+		
+		for(int i =0;i<mPlayMusicStateListenerList.size();i++){
+			mPlayMusicStateListenerList.get(i).onNewSongPlayed(mPlayingMusic);
+		}
 	}
 	
 	private void createMediaPlayerIfNeed(){
@@ -371,7 +471,7 @@ public class MusicService extends Service implements OnPreparedListener,OnComple
 	 */
 	@Override
 	public void onCompletion(MediaPlayer arg0) {
-		
+		requestToPlayNext(false);
 	}
 
 
@@ -383,6 +483,10 @@ public class MusicService extends Service implements OnPreparedListener,OnComple
 		Log.i(TAG, "onPrepared");
 		mState = PlayState.Playing;
 		configAndStartMediaPlayer();
+		if (!mServiceHandler.hasMessages(MESSAGE_UPDATE_PLAYING_SONG_PROGRESS)) {
+			mServiceHandler
+					.sendEmptyMessage(MESSAGE_UPDATE_PLAYING_SONG_PROGRESS);
+		}
 	}
 	
 	/**

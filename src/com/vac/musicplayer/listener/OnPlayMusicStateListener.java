@@ -13,12 +13,12 @@ public interface OnPlayMusicStateListener {
 	/**
 	 * 音乐播放
 	 */
-	public abstract void onMuiscPlayed();
+	public abstract void onMuiscPlayed(Music music);
 	
 	/**
 	 * 音乐暂停
 	 */
-	public abstract void onMusicPaused();
+	public abstract void onMusicPaused(Music music);
 	
 	/**
 	 * 音乐停止

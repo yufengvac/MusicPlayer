@@ -152,7 +152,6 @@ public class MusicListAdapter extends BaseAdapter implements OnClickListener {
 		if(animaiton==null){
 			animaiton = (AnimationDrawable) imageView.getBackground();
 		}
-		 imageView.setImageDrawable(null);
 		animaiton.start();
 	}
 }
