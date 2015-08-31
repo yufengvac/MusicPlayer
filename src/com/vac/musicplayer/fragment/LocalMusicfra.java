@@ -24,7 +24,6 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.vac.musicplayer.MainActivity;
-import com.vac.musicplayer.PlayMusic;
 import com.vac.musicplayer.R;
 import com.vac.musicplayer.adapter.MusicListAdapter;
 import com.vac.musicplayer.bean.Constant;
@@ -78,7 +77,8 @@ public class LocalMusicfra extends Fragment implements android.widget.AdapterVie
 					int SharePosition = PreferHelper.readInt(getActivity(), Constant.SHARE_NMAE_MUSIC,
 							Constant.SHARE_NMAE_MUSIC_POSITION, -1);
 					mAdapter.setSpecifiedIndicator(MusicListAdapter.ANIMATION_PAUSE,SharePosition);
-					listView.setSelection(SharePosition);
+					int offest = listView.getLastVisiblePosition()-listView.getFirstVisiblePosition();
+					listView.setSelection(SharePosition-offest/2);
 				}
 				
 				
@@ -92,7 +92,9 @@ public class LocalMusicfra extends Fragment implements android.widget.AdapterVie
 					}else{
 						mAdapter.setSpecifiedIndicator(MusicListAdapter.ANIMATION_PAUSE,currentPlayPosition);
 					}
-					listView.setSelection(currentPlayPosition);
+					int offest = listView.getLastVisiblePosition()-listView.getFirstVisiblePosition();
+					Log.i(TAG, "offest==="+offest);
+					listView.setSelection(currentPlayPosition-offest/2);
 				}
 			}
 		}
@@ -161,7 +163,8 @@ public class LocalMusicfra extends Fragment implements android.widget.AdapterVie
 							int SharePosition = PreferHelper.readInt(getActivity(), Constant.SHARE_NMAE_MUSIC,
 									Constant.SHARE_NMAE_MUSIC_POSITION, -1);
 							mAdapter.setSpecifiedIndicator(MusicListAdapter.ANIMATION_PAUSE,SharePosition);
-							listView.setSelection(SharePosition);
+							int offest = listView.getLastVisiblePosition()-listView.getFirstVisiblePosition();
+							listView.setSelection(SharePosition-offest/2);
 						}
 						
 						
@@ -175,7 +178,8 @@ public class LocalMusicfra extends Fragment implements android.widget.AdapterVie
 							}else{
 								mAdapter.setSpecifiedIndicator(MusicListAdapter.ANIMATION_PAUSE,currentPlayPosition);
 							}
-							listView.setSelection(currentPlayPosition);
+							int offest = listView.getLastVisiblePosition()-listView.getFirstVisiblePosition();
+							listView.setSelection(currentPlayPosition-offest/2);
 						}
 					}
 					

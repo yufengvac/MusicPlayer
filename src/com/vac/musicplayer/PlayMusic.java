@@ -14,7 +14,9 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.SeekBar;
+import android.widget.Toast;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
@@ -23,6 +25,7 @@ import com.vac.musicplayer.bean.Music;
 import com.vac.musicplayer.listener.OnPlayMusicStateListener;
 import com.vac.musicplayer.service.MusicService;
 import com.vac.musicplayer.service.MusicService.MusicServiceBinder;
+import com.vac.musicplayer.service.MusicService.PlayMode;
 import com.vac.musicplayer.service.MusicService.PlayState;
 import com.vac.musicplayer.utils.PreferHelper;
 import com.vac.musicplayer.utils.TimeHelper;
@@ -52,6 +55,9 @@ public class PlayMusic extends Activity implements OnPlayMusicStateListener,OnCl
 	
 	/**音乐播放的进度指示条*/
 	private SeekBar play_music_progressBar;
+	
+	/**音乐播放模式*/
+	private ImageButton play_music_playmode;
 
 	private ServiceConnection mServiceConn=new ServiceConnection() {
 		
@@ -126,6 +132,15 @@ public class PlayMusic extends Activity implements OnPlayMusicStateListener,OnCl
 				}
 			}
 		});
+		
+		play_music_playmode = (ImageButton) findViewById(R.id.play_music_playmode);
+		play_music_playmode.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				mBinder.changePlayMode();
+			}
+		});
 	}
 	
 	/**
@@ -157,6 +172,8 @@ public class PlayMusic extends Activity implements OnPlayMusicStateListener,OnCl
 			isPlaying =false;
 			play_music_pause.setBackgroundResource(R.drawable.play_music_play_sele);
 			play_music_cursong.setText((sharePosition+1)+"");
+			
+			
 		}
 		
 		
@@ -164,6 +181,7 @@ public class PlayMusic extends Activity implements OnPlayMusicStateListener,OnCl
 		
 		int currentPlayProgress = bundle.getInt(Constant.PLAYING_MUSIC_PROGRESS);
 		int currentPlayPosition = bundle.getInt(Constant.PLAYING_MUSIC_POSITION_IN_LIST);
+		int currentPlayMode = bundle.getInt(Constant.PLAYING_MUSIC_PLAYMODE);
 		if(currentPlayState==PlayState.Playing||currentPlayState==PlayState.Prepraing){
 			play_music_pause.setBackgroundResource(R.drawable.play_music_pause_sele);
 			isPlaying=true;
@@ -190,6 +208,7 @@ public class PlayMusic extends Activity implements OnPlayMusicStateListener,OnCl
 		
 		ArrayList<Music> currentPlayMusicList = bundle.getParcelableArrayList(Constant.PLAYING_MUSIC_CURRENT_LIST);
 		play_music_totalsong.setText(currentPlayMusicList.size()+"");
+		setCurrentPlayModeBg(currentPlayMode);
 	}
 	
 	@Override
@@ -226,6 +245,7 @@ public class PlayMusic extends Activity implements OnPlayMusicStateListener,OnCl
 	@Override
 	public void onPlayModeChanged(int playMode) {
 		Log.v(TAG, "PlayMusic-onPlayMusicStateListener--onPlayModeChanged");
+		setCurrentPlayModeBg(playMode);
 	}
 
 	@Override
@@ -260,6 +280,30 @@ public class PlayMusic extends Activity implements OnPlayMusicStateListener,OnCl
 			unbindService(mServiceConn);
 		}
 	
+	}
+	
+	private void setCurrentPlayModeBg(int playMode){
+		switch (playMode) {
+		case PlayMode.REPEAT:
+			play_music_playmode.setImageResource(R.drawable.button_playmode_repeat);
+			Toast.makeText(PlayMusic.this, "列表循环", Toast.LENGTH_SHORT).show();
+			break;
+		case PlayMode.REPEAT_SINGLE:
+			play_music_playmode.setImageResource(R.drawable.button_playmode_repeat_single);
+			Toast.makeText(PlayMusic.this, "单曲循环", Toast.LENGTH_SHORT).show();
+			break;
+		case PlayMode.SEQUENTIAL:
+			play_music_playmode.setImageResource(R.drawable.button_playmode_sequential);
+			Toast.makeText(PlayMusic.this, "顺序播放", Toast.LENGTH_SHORT).show();
+			break;
+		case PlayMode.SHUFFLE:
+			play_music_playmode.setImageResource(R.drawable.button_playmode_shuffle);
+			Toast.makeText(PlayMusic.this, "随机播放", Toast.LENGTH_SHORT).show();
+			break;
+
+		default:
+			break;
+		}
 	}
 
 	@Override

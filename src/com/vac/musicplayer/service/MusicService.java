@@ -3,6 +3,7 @@ package com.vac.musicplayer.service;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -99,6 +100,23 @@ public class MusicService extends Service implements OnPreparedListener,OnComple
 	/**通知的id*/
 	private static final int NOTIFICATION_ID =1000;
 	
+	/**当前的播放模式*/
+	private int mPlayMode =1;
+	
+	public static class PlayMode{
+		/**单曲循环*/
+		public static final int REPEAT_SINGLE=0;
+		
+		/**列表循环*/
+		public static final int REPEAT =1;
+		
+		/**顺序播放*/
+		public static final int SEQUENTIAL = 2;
+		
+		/**随机播放*/
+		public static final int SHUFFLE = 3;
+	}
+	
 	/**发送消息的handler*/
 	private ServiceHandler mServiceHandler = new ServiceHandler(this);
 	
@@ -171,6 +189,7 @@ public class MusicService extends Service implements OnPreparedListener,OnComple
 			bundle.putParcelable(Constant.PLAYING_MUSIC_ITEM, _music);//将Music返回
 			bundle.putInt(Constant.PLAYING_MUSIC_STATE, mState);//将当前的播放状态返回
 			bundle.putInt(Constant.PLAYING_MUSIC_PROGRESS, currentPlayProgress);//将当前的播放进度返回 ，如果是非播放暂停状态，则返回0
+			bundle.putInt(Constant.PLAYING_MUSIC_PLAYMODE, mPlayMode);
 			bundle.putInt(Constant.PLAYING_MUSIC_POSITION_IN_LIST, mPlayingMusicPostion);//将当前的播放的音乐在播放列表中的位置返回
 			bundle.putParcelableArrayList(Constant.PLAYING_MUSIC_CURRENT_LIST, mCurrentPlayList);//将当前的播放列表返回
 			return bundle;
@@ -237,6 +256,25 @@ public class MusicService extends Service implements OnPreparedListener,OnComple
 				mPlayer.seekTo(milliSeconds);
 			}
 		}
+		
+		/**
+		 * 改变播放模式
+		 */
+		public void changePlayMode(){
+			mPlayMode = (mPlayMode+1)%4;
+			if(mPlayer!=null){
+				if(mPlayMode==PlayMode.REPEAT_SINGLE){
+					mPlayer.setLooping(true);
+				}else{
+					mPlayer.setLooping(false);
+				}
+			}
+			
+			for(int i=0;i<mPlayMusicStateListenerList.size();i++){
+				mPlayMusicStateListenerList.get(i).onPlayModeChanged(mPlayMode);
+			}
+		}
+		
 	}
 	
 	@Override
@@ -358,7 +396,37 @@ public class MusicService extends Service implements OnPreparedListener,OnComple
 	 */
 	private void requestToPlayNext(boolean isUserClick){
 		if(mState!=PlayState.Prepraing){
-			mRequestMusicPosition =( mPlayingMusicPostion+1)%mCurrentPlayList.size();
+			
+			switch (mPlayMode) {
+			case PlayMode.REPEAT:
+				mRequestMusicPosition =( mPlayingMusicPostion+1)%mCurrentPlayList.size();
+				break;
+			case PlayMode.REPEAT_SINGLE:
+				if(isUserClick){
+					mRequestMusicPosition = (mPlayingMusicPostion + 1) % mCurrentPlayList.size();
+				}else{
+					mPlayer.setLooping(true);
+				}
+				break;
+			case PlayMode.SEQUENTIAL:
+				mRequestMusicPosition = (mPlayingMusicPostion+1)%mCurrentPlayList.size();
+				if(mRequestMusicPosition==0){
+					if(isUserClick){
+						mRequestMusicPosition=0;
+					}else{
+						mRequestMusicPosition = mCurrentPlayList.size()-1;
+						requestToStop();
+						return;
+					}
+				}
+				break;
+			case PlayMode.SHUFFLE:
+				mRequestMusicPosition = new Random().nextInt(mCurrentPlayList.size());
+				break;
+
+			default:
+				break;
+			}
 		}
 		
 		mRequestPlayMusicId = mCurrentPlayList.get(mRequestMusicPosition).getId();

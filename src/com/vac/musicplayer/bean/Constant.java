@@ -33,6 +33,9 @@ public class Constant {
 	/**当前服务中的播放列表  value->currentPlayList*/
 	public static final String PLAYING_MUSIC_CURRENT_LIST = "playing_music_current_list";
 
+	/**当前服务中的音乐播放模式*/
+	public static final String PLAYING_MUSIC_PLAYMODE = "playing_music_playmode";
+	
 	/**记录下当前播放的音乐的 名称*/
 	public static final String SHARE_NMAE_MUSIC = "share_name_music";
 	
