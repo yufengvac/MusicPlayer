@@ -78,6 +78,7 @@ public class LocalMusicfra extends Fragment implements android.widget.AdapterVie
 					int SharePosition = PreferHelper.readInt(getActivity(), Constant.SHARE_NMAE_MUSIC,
 							Constant.SHARE_NMAE_MUSIC_POSITION, -1);
 					mAdapter.setSpecifiedIndicator(MusicListAdapter.ANIMATION_PAUSE,SharePosition);
+					listView.setSelection(SharePosition);
 				}
 				
 				
@@ -91,6 +92,7 @@ public class LocalMusicfra extends Fragment implements android.widget.AdapterVie
 					}else{
 						mAdapter.setSpecifiedIndicator(MusicListAdapter.ANIMATION_PAUSE,currentPlayPosition);
 					}
+					listView.setSelection(currentPlayPosition);
 				}
 			}
 		}
@@ -159,6 +161,7 @@ public class LocalMusicfra extends Fragment implements android.widget.AdapterVie
 							int SharePosition = PreferHelper.readInt(getActivity(), Constant.SHARE_NMAE_MUSIC,
 									Constant.SHARE_NMAE_MUSIC_POSITION, -1);
 							mAdapter.setSpecifiedIndicator(MusicListAdapter.ANIMATION_PAUSE,SharePosition);
+							listView.setSelection(SharePosition);
 						}
 						
 						
@@ -172,6 +175,7 @@ public class LocalMusicfra extends Fragment implements android.widget.AdapterVie
 							}else{
 								mAdapter.setSpecifiedIndicator(MusicListAdapter.ANIMATION_PAUSE,currentPlayPosition);
 							}
+							listView.setSelection(currentPlayPosition);
 						}
 					}
 					
