@@ -3,12 +3,8 @@ package com.vac.musicplayer;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -34,7 +30,6 @@ import com.vac.musicplayer.fragment.LocalMusicfra;
 import com.vac.musicplayer.fragment.LocalMusicfra.onMusicTotalCountListener;
 import com.vac.musicplayer.fragment.Singerfra;
 import com.vac.musicplayer.service.MusicService;
-import com.vac.musicplayer.service.MusicService.MusicServiceBinder;
 
 public class MainActivity extends FragmentActivity implements 
 OnCheckedChangeListener,OnPageChangeListener,onMusicTotalCountListener {

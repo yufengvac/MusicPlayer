@@ -7,7 +7,6 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.provider.MediaStore;
-import android.provider.MediaStore.Audio.Playlists;
 import android.support.v4.content.AsyncTaskLoader;
 import android.util.Log;
 
