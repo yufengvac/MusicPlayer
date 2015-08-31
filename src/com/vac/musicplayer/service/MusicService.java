@@ -4,6 +4,9 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.ContentUris;
 import android.content.Intent;
@@ -20,12 +23,14 @@ import android.os.Message;
 import android.provider.MediaStore.Audio.Media;
 import android.util.Log;
 
-import com.vac.musicplayer.adapter.MusicListAdapter;
+import com.vac.musicplayer.PlayMusic;
+import com.vac.musicplayer.R;
 import com.vac.musicplayer.bean.Constant;
 import com.vac.musicplayer.bean.Music;
 import com.vac.musicplayer.listener.AudioFocusHelper;
 import com.vac.musicplayer.listener.AudioFocusHelper.MusicFocusable;
 import com.vac.musicplayer.listener.OnPlayMusicStateListener;
+import com.vac.musicplayer.utils.PreferHelper;
 
 public class MusicService extends Service implements OnPreparedListener,OnCompletionListener
 	,OnErrorListener,MusicFocusable{
@@ -84,6 +89,15 @@ public class MusicService extends Service implements OnPreparedListener,OnComple
 	
 	/**记录当前的播放音乐的ID*/
 	private long mRequestPlayMusicId = -1l;
+	
+	/**通知*/
+	private Notification mNotification=null;
+	
+	/**通知的管理类*/
+	private NotificationManager mNotificationManager=null;
+	
+	/**通知的id*/
+	private static final int NOTIFICATION_ID =1000;
 	
 	/**发送消息的handler*/
 	private ServiceHandler mServiceHandler = new ServiceHandler(this);
@@ -171,6 +185,8 @@ public class MusicService extends Service implements OnPreparedListener,OnComple
 			if(list!=null){
 				mCurrentPlayList.addAll(list);
 			}
+			
+			Log.v(TAG, "当前服务的音乐播放列表"+mCurrentPlayList.size());
 		}
 		
 		/**
@@ -198,8 +214,16 @@ public class MusicService extends Service implements OnPreparedListener,OnComple
 		 * 播放
 		 */
 		public void playToPlay(){
-			mRequestPlayMusicId = mCurrentPlayList.get(mRequestMusicPosition).getId();
-			requestToPlay();
+			if(mRequestMusicPosition==-1){
+				mRequestMusicPosition= PreferHelper.readInt(getApplicationContext(), Constant.SHARE_NMAE_MUSIC,
+						Constant.SHARE_NMAE_MUSIC_POSITION, -1);
+			}
+			
+			if(mRequestMusicPosition!=-1){
+				mRequestPlayMusicId = mCurrentPlayList.get(mRequestMusicPosition).getId();
+				requestToPlay();
+			}
+		
 		}
 		
 		/**
@@ -221,7 +245,7 @@ public class MusicService extends Service implements OnPreparedListener,OnComple
 		
 		mAudioFocusHelper = new AudioFocusHelper(getApplicationContext(), this);
 
-		mBinder.setCurrentPlayList(MusicListAdapter.getData());
+		mNotificationManager = (NotificationManager) getApplicationContext().getSystemService(NOTIFICATION_SERVICE);
 		super.onCreate();
 	}
 
@@ -276,6 +300,7 @@ public class MusicService extends Service implements OnPreparedListener,OnComple
 			if(mPlayingMusicPostion==mRequestMusicPosition){//用户请求的播放歌曲 和 当前播放歌曲相同
 				//继续播放音乐吧，由暂停状态转成播放状态
 				mState =PlayState.Playing;
+				setServiceAsForeground(mPlayingMusic.getTitle() + " (playing)");
 				configAndStartMediaPlayer();
 				Log.d(TAG, "播放器处于暂停状态,播放歌曲 和 当前播放歌曲相同,继续播放音乐吧，由暂停状态转成播放状态");
 			}else if(mRequestPlayMusicId != mPlayingMusic.getId()){//用户请求的播放歌曲 和 当前播放歌曲 不 相同
@@ -301,6 +326,10 @@ public class MusicService extends Service implements OnPreparedListener,OnComple
 			mPlayMusicStateListenerList.get(i).onMuiscPlayed(mPlayingMusic);
 		}
 		
+		if (!mServiceHandler.hasMessages(MESSAGE_UPDATE_PLAYING_SONG_PROGRESS)) {
+			mServiceHandler
+					.sendEmptyMessage(MESSAGE_UPDATE_PLAYING_SONG_PROGRESS);
+		}
 	}
 	
 	
@@ -345,7 +374,7 @@ public class MusicService extends Service implements OnPreparedListener,OnComple
 	private void requestToPlayPrevious(boolean isUserClick){
 		if(mState!=PlayState.Prepraing){
 			if(--mRequestMusicPosition<0){
-				mRequestPlayMusicId = mCurrentPlayList.size()-1;//如果是第一首歌曲，那么将从最后一首歌曲开始播放
+				mRequestMusicPosition = mCurrentPlayList.size()-1;//如果是第一首歌曲，那么将从最后一首歌曲开始播放
 			}
 		}
 		
@@ -382,11 +411,40 @@ public class MusicService extends Service implements OnPreparedListener,OnComple
 	 * @param isRealseMediaPlayer 是否释放MediaPlayer对象
 	 */
 	private void releaseResource(boolean isReleaseMediaPlayer){
+		stopForeground(true);
 		if(mPlayer!=null&&isReleaseMediaPlayer){
 			mPlayer.reset();
 			mPlayer.release();
 			mPlayer = null;
 		}
+	}
+	
+	/***
+	 * 更新通知栏
+	 * @param text
+	 */
+	private void updateNotification(String text){
+		PendingIntent pIntent = PendingIntent.getActivity(getApplicationContext(),
+				0, new Intent(getApplicationContext(),PlayMusic.class), PendingIntent.FLAG_UPDATE_CURRENT);
+		mNotification.setLatestEventInfo(getApplicationContext(),
+				"yufengvac的音乐", text, pIntent);
+		mNotificationManager.notify(NOTIFICATION_ID,mNotification );
+	}
+	
+	/**
+	 * 将本服务设置为“前台服务”。“前台服务”是一个与用户正在交互的服务， 必须在通知栏显示一个通知表示正在交互
+	 */
+	private void setServiceAsForeground(String text){
+		Intent intent = new Intent(getApplicationContext(),PlayMusic.class);
+		intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		PendingIntent pIntent = PendingIntent.getActivity(getApplicationContext(), 0,
+				intent, PendingIntent.FLAG_UPDATE_CURRENT);
+		mNotification = new Notification();
+		mNotification.tickerText = text;
+		mNotification.icon = R.drawable.ic_launcher;
+		mNotification.flags |=Notification.FLAG_ONGOING_EVENT;
+		mNotification.setLatestEventInfo(getApplicationContext(), "yufengvac的音乐", text, pIntent);
+		startForeground(NOTIFICATION_ID, mNotification);
 	}
 	
 	
@@ -423,6 +481,9 @@ public class MusicService extends Service implements OnPreparedListener,OnComple
 			Log.i(TAG, ContentUris.withAppendedId(Media.EXTERNAL_CONTENT_URI, mPlayingMusic.getId())+"-000");
 			mPlayer.setDataSource(getApplicationContext(), ContentUris.withAppendedId(Media.EXTERNAL_CONTENT_URI, mPlayingMusic.getId()));
 			mState = PlayState.Prepraing;
+			
+			setServiceAsForeground(mPlayingMusic.getTitle() + " (loading)");
+			
 			mPlayer.prepareAsync();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -430,7 +491,7 @@ public class MusicService extends Service implements OnPreparedListener,OnComple
 		}
 		
 		for(int i =0;i<mPlayMusicStateListenerList.size();i++){
-			mPlayMusicStateListenerList.get(i).onNewSongPlayed(mPlayingMusic);
+			mPlayMusicStateListenerList.get(i).onNewSongPlayed(mPlayingMusic,mPlayingMusicPostion);
 		}
 	}
 	
@@ -482,6 +543,7 @@ public class MusicService extends Service implements OnPreparedListener,OnComple
 	public void onPrepared(MediaPlayer arg0) {
 		Log.i(TAG, "onPrepared");
 		mState = PlayState.Playing;
+		updateNotification(mPlayingMusic.getTitle() + " (playing)");
 		configAndStartMediaPlayer();
 		if (!mServiceHandler.hasMessages(MESSAGE_UPDATE_PLAYING_SONG_PROGRESS)) {
 			mServiceHandler
@@ -512,6 +574,7 @@ public class MusicService extends Service implements OnPreparedListener,OnComple
 		if(!mPlayer.isPlaying()){
 			Log.i(TAG, "start");
 			mPlayer.start();
+			PreferHelper.write(getApplicationContext(), Constant.SHARE_NMAE_MUSIC,Constant.SHARE_NMAE_MUSIC_POSITION,mPlayingMusicPostion);
 		}
 		
 	}

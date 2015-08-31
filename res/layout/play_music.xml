@@ -67,13 +67,33 @@
                     android:text="歌曲专辑"/>
             </LinearLayout>
         </LinearLayout>
-        <Button 
-            android:id="@+id/play_music_coll"
+        
+        
+        <LinearLayout 
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="center_vertical">
+          
+	        <ImageButton 
+	            android:id="@+id/play_music_playmode"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:background="@drawable/button_backround_deep"
+	            android:contentDescription="@string/hello_world"
+	            android:layout_gravity="center_vertical"
+	            android:src="@drawable/button_playmode_repeat"/>
+        
+        <Button 
+            android:id="@+id/play_music_coll"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_gravity="center_vertical"
-            android:layout_marginRight="15dp"
+            android:layout_marginRight="10dp"
             android:background="@drawable/fovor"/>
+        
+        </LinearLayout>
+        
     </LinearLayout>
 	<TextView 
 	    android:id="@+id/play_music_line"
@@ -115,6 +135,8 @@
 	        android:layout_height="wrap_content"
 	        android:gravity="center_horizontal"
 	        android:orientation="horizontal">
+          
+	        
 	        <Button 
 	            android:id="@+id/play_music_pre"
 	            android:layout_width="wrap_content"
@@ -190,8 +212,8 @@
         android:thumb="@drawable/seekbar_play_music_thumb"
 	    android:max="100"
 	    android:progress="0"
-	    android:layout_marginLeft="7dp"
-	    android:layout_marginRight="7dp"/>
+	    android:layout_marginLeft="0dp"
+	    android:layout_marginRight="0dp"/>
 	</LinearLayout>
 	
 </RelativeLayout>

@@ -24,6 +24,7 @@ import com.vac.musicplayer.listener.OnPlayMusicStateListener;
 import com.vac.musicplayer.service.MusicService;
 import com.vac.musicplayer.service.MusicService.MusicServiceBinder;
 import com.vac.musicplayer.service.MusicService.PlayState;
+import com.vac.musicplayer.utils.PreferHelper;
 import com.vac.musicplayer.utils.TimeHelper;
 
 public class PlayMusic extends Activity implements OnPlayMusicStateListener,OnClickListener{
@@ -64,6 +65,8 @@ public class PlayMusic extends Activity implements OnPlayMusicStateListener,OnCl
 			Log.i(TAG, "serviceConnected");
 			mBinder = (MusicServiceBinder) binder;
 			mBinder.registerOnPlayMusicStateListener(PlayMusic.this);
+		
+			mBinder.setCurrentPlayList(playMusicList);
 			
 			/**初始化当前的播放信息*/
 			initCurrentPlayMusicInfo(mBinder.getCurrentPlayMusicInfo());
@@ -140,12 +143,27 @@ public class PlayMusic extends Activity implements OnPlayMusicStateListener,OnCl
 	 */
 	private void initCurrentPlayMusicInfo(Bundle bundle){
 		int currentPlayState = bundle.getInt(Constant.PLAYING_MUSIC_STATE);
-
+	
+		if(currentPlayState==PlayState.Stopped){
+			int sharePosition = PreferHelper.readInt(PlayMusic.this, Constant.SHARE_NMAE_MUSIC,
+					Constant.SHARE_NMAE_MUSIC_POSITION, -1);
+			play_music_title.setText(playMusicList.get(sharePosition).getTitle());
+			if(playMusicList.get(sharePosition).getArtist().equals("<unknown>")){
+				play_music_artist.setText("未知艺术家");
+			}else{
+				play_music_artist.setText(playMusicList.get(sharePosition).getArtist());
+			}
+			play_music_album.setText(playMusicList.get(sharePosition).getAlbum());
+			isPlaying =false;
+			play_music_pause.setBackgroundResource(R.drawable.play_music_play_sele);
+			play_music_cursong.setText((sharePosition+1)+"");
+		}
+		
+		
 		mMusic = bundle.getParcelable(Constant.PLAYING_MUSIC_ITEM);
 		
 		int currentPlayProgress = bundle.getInt(Constant.PLAYING_MUSIC_PROGRESS);
 		int currentPlayPosition = bundle.getInt(Constant.PLAYING_MUSIC_POSITION_IN_LIST);
-		
 		if(currentPlayState==PlayState.Playing||currentPlayState==PlayState.Prepraing){
 			play_music_pause.setBackgroundResource(R.drawable.play_music_pause_sele);
 			isPlaying=true;
@@ -165,9 +183,10 @@ public class PlayMusic extends Activity implements OnPlayMusicStateListener,OnCl
 			
 			play_music_endtime.setText(TimeHelper.milliSecondsToFormatTimeString(mMusic.getDuration()));
 			play_music_curtime.setText(TimeHelper.milliSecondsToFormatTimeString(currentPlayProgress));
+			play_music_progressBar.setProgress((int)(currentPlayProgress*1.0/mMusic.getDuration() *play_music_progressBar.getMax()));
 		}
 		
-		play_music_cursong.setText(currentPlayPosition+"");
+		play_music_cursong.setText((currentPlayPosition+1)+"");
 		
 		ArrayList<Music> currentPlayMusicList = bundle.getParcelableArrayList(Constant.PLAYING_MUSIC_CURRENT_LIST);
 		play_music_totalsong.setText(currentPlayMusicList.size()+"");
@@ -178,9 +197,6 @@ public class PlayMusic extends Activity implements OnPlayMusicStateListener,OnCl
 		super.onStart();
 		//绑定音乐播放的服务
 		boolean isbind =bindService(new Intent(PlayMusic.this, MusicService.class), mServiceConn, Context.BIND_AUTO_CREATE);
-		if(mBinder!=null){
-			mBinder.setCurrentPlayList(playMusicList);
-		}
 		
 		Log.v(TAG, "绑定"+isbind);
 	}
@@ -188,7 +204,7 @@ public class PlayMusic extends Activity implements OnPlayMusicStateListener,OnCl
 	
 	@Override
 	public void onMuiscPlayed(Music music) {
-		Log.v(TAG, "onPlayMusicStateListener--onMuiscPlayed");
+		Log.v(TAG, "PlayMusic-onPlayMusicStateListener--onMuiscPlayed");
 		isPlaying =true;
 		play_music_pause.setBackgroundResource(R.drawable.play_music_pause_sele);
 	}
@@ -196,25 +212,25 @@ public class PlayMusic extends Activity implements OnPlayMusicStateListener,OnCl
 
 	@Override
 	public void onMusicPaused(Music music) {
-		Log.v(TAG, "onPlayMusicStateListener--onMusicPaused");
+		Log.v(TAG, "PlayMusic-onPlayMusicStateListener--onMusicPaused");
 		isPlaying =false;
 		play_music_pause.setBackgroundResource(R.drawable.play_music_play_sele);
 	}
 
 	@Override
 	public void onMusicStoped() {
-		Log.v(TAG, "onPlayMusicStateListener--onMusicStoped");
+		Log.v(TAG, "PlayMusic-onPlayMusicStateListener--onMusicStoped");
 		isPlaying=false;
 	}
 
 	@Override
 	public void onPlayModeChanged(int playMode) {
-		Log.v(TAG, "onPlayMusicStateListener--onPlayModeChanged");
+		Log.v(TAG, "PlayMusic-onPlayMusicStateListener--onPlayModeChanged");
 	}
 
 	@Override
-	public void onNewSongPlayed(Music music) {
-		Log.v(TAG, "onPlayMusicStateListener--onMuiscPlayed");
+	public void onNewSongPlayed(Music music,int position) {
+		Log.v(TAG, "PlayMusic-onPlayMusicStateListener--onMuiscPlayed");
 		mMusic = music;
 		play_music_title.setText(mMusic.getTitle());
 		if(mMusic.getArtist().equals("<unknown>")){
@@ -223,6 +239,8 @@ public class PlayMusic extends Activity implements OnPlayMusicStateListener,OnCl
 			play_music_artist.setText(mMusic.getArtist());
 		}
 		play_music_album.setText(mMusic.getAlbum());
+		
+		play_music_cursong.setText((position+1)+"");
 		
 		play_music_endtime.setText(TimeHelper.milliSecondsToFormatTimeString(mMusic.getDuration()));
 	}
@@ -235,7 +253,13 @@ public class PlayMusic extends Activity implements OnPlayMusicStateListener,OnCl
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		unbindService(mServiceConn);
+		if(mBinder!=null){
+			mBinder.unRegisterPlayMusicStateListener(this);
+		}
+		if(mServiceConn!=null){
+			unbindService(mServiceConn);
+		}
+	
 	}
 
 	@Override

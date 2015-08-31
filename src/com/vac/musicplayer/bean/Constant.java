@@ -32,4 +32,10 @@ public class Constant {
 
 	/**当前服务中的播放列表  value->currentPlayList*/
 	public static final String PLAYING_MUSIC_CURRENT_LIST = "playing_music_current_list";
+
+	/**记录下当前播放的音乐的 名称*/
+	public static final String SHARE_NMAE_MUSIC = "share_name_music";
+	
+	/**记录下当前播放的音乐的位置*/
+	public static final String SHARE_NMAE_MUSIC_POSITION = "share_name_music_position";
 }

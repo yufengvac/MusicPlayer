@@ -12,6 +12,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.vac.musicplayer.R;
@@ -31,7 +32,7 @@ public class MusicListAdapter extends BaseAdapter implements OnClickListener {
 	private AnimationDrawable animaiton=null;
 
 	public static final int ANIMATION_START=0;
-	public static final int ANIAMTION_PAUSE=1;
+	public static final int ANIMATION_PAUSE=1;
 	private int musicAnimation =-1;
 
 	public MusicListAdapter(Context context) {
@@ -101,8 +102,17 @@ public class MusicListAdapter extends BaseAdapter implements OnClickListener {
 		}
 		if (mActivateItemPos == position) {
 			holder.popup_menu.setVisibility(View.VISIBLE);
-			startMusicAnimation(musicAnimation,holder.popup_menu);
+			if(musicAnimation==ANIMATION_START){		
+				holder.popup_menu.setBackgroundResource(R.drawable.start_music_animaiton);
+				animaiton = (AnimationDrawable) holder.popup_menu.getBackground();
+				animaiton.start();
+				Log.d("TAG", "适配器中已经开始播放了动画~~~~~~~~~~");
+			}else if(musicAnimation==ANIMATION_PAUSE){
+				holder.popup_menu.setBackgroundResource(R.drawable.spectrum_4);
+				Log.d("TAG", "适配器中已经开始停止了动画~~~~~~~~~~");
+			}
 		} else {
+			holder.popup_menu.setBackgroundResource(R.drawable.start_music_animaiton);
 			holder.popup_menu.setVisibility(View.GONE);
 		}
 		holder.title.setText(getItem(position).getTitle());
@@ -133,7 +143,7 @@ public class MusicListAdapter extends BaseAdapter implements OnClickListener {
 
 		if(animationState==ANIMATION_START){
 			startImageAni(imageview);
-		}else if(animationState==ANIAMTION_PAUSE){
+		}else if(animationState==ANIMATION_PAUSE){
 			stopMusicAnimation(imageview);
 		}
 		

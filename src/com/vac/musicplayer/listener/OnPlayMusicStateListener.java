@@ -37,7 +37,7 @@ public interface OnPlayMusicStateListener {
 	 * 播放新的音乐
 	 * @param music 
 	 */
-	public abstract void onNewSongPlayed(Music music);
+	public abstract void onNewSongPlayed(Music music,int position);
 	
 	/**
 	 * 播放进度

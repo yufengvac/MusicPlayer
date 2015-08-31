@@ -82,6 +82,7 @@ public class MusicLoader extends AsyncTaskLoader<List<Music>> {
 	@Override
 	public void onCanceled(List<Music> data) {
 		super.onCanceled(data);
+		onReleaseResources(data);
 	}
 
 	@Override

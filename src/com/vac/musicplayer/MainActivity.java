@@ -14,6 +14,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -199,16 +200,16 @@ OnCheckedChangeListener,OnPageChangeListener,onMusicTotalCountListener {
 		if (viewPager.getCurrentItem()==0) {
 			title_of_top.setText("歌曲("+totalMusic+")");
 		}
-		Intent intent = new Intent(MainActivity.this,MusicService.class);
-		intent.setAction(MusicService.ACTION_INIT);
-		intent.putExtra(Constant.CLICK_MUSIC_LIST, false);
-		startService(intent);//启动服务
-		
 	}
 	
 	@Override
 	protected void onStart() {
+		Log.v(TAG, "MainActivity-->OnStart===============startService");
 		super.onStart();
+		Intent intent = new Intent(MainActivity.this,MusicService.class);
+		intent.setAction(MusicService.ACTION_INIT);
+		intent.putExtra(Constant.CLICK_MUSIC_LIST, false);
+		startService(intent);//启动服务
 	}
 	@Override
 	protected void onDestroy() {
