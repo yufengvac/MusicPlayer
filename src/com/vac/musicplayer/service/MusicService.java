@@ -275,6 +275,35 @@ public class MusicService extends Service implements OnPreparedListener,OnComple
 			}
 		}
 		
+		/**
+		 * 移除当前队列的歌曲 
+		 */
+		public void removeMusicFromCurrentList(long musicId){
+			for(int i=0;i<mCurrentPlayList.size();i++){
+				if(mCurrentPlayList.get(i).getId()==musicId){
+					if(i<mPlayingMusicPostion){
+						mRequestMusicPosition = mPlayingMusicPostion--;
+					}else if(i==mPlayingMusicPostion){
+						mCurrentPlayList.remove(i);
+						playSong();
+						return;
+					}
+					mCurrentPlayList.remove(i);		
+					break;
+					
+					
+				}
+			}
+			
+			if(mCurrentPlayList.size()==0){
+				requestToStop();
+			}else if(musicId ==mPlayingMusic.getId()){
+				--mPlayingMusicPostion;
+				mRequestMusicPosition--;
+
+			}
+		}
+		
 	}
 	
 	@Override
@@ -395,7 +424,7 @@ public class MusicService extends Service implements OnPreparedListener,OnComple
 	 * 					false 当歌曲播放完成后，自动播放下一首
 	 */
 	private void requestToPlayNext(boolean isUserClick){
-		if(mState!=PlayState.Prepraing){
+		if(mState!=PlayState.Prepraing&&mCurrentPlayList.size()>0){
 			
 			switch (mPlayMode) {
 			case PlayMode.REPEAT:
@@ -427,10 +456,11 @@ public class MusicService extends Service implements OnPreparedListener,OnComple
 			default:
 				break;
 			}
+			
+			mRequestPlayMusicId = mCurrentPlayList.get(mRequestMusicPosition).getId();
+			requestToPlay();
 		}
-		
-		mRequestPlayMusicId = mCurrentPlayList.get(mRequestMusicPosition).getId();
-		requestToPlay();
+	
 	}
 	
 	/**
@@ -440,14 +470,13 @@ public class MusicService extends Service implements OnPreparedListener,OnComple
 	 * 					false 当歌曲播放完成后，自动播放上一首
 	 */
 	private void requestToPlayPrevious(boolean isUserClick){
-		if(mState!=PlayState.Prepraing){
+		if(mState!=PlayState.Prepraing&&mCurrentPlayList.size()>0){
 			if(--mRequestMusicPosition<0){
 				mRequestMusicPosition = mCurrentPlayList.size()-1;//如果是第一首歌曲，那么将从最后一首歌曲开始播放
 			}
+			mRequestPlayMusicId = mCurrentPlayList.get(mRequestMusicPosition).getId();
+			requestToPlay();
 		}
-		
-		mRequestPlayMusicId = mCurrentPlayList.get(mRequestMusicPosition).getId();
-		requestToPlay();
 	}
 	
 	/**
@@ -470,6 +499,11 @@ public class MusicService extends Service implements OnPreparedListener,OnComple
 			mRequestPlayMusicId = -1;
 			releaseResource(true);//释放掉MediaPlayer对象
 			mAudioFocusHelper.giveUpAudioFocus();
+		}
+
+		// 通知所有的观察者音乐停止播放了
+		for (int i = 0; i < mPlayMusicStateListenerList.size(); i++) {
+			mPlayMusicStateListenerList.get(i).onMusicStoped();
 		}
 	}
 	

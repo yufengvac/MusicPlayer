@@ -2,6 +2,7 @@ package com.vac.musicplayer.adapter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import android.content.Context;
 import android.graphics.drawable.AnimationDrawable;
@@ -102,16 +103,46 @@ public class MusicListAdapter extends BaseAdapter implements OnClickListener {
 		if (mActivateItemPos == position) {
 			holder.popup_menu.setVisibility(View.VISIBLE);
 			if(musicAnimation==ANIMATION_START){		
-				holder.popup_menu.setBackgroundResource(R.drawable.start_music_animaiton);
+//				holder.popup_menu.setBackgroundResource(R.drawable.start_music_animaiton);
 				animaiton = (AnimationDrawable) holder.popup_menu.getBackground();
 				animaiton.start();
 				Log.d("TAG", "适配器中已经开始播放了动画~~~~~~~~~~");
 			}else if(musicAnimation==ANIMATION_PAUSE){
-				holder.popup_menu.setBackgroundResource(R.drawable.spectrum_4);
+				int random = new Random().nextInt(7)+1;
+				switch (random) {
+				case 1:
+					
+					break;
+				case 2:
+					
+					break;
+				case 3:
+					
+					break;
+				case 4:
+					
+					break;
+				case 5:
+					
+					break;
+					
+				case 6:
+					
+					break;
+				case 7:
+					
+					break;
+
+				default:
+					break;
+				}
+//				holder.popup_menu.setBackgroundResource(R.drawable.spectrum_4);
+//				holder.popup_menu.setBackgroundResource(R.drawable.start_music_animaiton);
+				animaiton = (AnimationDrawable) holder.popup_menu.getBackground();
+				animaiton.stop();
 				Log.d("TAG", "适配器中已经开始停止了动画~~~~~~~~~~");
 			}
 		} else {
-			holder.popup_menu.setBackgroundResource(R.drawable.start_music_animaiton);
 			holder.popup_menu.setVisibility(View.GONE);
 		}
 		holder.title.setText(getItem(position).getTitle());

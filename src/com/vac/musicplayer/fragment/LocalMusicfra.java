@@ -77,8 +77,8 @@ public class LocalMusicfra extends Fragment implements android.widget.AdapterVie
 					int SharePosition = PreferHelper.readInt(getActivity(), Constant.SHARE_NMAE_MUSIC,
 							Constant.SHARE_NMAE_MUSIC_POSITION, -1);
 					mAdapter.setSpecifiedIndicator(MusicListAdapter.ANIMATION_PAUSE,SharePosition);
-					int offest = listView.getLastVisiblePosition()-listView.getFirstVisiblePosition();
-					listView.setSelection(SharePosition-offest/2);
+					int offest = listView.getHeight();
+					listView.setSelectionFromTop(SharePosition,offest/2);
 				}
 				
 				
@@ -92,9 +92,8 @@ public class LocalMusicfra extends Fragment implements android.widget.AdapterVie
 					}else{
 						mAdapter.setSpecifiedIndicator(MusicListAdapter.ANIMATION_PAUSE,currentPlayPosition);
 					}
-					int offest = listView.getLastVisiblePosition()-listView.getFirstVisiblePosition();
-					Log.i(TAG, "offest==="+offest);
-					listView.setSelection(currentPlayPosition-offest/2);
+					int offest = listView.getHeight();
+					listView.setSelectionFromTop(currentPlayPosition,offest/2);
 				}
 			}
 		}
@@ -151,7 +150,6 @@ public class LocalMusicfra extends Fragment implements android.widget.AdapterVie
 						mCurrentMusicList.addAll(data);
 						mAdapter.setData(data);
 						musicTotalListener.musicTotalCount(data.size());//设置音乐的总数，接口回调给宿主MainActivity.class
-//						Log.v(TAG, "LocalMusicFragment中绑定服务");
 					}
 					if(data!=null&&mBinder!=null&&currentMusicBundle!=null){
 						Log.d(TAG, "在此onLoadFinished设置currentMusicBundle");
@@ -163,8 +161,8 @@ public class LocalMusicfra extends Fragment implements android.widget.AdapterVie
 							int SharePosition = PreferHelper.readInt(getActivity(), Constant.SHARE_NMAE_MUSIC,
 									Constant.SHARE_NMAE_MUSIC_POSITION, -1);
 							mAdapter.setSpecifiedIndicator(MusicListAdapter.ANIMATION_PAUSE,SharePosition);
-							int offest = listView.getLastVisiblePosition()-listView.getFirstVisiblePosition();
-							listView.setSelection(SharePosition-offest/2);
+							int offest = listView.getHeight();
+							listView.setSelectionFromTop(SharePosition,offest/2);
 						}
 						
 						
@@ -178,8 +176,8 @@ public class LocalMusicfra extends Fragment implements android.widget.AdapterVie
 							}else{
 								mAdapter.setSpecifiedIndicator(MusicListAdapter.ANIMATION_PAUSE,currentPlayPosition);
 							}
-							int offest = listView.getLastVisiblePosition()-listView.getFirstVisiblePosition();
-							listView.setSelection(currentPlayPosition-offest/2);
+							int offest = listView.getHeight();
+							listView.setSelectionFromTop(currentPlayPosition,offest/2);
 						}
 					}
 					

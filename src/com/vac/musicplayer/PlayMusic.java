@@ -56,8 +56,8 @@ public class PlayMusic extends Activity implements OnPlayMusicStateListener,OnCl
 	/**音乐播放的进度指示条*/
 	private SeekBar play_music_progressBar;
 	
-	/**音乐播放模式*/
-	private ImageButton play_music_playmode;
+	/**音乐播放模式    打开当前的播放列表*/
+	private ImageButton play_music_playmode,play_music_opencurrentlist;
 
 	private ServiceConnection mServiceConn=new ServiceConnection() {
 		
@@ -141,6 +141,18 @@ public class PlayMusic extends Activity implements OnPlayMusicStateListener,OnCl
 				mBinder.changePlayMode();
 			}
 		});
+		
+		
+		play_music_opencurrentlist =(ImageButton) findViewById(R.id.play_music_opencurrentlist);
+		play_music_opencurrentlist.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				//打开当前的播放列表
+				Intent intent = new Intent(PlayMusic.this,PlayMusicQueue.class);
+				startActivity(intent);
+			}
+		});
 	}
 	
 	/**
@@ -162,18 +174,15 @@ public class PlayMusic extends Activity implements OnPlayMusicStateListener,OnCl
 		if(currentPlayState==PlayState.Stopped){
 			int sharePosition = PreferHelper.readInt(PlayMusic.this, Constant.SHARE_NMAE_MUSIC,
 					Constant.SHARE_NMAE_MUSIC_POSITION, -1);
-			play_music_title.setText(playMusicList.get(sharePosition).getTitle());
-			if(playMusicList.get(sharePosition).getArtist().equals("<unknown>")){
-				play_music_artist.setText("未知艺术家");
-			}else{
+			if(sharePosition!=-1){
+				play_music_title.setText(playMusicList.get(sharePosition).getTitle());
 				play_music_artist.setText(playMusicList.get(sharePosition).getArtist());
+
+				play_music_album.setText(playMusicList.get(sharePosition).getAlbum());
+				isPlaying =false;
+				play_music_pause.setBackgroundResource(R.drawable.play_music_play_sele);
+				play_music_cursong.setText((sharePosition+1)+"");
 			}
-			play_music_album.setText(playMusicList.get(sharePosition).getAlbum());
-			isPlaying =false;
-			play_music_pause.setBackgroundResource(R.drawable.play_music_play_sele);
-			play_music_cursong.setText((sharePosition+1)+"");
-			
-			
 		}
 		
 		
@@ -192,11 +201,8 @@ public class PlayMusic extends Activity implements OnPlayMusicStateListener,OnCl
 		if(mMusic!=null){
 			Log.i(TAG, mMusic.toString());
 			play_music_title.setText(mMusic.getTitle());
-			if(mMusic.getArtist().equals("<unknown>")){
-				play_music_artist.setText("未知艺术家");
-			}else{
-				play_music_artist.setText(mMusic.getArtist());
-			}
+			play_music_artist.setText(mMusic.getArtist());
+
 			play_music_album.setText(mMusic.getAlbum());
 			
 			play_music_endtime.setText(TimeHelper.milliSecondsToFormatTimeString(mMusic.getDuration()));
@@ -253,11 +259,8 @@ public class PlayMusic extends Activity implements OnPlayMusicStateListener,OnCl
 		Log.v(TAG, "PlayMusic-onPlayMusicStateListener--onMuiscPlayed");
 		mMusic = music;
 		play_music_title.setText(mMusic.getTitle());
-		if(mMusic.getArtist().equals("<unknown>")){
-			play_music_artist.setText("未知艺术家");
-		}else{
-			play_music_artist.setText(mMusic.getArtist());
-		}
+		play_music_artist.setText(mMusic.getArtist());
+
 		play_music_album.setText(mMusic.getAlbum());
 		
 		play_music_cursong.setText((position+1)+"");

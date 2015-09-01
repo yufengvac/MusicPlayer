@@ -39,9 +39,13 @@ public class Music implements Parcelable{
 		this.id = id;
 	}
 	public String getTitle() {
+		if(title.equals("<unknown>")){
+			return "未知";
+		}
 		return title;
 	}
 	public void setTitle(String title) {
+		
 		this.title = title;
 	}
 	public String getAlbum() {
@@ -51,6 +55,9 @@ public class Music implements Parcelable{
 		this.album = album;
 	}
 	public String getArtist() {
+		if(artist.equals("<unknown>")){
+			return "未知艺术家";
+		}
 		return artist;
 	}
 	public void setArtist(String artist) {
