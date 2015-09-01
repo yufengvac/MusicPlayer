@@ -1,5 +1,6 @@
 package com.vac.musicplayer;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,24 +10,31 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.SeekBar;
-import android.widget.Toast;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.vac.musicplayer.adapter.LyricAdapter;
 import com.vac.musicplayer.bean.Constant;
+import com.vac.musicplayer.bean.LyricSentence;
 import com.vac.musicplayer.bean.Music;
 import com.vac.musicplayer.listener.OnPlayMusicStateListener;
 import com.vac.musicplayer.service.MusicService;
 import com.vac.musicplayer.service.MusicService.MusicServiceBinder;
 import com.vac.musicplayer.service.MusicService.PlayMode;
 import com.vac.musicplayer.service.MusicService.PlayState;
+import com.vac.musicplayer.utils.LyricLoadHelper.LyricListener;
 import com.vac.musicplayer.utils.PreferHelper;
 import com.vac.musicplayer.utils.TimeHelper;
 
@@ -36,6 +44,7 @@ public class PlayMusic extends Activity implements OnPlayMusicStateListener,OnCl
 	private static final String TAG = PlayMusic.class.getSimpleName();
 	private MusicServiceBinder mBinder = null;
 	private List<Music> playMusicList=null;
+	public static final int MSG_SET_LYRIC_INDEX = 1;
 	
 	private Music mMusic=null;//当前播放音乐
 	
@@ -58,7 +67,50 @@ public class PlayMusic extends Activity implements OnPlayMusicStateListener,OnCl
 	
 	/**音乐播放模式    打开当前的播放列表*/
 	private ImageButton play_music_playmode,play_music_opencurrentlist;
+	
+	/**歌词show*/
+	private ListView play_music_listview_lyricshow;
+	
+	/**歌词适配器*/
+	private LyricAdapter mAdapter=null;
+	
+	/**空歌词*/
+	private TextView play_music_emptylyric;
 
+	private ClientIncomingHandler mHandler = new ClientIncomingHandler(this);
+
+	/** 处理来自服务端的消息 */
+	private static class ClientIncomingHandler extends Handler {
+		// 使用弱引用，避免Handler造成的内存泄露(Message持有Handler的引用，内部定义的Handler类持有外部类的引用)
+		WeakReference<PlayMusic> mFragmentWeakReference = null;
+		PlayMusic mActivity = null;
+
+		public ClientIncomingHandler(PlayMusic a) {
+			mFragmentWeakReference = new WeakReference<PlayMusic>(a);
+			mActivity = mFragmentWeakReference.get();
+		}
+
+		@Override
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+			case MSG_SET_LYRIC_INDEX:
+				if (mActivity.mAdapter.isEmpty()) {
+					Log.i(TAG, "歌词为空");
+					mActivity.play_music_emptylyric
+							.setText("暂无歌词");
+				} else {
+					mActivity.play_music_listview_lyricshow.setSelectionFromTop(msg.arg1,
+							mActivity.play_music_listview_lyricshow.getHeight() / 2);
+				}
+				break;
+			default:
+				super.handleMessage(msg);
+				break;
+			}
+		}
+	}
+	
+	
 	private ServiceConnection mServiceConn=new ServiceConnection() {
 		
 		@Override
@@ -74,6 +126,10 @@ public class PlayMusic extends Activity implements OnPlayMusicStateListener,OnCl
 		
 			mBinder.setCurrentPlayList(playMusicList);
 			
+			/**传递LyricListener对象给Service，以便歌词发生变化时通知本Activity*/
+			mBinder.registerLyricListener(mLyricListener);
+			
+			mBinder.requestLoadLyric();
 			/**初始化当前的播放信息*/
 			initCurrentPlayMusicInfo(mBinder.getCurrentPlayMusicInfo());
 		}
@@ -85,6 +141,12 @@ public class PlayMusic extends Activity implements OnPlayMusicStateListener,OnCl
 		setContentView(R.layout.play_music);
 		initView();
 		playMusicList = (List<Music>) getIntent().getSerializableExtra(Constant.PLAYLIST_MUISC);
+		
+		mAdapter = new LyricAdapter(PlayMusic.this);
+		play_music_listview_lyricshow.setAdapter(mAdapter);
+		play_music_listview_lyricshow.setEmptyView(play_music_emptylyric);
+		play_music_listview_lyricshow.startAnimation(AnimationUtils.loadAnimation(this,
+				android.R.anim.fade_in));
 	}
 	
 	/**
@@ -153,6 +215,10 @@ public class PlayMusic extends Activity implements OnPlayMusicStateListener,OnCl
 				startActivity(intent);
 			}
 		});
+		
+		play_music_listview_lyricshow = (ListView) findViewById(R.id.play_music_listview_lyricshow);
+		
+		play_music_emptylyric = (TextView) findViewById(R.id.play_music_lyric_empty);
 	}
 	
 	/**
@@ -331,5 +397,33 @@ public class PlayMusic extends Activity implements OnPlayMusicStateListener,OnCl
 		}
 	}
 
+	private LyricListener mLyricListener = new LyricListener() {
+
+		@Override
+		public void onLyricLoaded(List<LyricSentence> lyricSentences, int index) {
+			Log.i(TAG, "onLyricLoaded");
+			if (lyricSentences != null) {
+				Log.i(TAG, "onLyricLoaded--->歌词句子数目=" + lyricSentences.size()
+						+ ",当前句子索引=" + index);
+				mAdapter.setLyric(lyricSentences);
+				mAdapter.setCurrentSentenceIndex(index);
+				mAdapter.notifyDataSetChanged();
+				// 本方法执行时，lyricshow的控件还没有加载完成，所以延迟下再执行相关命令
+				mHandler.sendMessageDelayed(
+						Message.obtain(null, MSG_SET_LYRIC_INDEX, index, 0),
+						100);
+			}
+		}
+
+		@Override
+		public void onLyricSentenceChanged(int indexOfCurSentence) {
+			Log.i(TAG, "onLyricSentenceChanged--->当前句子索引=" + indexOfCurSentence);
+			mAdapter.setCurrentSentenceIndex(indexOfCurSentence);
+			mAdapter.notifyDataSetChanged();
+			play_music_listview_lyricshow
+					.smoothScrollToPositionFromTop(indexOfCurSentence,
+							play_music_listview_lyricshow.getHeight() / 2, 500);
+		}
+	};
 
 }

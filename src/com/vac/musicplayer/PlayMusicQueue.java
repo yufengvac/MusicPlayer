@@ -185,19 +185,19 @@ public class PlayMusicQueue extends Activity implements OnPlayMusicStateListener
 	private void setCurrentPlayModeBg(int playMode){
 		switch (playMode) {
 		case PlayMode.REPEAT:
-			play_queue_playmode.setImageResource(R.drawable.button_playmode_repeat);
+			play_queue_playmode.setImageResource(R.drawable.button_playmode_repeat_blue);
 //			Toast.makeText(PlayMusic.this, "列表循环", Toast.LENGTH_SHORT).show();
 			break;
 		case PlayMode.REPEAT_SINGLE:
-			play_queue_playmode.setImageResource(R.drawable.button_playmode_repeat_single);
+			play_queue_playmode.setImageResource(R.drawable.button_playmode_repeat_single_blue);
 //			Toast.makeText(PlayMusic.this, "单曲循环", Toast.LENGTH_SHORT).show();
 			break;
 		case PlayMode.SEQUENTIAL:
-			play_queue_playmode.setImageResource(R.drawable.button_playmode_sequential);
+			play_queue_playmode.setImageResource(R.drawable.button_playmode_sequential_blue);
 //			Toast.makeText(PlayMusic.this, "顺序播放", Toast.LENGTH_SHORT).show();
 			break;
 		case PlayMode.SHUFFLE:
-			play_queue_playmode.setImageResource(R.drawable.button_playmode_shuffle);
+			play_queue_playmode.setImageResource(R.drawable.button_playmode_shuffle_blue);
 //			Toast.makeText(PlayMusic.this, "随机播放", Toast.LENGTH_SHORT).show();
 			break;
 

@@ -1,5 +1,6 @@
 package com.vac.musicplayer.service;
 
+import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +17,7 @@ import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnErrorListener;
 import android.media.MediaPlayer.OnPreparedListener;
+import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.Handler;
@@ -27,14 +29,18 @@ import android.util.Log;
 import com.vac.musicplayer.PlayMusic;
 import com.vac.musicplayer.R;
 import com.vac.musicplayer.bean.Constant;
+import com.vac.musicplayer.bean.LyricSentence;
 import com.vac.musicplayer.bean.Music;
 import com.vac.musicplayer.listener.AudioFocusHelper;
 import com.vac.musicplayer.listener.AudioFocusHelper.MusicFocusable;
 import com.vac.musicplayer.listener.OnPlayMusicStateListener;
+import com.vac.musicplayer.utils.LyricDownloadManager;
+import com.vac.musicplayer.utils.LyricLoadHelper;
+import com.vac.musicplayer.utils.LyricLoadHelper.LyricListener;
 import com.vac.musicplayer.utils.PreferHelper;
 
 public class MusicService extends Service implements OnPreparedListener,OnCompletionListener
-	,OnErrorListener,MusicFocusable{
+	,OnErrorListener,MusicFocusable,LyricListener{
 
 	private static final String TAG = MusicService.class.getSimpleName();
 
@@ -57,6 +63,8 @@ public class MusicService extends Service implements OnPreparedListener,OnComple
 	
 	/**handler消息类型*/
 	public static final int MESSAGE_UPDATE_PLAYING_SONG_PROGRESS = 1;
+	public static final int MESSAGE_ON_LYRIC_LOADED = 2;
+	public static final int MESSAGE_ON_LYRIC_SENTENCE_CHANGED = 3;
 	
 	/**播放状态*/
 	public static class PlayState{
@@ -117,8 +125,24 @@ public class MusicService extends Service implements OnPreparedListener,OnComple
 		public static final int SHUFFLE = 3;
 	}
 	
+	/**歌词的回调接口*/
+	private LyricListener mLyricListener = null;
+	
+	/** 句子集合 */
+	private ArrayList<LyricSentence> mLyricSentences = new ArrayList<LyricSentence>();
+	
+	/** 当前正在播放的歌词句子的在句子集合中的索引号 */
+	private int mIndexOfCurrentSentence = -1;
+	
+	/**歌词帮助类*/
+	private LyricLoadHelper mLyricLoadHelper = new LyricLoadHelper();
+	
 	/**发送消息的handler*/
 	private ServiceHandler mServiceHandler = new ServiceHandler(this);
+	
+	private boolean mHasLyric=false;
+	
+	private LyricDownloadManager mLyricDownloadManager = null;
 	
 	private static class ServiceHandler extends Handler{
 		
@@ -139,10 +163,23 @@ public class MusicService extends Service implements OnPreparedListener,OnComple
 					for(int i=0;i<mMusicService.mPlayMusicStateListenerList.size();i++){
 						mMusicService.mPlayMusicStateListenerList.get(i).onPlayProgressUpdate(currentProgressMilli);
 					}
+					
+					if(mMusicService.mHasLyric){
+						mMusicService.mLyricLoadHelper.notifyTime(currentProgressMilli);
+					}
 					mMusicService.mServiceHandler.sendEmptyMessageDelayed(MESSAGE_UPDATE_PLAYING_SONG_PROGRESS, 500);
 				}
 				break;
-
+			case MESSAGE_ON_LYRIC_LOADED:
+				if (mMusicService.mLyricListener != null) {
+					mMusicService.mLyricListener.onLyricLoaded((List<LyricSentence>) msg.obj, msg.arg1);
+				}
+				break;
+			case MESSAGE_ON_LYRIC_SENTENCE_CHANGED:
+				if (mMusicService.mLyricListener != null) {
+					mMusicService.mLyricListener.onLyricSentenceChanged(msg.arg1);
+				}
+				break;
 			default:
 				break;
 			}
@@ -173,6 +210,14 @@ public class MusicService extends Service implements OnPreparedListener,OnComple
 			mPlayMusicStateListenerList.remove(listener);
 		}
 		
+		public void registerLyricListener(LyricListener listener) {
+			mLyricListener = listener;
+		}
+
+		public void unRegisterLyricListener() {
+			mLyricListener = null;
+		}
+		
 		/**
 		 * 获取当前的播放 相关信息
 		 * @return
@@ -193,6 +238,16 @@ public class MusicService extends Service implements OnPreparedListener,OnComple
 			bundle.putInt(Constant.PLAYING_MUSIC_POSITION_IN_LIST, mPlayingMusicPostion);//将当前的播放的音乐在播放列表中的位置返回
 			bundle.putParcelableArrayList(Constant.PLAYING_MUSIC_CURRENT_LIST, mCurrentPlayList);//将当前的播放列表返回
 			return bundle;
+		}
+		
+		/** 如果当前正在播放歌曲，通知LyricListener载入歌词 */
+		public void requestLoadLyric() {
+			Log.i(TAG, "requestLoadLyric");
+			if (mPlayingMusic != null && mState != PlayState.Stopped) {
+				Log.i(TAG, "requestLoadLyric--->loadLyric");
+				loadLyric(mPlayingMusic.getData());
+				mLyricLoadHelper.notifyTime(mPlayer.getCurrentPosition());
+			}
 		}
 		
 		/**
@@ -313,6 +368,9 @@ public class MusicService extends Service implements OnPreparedListener,OnComple
 		mAudioFocusHelper = new AudioFocusHelper(getApplicationContext(), this);
 
 		mNotificationManager = (NotificationManager) getApplicationContext().getSystemService(NOTIFICATION_SERVICE);
+		
+		mLyricLoadHelper.setLyricListener(MusicService.this);
+		mLyricDownloadManager = new LyricDownloadManager(getApplicationContext());
 		super.onCreate();
 	}
 
@@ -347,6 +405,74 @@ public class MusicService extends Service implements OnPreparedListener,OnComple
 	public IBinder onBind(Intent arg0) {
 		Log.i(TAG, "service onBind");
 		return mBinder;//在此返回service的Binder对象
+	}
+	
+	
+	/**
+	 * 根据传递过来的已播放的毫秒数，计算应当对应到句子集合中的哪一句，再通知监听者播放到的位置。
+	 * 
+	 * @param millisecond
+	 *            已播放的毫秒数
+	 */
+	public void notifyTime(long millisecond) {
+		// Log.i(TAG, "notifyTime");
+		if (mCurrentPlayList.size()>0 && mLyricSentences != null && mLyricSentences.size() != 0) {
+			int newLyricIndex = seekSentenceIndex(millisecond);
+			if (newLyricIndex != -1 && newLyricIndex != mIndexOfCurrentSentence) {// 如果找到的歌词和现在的不是一句。
+				if (mLyricListener != null) {
+					// 告诉一声，歌词已经变成另外一句啦！
+					mLyricListener.onLyricSentenceChanged(newLyricIndex);
+				}
+				mIndexOfCurrentSentence = newLyricIndex;
+			}
+		}
+	}
+	
+	private int seekSentenceIndex(long millisecond) {
+		int findStart = 0;
+		if (mIndexOfCurrentSentence >= 0) {
+			// 如果已经指定了歌词，则现在位置开始
+			findStart = mIndexOfCurrentSentence;
+		}
+
+		try {
+			long lyricTime = mLyricSentences.get(findStart).getStartTime();
+
+			if (millisecond > lyricTime) { // 如果想要查找的时间在现在字幕的时间之后
+				// 如果开始位置经是最后一句了，直接返回最后一句。
+				if (findStart == (mLyricSentences.size() - 1)) {
+					return findStart;
+				}
+				int new_index = findStart + 1;
+				// 找到第一句开始时间大于输入时间的歌词
+				while (new_index < mLyricSentences.size()
+						&& mLyricSentences.get(new_index).getStartTime() <= millisecond) {
+					++new_index;
+				}
+				// 这句歌词的前一句就是我们要找的了。
+				return new_index - 1;
+			} else if (millisecond < lyricTime) { // 如果想要查找的时间在现在字幕的时间之前
+				// 如果开始位置经是第一句了，直接返回第一句。
+				if (findStart == 0)
+					return 0;
+
+				int new_index = findStart - 1;
+				// 找到开始时间小于输入时间的歌词
+				while (new_index > 0
+						&& mLyricSentences.get(new_index).getStartTime() > millisecond) {
+					--new_index;
+				}
+				// 就是它了。
+				return new_index;
+			} else {
+				// 不用找了
+				return findStart;
+			}
+		} catch (IndexOutOfBoundsException e) {
+			e.printStackTrace();
+			Log.i(TAG, "新的歌词载入了，所以产生了越界错误，不用理会，返回0");
+			return 0;
+		}
 	}
 	
 	/**
@@ -583,6 +709,9 @@ public class MusicService extends Service implements OnPreparedListener,OnComple
 			Log.i(TAG, ContentUris.withAppendedId(Media.EXTERNAL_CONTENT_URI, mPlayingMusic.getId())+"-000");
 			mPlayer.setDataSource(getApplicationContext(), ContentUris.withAppendedId(Media.EXTERNAL_CONTENT_URI, mPlayingMusic.getId()));
 			mState = PlayState.Prepraing;
+			if (mLyricListener != null) {
+				loadLyric(mPlayingMusic.getData());
+			}
 			
 			setServiceAsForeground(mPlayingMusic.getTitle() + " (loading)");
 			
@@ -634,6 +763,8 @@ public class MusicService extends Service implements OnPreparedListener,OnComple
 	 */
 	@Override
 	public void onCompletion(MediaPlayer arg0) {
+		mHasLyric = false;
+		mLyricLoadHelper.setIndexOfCurrentSentence(-1);
 		requestToPlayNext(false);
 	}
 
@@ -702,6 +833,75 @@ public class MusicService extends Service implements OnPreparedListener,OnComple
 		Log.i(TAG, "onLostAudioFocus");
 		if(mPlayer!=null&&mPlayer.isPlaying()){
 			configAndStartMediaPlayer();
+		}
+	}
+
+
+	/**
+	 * 读取歌词文件
+	 * 
+	 * @param path
+	 *            歌曲文件的路径
+	 */
+	private void loadLyric(String path) {
+		// 取得歌曲同目录下的歌词文件绝对路径
+		String lyricFilePath = Constant.LYRIC_SAVE_FOLDER_PATH + "/"
+				+ mPlayingMusic.getTitle() + "_" + mPlayingMusic.getArtist()
+				+ ".lrc";
+		
+		File lyricfile = new File(lyricFilePath);
+		
+		if (lyricfile.exists()) {
+			// 本地有歌词，直接读取
+			Log.i(TAG, "loadLyric()--->本地有歌词，直接读取");
+			mHasLyric = mLyricLoadHelper.loadLyric(lyricFilePath);
+		} else {
+			// 尝试网络获取歌词
+			Log.i(TAG, "loadLyric()--->本地无歌词，尝试从网络获取");
+			new LyricDownloadAsyncTask().execute(mPlayingMusic.getTitle(),mPlayingMusic.getArtist());
+			
+		}
+	}
+	
+	class LyricDownloadAsyncTask extends AsyncTask<String, Void, String> {
+
+		@Override
+		protected String doInBackground(String... params) {
+			// 从网络获取歌词，然后保存到本地
+			String lyricFilePath = mLyricDownloadManager.searchLyricFromWeb(
+					params[0], params[1]);
+			// 返回本地歌词路径
+			return lyricFilePath;
+		}
+
+		@Override
+		protected void onPostExecute(String result) {
+			Log.i(TAG, "网络获取歌词完毕，歌词保存路径:" + result);
+			// 读取保存到本地的歌曲
+			mHasLyric = mLyricLoadHelper.loadLyric(result);
+		};
+
+	};
+
+	@Override
+	public void onLyricLoaded(List<LyricSentence> lyricSentences, int index) {
+		if (mLyricListener != null) {
+			mLyricListener.onLyricLoaded(lyricSentences, index);
+		} else {
+			// 来自客户端的LyricListener还没来的及注册，就延迟一会等它注册好了再把参数传递给它
+			mServiceHandler.sendMessageDelayed(Message.obtain(null,
+					MESSAGE_ON_LYRIC_LOADED, index, 0, lyricSentences), 500);
+		}
+	}
+
+	@Override
+	public void onLyricSentenceChanged(int indexOfCurSentence) {
+		if (mLyricListener != null) {
+			mLyricListener.onLyricSentenceChanged(indexOfCurSentence);
+		} else {
+			// 来自客户端的LyricListener还没来的及注册，就延迟一会等它注册好了再把参数传递给它
+			mServiceHandler.sendMessageDelayed(Message.obtain(null,
+					MESSAGE_ON_LYRIC_LOADED, indexOfCurSentence, 0), 500);
 		}
 	}
 }

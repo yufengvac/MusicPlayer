@@ -5,6 +5,7 @@ import java.util.List;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 
 import com.vac.musicplayer.R;
 import com.vac.musicplayer.bean.Album;
+import com.vac.musicplayer.utils.MediaUtil;
 
 public class MyAlbumAdapter extends BaseAdapter {
 
@@ -57,22 +59,37 @@ public class MyAlbumAdapter extends BaseAdapter {
 		}
 		Log.v("TAG", mData.get(position).getAlbum_pic()+","+mData.get(position).getAlbum_name()+","+mData.get(position).getAlbum_num());
 		String url = mData.get(position).getAlbum_pic();
-		if (url != null) {
-			if (url.endsWith(".jpg") || url.endsWith(".png")) {
-				Bitmap bitmap = BitmapFactory.decodeFile(url);
-				if (bitmap != null) {
-					holder.pic.setImageBitmap(bitmap);
-					bitmap.recycle();
+//		if (url != null) {
+//			if (url.endsWith(".jpg") || url.endsWith(".png")) {
+//				Bitmap bitmap = BitmapFactory.decodeFile(url);
+//				if (bitmap != null) {
+//					holder.pic.setImageBitmap(bitmap);
+//					bitmap.recycle();
+//				}
+//			} else if (url != null) {
+//				url = url + ".jpg";
+//				Bitmap bitmap = BitmapFactory.decodeFile(url);
+//				if (bitmap != null) {
+//					holder.pic.setImageBitmap(bitmap);
+//					bitmap.recycle();
+//				}
+//			}
+//		}
+//		Bitmap bitmap = MediaUtil.getArtwork(mContext, mData.get(position).getAlbum_id(),mData.get(position).getAlbum_id(), true, true);  
+//        holder.pic.setImageBitmap(bitmap); 
+        
+		// 加载专辑封面
+				if (mData.get(position).getAlbum_pic()== null) {
+					holder.pic
+							.setImageResource(R.drawable.ic_launcher);
+				} else {
+					Bitmap bm = BitmapFactory
+							.decodeFile(mData.get(position).getAlbum_pic());
+					BitmapDrawable bmpDraw = new BitmapDrawable(bm);
+					holder.pic.setImageDrawable(bmpDraw);
+					
 				}
-			} else if (url != null) {
-				url = url + ".jpg";
-				Bitmap bitmap = BitmapFactory.decodeFile(url);
-				if (bitmap != null) {
-					holder.pic.setImageBitmap(bitmap);
-					bitmap.recycle();
-				}
-			}
-		}
+		
 		holder.name.setText(mData.get(position).getAlbum_name());
 		holder.artist.setText(mData.get(position).getAlbum_num()+"");
 		return convertView;

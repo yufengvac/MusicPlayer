@@ -101,14 +101,33 @@
         android:background="@android:color/darker_gray" />
     <!-- 播放音乐界面的歌词 -->
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/play_music_linear_lyric"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/play_music_bottom"
         android:layout_below="@id/play_music_line"
         android:orientation="vertical" >
-    </LinearLayout>
+       <ListView
+            android:id="@+id/play_music_listview_lyricshow"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:descendantFocusability="blocksDescendants"
+            android:divider="@color/transparent"
+            android:gravity="center"
+            android:scrollbars="none" />
+	 <TextView
+            android:id="@+id/play_music_lyric_empty"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:padding="15dip"
+            android:text="暂无歌词"
+            android:textColor="@color/white"
+            android:textIsSelectable="false"
+            android:textSize="18sp"
+            android:visibility="gone" />
+    </RelativeLayout>
 
     <LinearLayout
         android:id="@+id/play_music_bottom"

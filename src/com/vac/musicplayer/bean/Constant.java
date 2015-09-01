@@ -1,7 +1,19 @@
 package com.vac.musicplayer.bean;
 
+import java.io.File;
+
+import android.os.Environment;
+
 public class Constant {
 
+	public static final String ROOT_PATH =Environment.getExternalStorageDirectory()
+			+ File.separator+ "yufengvac"
+			+ File.separator ;
+	public static final String LYRIC_SAVE_FOLDER_PATH = Environment.getExternalStorageDirectory()
+			+ File.separator+ "yufengvac"
+			+ File.separator + "lyric" + File.separator;
+	public static final String KEY_LYRIC_SAVE_PATH = "key_lyric_save_path";
+	
 	public static final String PLAYLIST_MUISC ="playlist_music";
 	
 	/**是从播放列表点击过去   value ->True*/

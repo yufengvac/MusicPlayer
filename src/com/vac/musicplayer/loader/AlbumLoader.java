@@ -59,12 +59,16 @@ public class AlbumLoader extends AsyncTaskLoader<List<Album>> {
 			int index_num_of_songs = cursor
 					.getColumnIndex(Albums.NUMBER_OF_SONGS);
 			int index_art_work = cursor.getColumnIndex(Albums.ALBUM_ART);
+		
 
 			while (cursor.moveToNext()) {
 				Album item = new Album();
 				item.setAlbum_id(cursor.getInt(index_album_id));
 				item.setAlbum_name(cursor.getString(index_album_name));
 				item.setAlbum_num(cursor.getInt(index_num_of_songs));
+				if(cursor.getString(index_art_work)==null){
+					Log.v(TAG, "路径为空");
+				}
 				item.setAlbum_pic(cursor.getString(index_art_work));
 				itemsList.add(item);
 			}
