@@ -13,15 +13,28 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.util.List;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.content.Context;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.alibaba.fastjson.JSON;
 import com.vac.musicplayer.bean.Constant;
+import com.vac.musicplayer.bean.LyricInfo;
 
 /**
- * @author lq 2013-6-1 lq2625304@gmail.com
+ * 
  * */
 public class LyricDownloadManager {
 	private static final String TAG = LyricDownloadManager.class
@@ -180,4 +193,106 @@ public class LyricDownloadManager {
 		}
 		Log.i(TAG, "歌词保存成功");
 	}
+	
+	public String downloadLyricJson(String name,String artist){
+		String savePath =null;
+		Log.i(TAG, "downloadLyric下载方式二------ 下载前，歌曲名:" + name + ",歌手名:" + artist);
+
+		// 传进来的如果是汉字，那么就要进行编码转化
+		try {
+			name = URLEncoder.encode(name, UTF_8);
+			artist = URLEncoder.encode(artist, UTF_8);
+		} catch (UnsupportedEncodingException e2) {
+			e2.printStackTrace();
+		}
+		try {
+			String lyricUrl = "http://geci.me/api/lyric/"+name+"/"+artist;
+			HttpGet get = new HttpGet(lyricUrl);
+			HttpClient client = new DefaultHttpClient();
+			HttpResponse response = null;
+			response = client.execute(get);
+			if(response.getStatusLine().getStatusCode()==200){
+				String result = EntityUtils.toString(response.getEntity());
+				JSONObject obj = new JSONObject(result);
+				if(obj.getInt("count")==0){
+					return null;
+				}
+				if(obj.getInt("code")!=0){
+					return null;
+				}
+				JSONArray array = obj.getJSONArray("result");
+				List<LyricInfo> list = JSON.parseArray(array.toString(), LyricInfo.class);
+				return downloadLyricContent(list,name,artist);
+			}
+		} catch (ClientProtocolException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+
+		return savePath;
+	}
+	
+	private String downloadLyricContent(List<LyricInfo> mList,String name,String artist){
+		String lyricPath =null;
+		if(mList==null){
+			Log.i(TAG, "mList 为空");
+			return null;
+		}
+		for(int i=0;i<mList.size();i++){
+			try {
+				String lyricUrl = mList.get(i).getLrc();
+				Log.i(TAG, "歌词下载地址是："+lyricUrl);
+				HttpGet get = new HttpGet(lyricUrl);
+				HttpClient client = new DefaultHttpClient();
+				HttpResponse response = null;
+				response = client.execute(get);
+				if(response.getStatusLine().getStatusCode()==200){
+					String result = EntityUtils.toString(response.getEntity(),UTF_8);
+					Log.i(TAG, "歌词下载成功---"+result);
+					
+					try {
+						name = URLDecoder.decode(name, UTF_8);
+						artist = URLDecoder.decode(artist, UTF_8);
+					} catch (UnsupportedEncodingException e) {
+						e.printStackTrace();
+					}
+					if (result != null) {
+						// 检查保存的目录是否已经创建
+
+						String folderPath = PreferenceManager.getDefaultSharedPreferences(
+								mContext).getString(Constant.KEY_LYRIC_SAVE_PATH,
+								Constant.LYRIC_SAVE_FOLDER_PATH);
+						File file = new File(Constant.ROOT_PATH);
+						if(!file.exists()){
+							file.mkdir();
+						}
+						
+						File savefolder = new File(folderPath);
+						if (!savefolder.exists()) {
+							savefolder.mkdirs();
+						}
+						String savePath = folderPath + name + "_" + artist
+								+ ".lrc";
+						Log.i(TAG, "歌词保存路径:" + savePath);
+
+						saveLyric(result, savePath);
+						lyricPath = savePath;
+						return lyricPath;
+					} else {
+						return null;
+					}
+					
+				}
+			} catch (ClientProtocolException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return lyricPath;
+	}
+	
 }

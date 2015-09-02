@@ -25,6 +25,7 @@ import android.os.IBinder;
 import android.os.Message;
 import android.provider.MediaStore.Audio.Media;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.vac.musicplayer.PlayMusic;
 import com.vac.musicplayer.R;
@@ -153,6 +154,7 @@ public class MusicService extends Service implements OnPreparedListener,OnComple
 			mMusicService = mServiceWeakReference.get();
 		}
 		
+		@SuppressWarnings("unchecked")
 		@Override
 		public void handleMessage(Message msg) {
 			super.handleMessage(msg);
@@ -746,6 +748,16 @@ public class MusicService extends Service implements OnPreparedListener,OnComple
 	public void onDestroy() {
 		Log.i(TAG, "service onDestroy");
 		super.onDestroy();
+		mState = PlayState.Stopped;
+		releaseResource(true);
+		mAudioFocusHelper.giveUpAudioFocus();
+		if (mState != PlayState.Stopped) {
+			requestToStop();
+		}
+		mLyricListener=null;
+		mPlayMusicStateListenerList.clear();
+		mPlayMusicStateListenerList=null;
+		
 	}
 
 
@@ -753,8 +765,40 @@ public class MusicService extends Service implements OnPreparedListener,OnComple
 	 * MeidaPlayer发生了错误调用此方法,错误发生后停止播放.
 	 */
 	@Override
-	public boolean onError(MediaPlayer arg0, int arg1, int arg2) {
-		return false;
+	public boolean onError(MediaPlayer arg0, int what, int extra) {
+		Toast.makeText(getApplicationContext(),
+				"Media player error! Resetting.", Toast.LENGTH_SHORT).show();
+		switch (what) {
+		case MediaPlayer.MEDIA_ERROR_NOT_VALID_FOR_PROGRESSIVE_PLAYBACK:
+			Log.e(TAG, "Error: "
+					+ "MEDIA_ERROR_NOT_VALID_FOR_PROGRESSIVE_PLAYBACK"
+					+ ", extra=" + String.valueOf(extra));
+			break;
+		case MediaPlayer.MEDIA_ERROR_SERVER_DIED:
+			Log.e(TAG, "Error: " + "MEDIA_ERROR_SERVER_DIED" + ", extra="
+					+ String.valueOf(extra));
+			break;
+		case MediaPlayer.MEDIA_ERROR_UNKNOWN:
+			Log.e(TAG,
+					"Error: " + "MEDIA_ERROR_UNKNOWN" + ", extra="
+							+ String.valueOf(extra));
+			break;
+		case -38:
+			Log.e(TAG,
+					"Error: what"
+							+ what
+							+ ", extra="
+							+ extra
+							+ ",see at http://blog.sina.com.cn/s/blog_632b619d01012991.html");
+			break;
+		default:
+			Log.e(TAG, "Error: what" + what + ", extra=" + extra);
+			break;
+		}
+
+		requestToStop(false);
+
+		return true; // true表示我们处理了发生的错误
 	}
 
 
@@ -853,14 +897,31 @@ public class MusicService extends Service implements OnPreparedListener,OnComple
 		
 		if (lyricfile.exists()) {
 			// 本地有歌词，直接读取
-			Log.i(TAG, "loadLyric()--->本地有歌词，直接读取");
+			Log.i(TAG, "loadLyric()--->原生---本地有歌词，直接读取");
 			mHasLyric = mLyricLoadHelper.loadLyric(lyricFilePath);
-		} else {
-			// 尝试网络获取歌词
-			Log.i(TAG, "loadLyric()--->本地无歌词，尝试从网络获取");
-			new LyricDownloadAsyncTask().execute(mPlayingMusic.getTitle(),mPlayingMusic.getArtist());
-			
-		}
+		} else{
+			if(mPlayingMusic.getTitle().contains("-")){//周杰伦-三年二班
+				String[] str = mPlayingMusic.getTitle().split("-");
+				String newSingerName = str[0].trim();
+				String newMusicName = str[1].trim();
+				String lyricFilePath_new = Constant.LYRIC_SAVE_FOLDER_PATH + "/"
+						+ newMusicName+ "_" + newSingerName + ".lrc";
+				if(new File(lyricFilePath_new).exists()){
+					// 本地有歌词，直接读取
+					Log.i(TAG, "lyricFilePath_new--->将歌名拆开后，本地有歌词，直接读取");
+					mHasLyric = mLyricLoadHelper.loadLyric(lyricFilePath_new);
+				}else{
+					// 尝试网络获取歌词
+					Log.i(TAG, "loadLyric()--->将歌名拆开后，本地无歌词，尝试从网络获取");
+					new LyricDownloadAsyncTask().execute(newMusicName,newSingerName);
+				}
+			}else{
+				// 尝试网络获取歌词
+				Log.i(TAG, "loadLyric()--->原生---本地无歌词，尝试从网络获取");
+				new LyricDownloadAsyncTask().execute(mPlayingMusic.getTitle(),mPlayingMusic.getArtist());
+			}
+		}  
+		
 	}
 	
 	class LyricDownloadAsyncTask extends AsyncTask<String, Void, String> {
@@ -870,6 +931,12 @@ public class MusicService extends Service implements OnPreparedListener,OnComple
 			// 从网络获取歌词，然后保存到本地
 			String lyricFilePath = mLyricDownloadManager.searchLyricFromWeb(
 					params[0], params[1]);
+			Log.i(TAG, "网络获取歌词完毕，返回本地歌词路径lyricFilePath:" + lyricFilePath);
+			
+			//尝试别的下载方式
+			if(lyricFilePath==null){
+				lyricFilePath =mLyricDownloadManager.downloadLyricJson(params[0], params[1]);
+			}
 			// 返回本地歌词路径
 			return lyricFilePath;
 		}

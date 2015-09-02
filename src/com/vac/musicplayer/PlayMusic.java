@@ -16,10 +16,11 @@ import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
@@ -35,6 +36,7 @@ import com.vac.musicplayer.service.MusicService.MusicServiceBinder;
 import com.vac.musicplayer.service.MusicService.PlayMode;
 import com.vac.musicplayer.service.MusicService.PlayState;
 import com.vac.musicplayer.utils.LyricLoadHelper.LyricListener;
+import com.vac.musicplayer.utils.MyImageLoader;
 import com.vac.musicplayer.utils.PreferHelper;
 import com.vac.musicplayer.utils.TimeHelper;
 
@@ -76,6 +78,11 @@ public class PlayMusic extends Activity implements OnPlayMusicStateListener,OnCl
 	
 	/**空歌词*/
 	private TextView play_music_emptylyric;
+	
+	/**背景*/
+	private ImageView play_music_content;
+	
+	private MyImageLoader imageLoader;
 
 	private ClientIncomingHandler mHandler = new ClientIncomingHandler(this);
 
@@ -129,7 +136,9 @@ public class PlayMusic extends Activity implements OnPlayMusicStateListener,OnCl
 			/**传递LyricListener对象给Service，以便歌词发生变化时通知本Activity*/
 			mBinder.registerLyricListener(mLyricListener);
 			
+			/**通知载入歌词*/
 			mBinder.requestLoadLyric();
+			
 			/**初始化当前的播放信息*/
 			initCurrentPlayMusicInfo(mBinder.getCurrentPlayMusicInfo());
 		}
@@ -145,8 +154,9 @@ public class PlayMusic extends Activity implements OnPlayMusicStateListener,OnCl
 		mAdapter = new LyricAdapter(PlayMusic.this);
 		play_music_listview_lyricshow.setAdapter(mAdapter);
 		play_music_listview_lyricshow.setEmptyView(play_music_emptylyric);
-		play_music_listview_lyricshow.startAnimation(AnimationUtils.loadAnimation(this,
-				android.R.anim.fade_in));
+//		play_music_listview_lyricshow.startAnimation(AnimationUtils.loadAnimation(this,
+//				android.R.anim.fade_in));
+		imageLoader = new MyImageLoader(getResources().getDisplayMetrics().heightPixels,getResources().getDisplayMetrics().widthPixels);
 	}
 	
 	/**
@@ -219,6 +229,10 @@ public class PlayMusic extends Activity implements OnPlayMusicStateListener,OnCl
 		play_music_listview_lyricshow = (ListView) findViewById(R.id.play_music_listview_lyricshow);
 		
 		play_music_emptylyric = (TextView) findViewById(R.id.play_music_lyric_empty);
+		
+		
+		play_music_content = (ImageView) findViewById(R.id.play_music_content);
+		
 	}
 	
 	/**
@@ -312,6 +326,9 @@ public class PlayMusic extends Activity implements OnPlayMusicStateListener,OnCl
 	public void onMusicStoped() {
 		Log.v(TAG, "PlayMusic-onPlayMusicStateListener--onMusicStoped");
 		isPlaying=false;
+		mAdapter.setLyric(null);
+		mAdapter.notifyDataSetChanged();
+		mMusic=null;
 	}
 
 	@Override
@@ -332,6 +349,11 @@ public class PlayMusic extends Activity implements OnPlayMusicStateListener,OnCl
 		play_music_cursong.setText((position+1)+"");
 		
 		play_music_endtime.setText(TimeHelper.milliSecondsToFormatTimeString(mMusic.getDuration()));
+	
+//		mAdapter.setLyric(null);
+//		mAdapter.notifyDataSetChanged();
+		// 歌词秀清空
+		play_music_emptylyric.setText("正在加载中...");
 	}
 
 	@Override
@@ -413,6 +435,10 @@ public class PlayMusic extends Activity implements OnPlayMusicStateListener,OnCl
 						Message.obtain(null, MSG_SET_LYRIC_INDEX, index, 0),
 						100);
 			}
+			
+			//加载图片
+			if(mMusic!=null)
+			imageLoader.setAlphaImageView(play_music_content,mMusic.getArtist());
 		}
 
 		@Override

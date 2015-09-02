@@ -1,9 +1,23 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/player_bg" >
+    android:layout_height="match_parent">
 
+    
+    <ImageView
+        android:id="@+id/play_music_content" 
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:contentDescription="@string/app_name"
+        android:scaleType="centerCrop"
+        android:background="@drawable/player_bg"/>
+    
+    <RelativeLayout 
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+   
+    
     <LinearLayout
         android:id="@+id/play_music_top"
         android:layout_width="match_parent"
@@ -264,5 +278,5 @@
             android:progressDrawable="@drawable/seekbar_horizontal"
             android:thumb="@drawable/seekbar_play_music_thumb" />
     </LinearLayout>
-
+ </RelativeLayout>
 </RelativeLayout>

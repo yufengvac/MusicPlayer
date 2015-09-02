@@ -7,11 +7,12 @@ import android.os.Environment;
 public class Constant {
 
 	public static final String ROOT_PATH =Environment.getExternalStorageDirectory()
-			+ File.separator+ "yufengvac"
-			+ File.separator ;
+			+ File.separator+ "yufengvac"+ File.separator ;
 	public static final String LYRIC_SAVE_FOLDER_PATH = Environment.getExternalStorageDirectory()
-			+ File.separator+ "yufengvac"
-			+ File.separator + "lyric" + File.separator;
+			+ File.separator+ "yufengvac"+ File.separator + "lyric" + File.separator;
+	public static final String ARTIST_PICTURE_PATH = Environment.getExternalStorageDirectory()
+			+File.separator +"yufengvac" +File.separator +"Images"+File.separator;
+	
 	public static final String KEY_LYRIC_SAVE_PATH = "key_lyric_save_path";
 	
 	public static final String PLAYLIST_MUISC ="playlist_music";
@@ -53,4 +54,10 @@ public class Constant {
 	
 	/**记录下当前播放的音乐的位置*/
 	public static final String SHARE_NMAE_MUSIC_POSITION = "share_name_music_position";
+
+	/**获取歌手的写真图片集*/
+	public static final String GET_SINGER_XIEZHEN_PIC = "http://artistpicserver.kuwo.cn/pic.web?type=big_artist_pic&pictype=url&content=list&&id=0&name=%E5%91%A8%E6%9D%B0%E4%BC%A6&rid=&from=pc&json=1&version=1&width=1366&height=768";
+	
+	/**获取歌词   http://geci.me/api/lyric/向往/李健*/
+	public static final String GET_LYRIC = "http://geci.me/api/lyric/%E5%90%91%E5%BE%80/%E6%9D%8E%E5%81%A5";
 }

@@ -79,16 +79,16 @@ public class MyAlbumAdapter extends BaseAdapter {
 //        holder.pic.setImageBitmap(bitmap); 
         
 		// 加载专辑封面
-				if (mData.get(position).getAlbum_pic()== null) {
-					holder.pic
-							.setImageResource(R.drawable.ic_launcher);
-				} else {
-					Bitmap bm = BitmapFactory
-							.decodeFile(mData.get(position).getAlbum_pic());
-					BitmapDrawable bmpDraw = new BitmapDrawable(bm);
-					holder.pic.setImageDrawable(bmpDraw);
-					
-				}
+//				if (mData.get(position).getAlbum_pic()== null) {
+//					holder.pic
+//							.setImageResource(R.drawable.ic_launcher);
+//				} else {
+//					Bitmap bm = BitmapFactory
+//							.decodeFile(mData.get(position).getAlbum_pic());
+//					BitmapDrawable bmpDraw = new BitmapDrawable(bm);
+//					holder.pic.setImageDrawable(bmpDraw);
+//					
+//				}
 		
 		holder.name.setText(mData.get(position).getAlbum_name());
 		holder.artist.setText(mData.get(position).getAlbum_num()+"");
