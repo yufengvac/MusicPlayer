@@ -141,6 +141,11 @@ public class PlayMusic extends Activity implements OnPlayMusicStateListener,OnCl
 			
 			/**初始化当前的播放信息*/
 			initCurrentPlayMusicInfo(mBinder.getCurrentPlayMusicInfo());
+			
+			if(imageLoader!=null&&mMusic!=null){
+				//加载图片
+				imageLoader.setAlphaImageView(play_music_content,mMusic.getArtist());
+			}
 		}
 	};
 	@SuppressWarnings("unchecked")
@@ -312,6 +317,10 @@ public class PlayMusic extends Activity implements OnPlayMusicStateListener,OnCl
 		Log.v(TAG, "PlayMusic-onPlayMusicStateListener--onMuiscPlayed");
 		isPlaying =true;
 		play_music_pause.setBackgroundResource(R.drawable.play_music_pause_sele);
+
+		if(imageLoader!=null){
+			imageLoader.toLoadingLocalPic();
+		}
 	}
 
 
@@ -320,6 +329,10 @@ public class PlayMusic extends Activity implements OnPlayMusicStateListener,OnCl
 		Log.v(TAG, "PlayMusic-onPlayMusicStateListener--onMusicPaused");
 		isPlaying =false;
 		play_music_pause.setBackgroundResource(R.drawable.play_music_play_sele);
+		
+		if(imageLoader!=null){
+			imageLoader.cancleLoading();
+		}
 	}
 
 	@Override
@@ -329,6 +342,10 @@ public class PlayMusic extends Activity implements OnPlayMusicStateListener,OnCl
 		mAdapter.setLyric(null);
 		mAdapter.notifyDataSetChanged();
 		mMusic=null;
+		
+		if(imageLoader!=null){
+			imageLoader.cancleLoading();
+		}
 	}
 
 	@Override
@@ -354,6 +371,12 @@ public class PlayMusic extends Activity implements OnPlayMusicStateListener,OnCl
 //		mAdapter.notifyDataSetChanged();
 		// 歌词秀清空
 		play_music_emptylyric.setText("正在加载中...");
+		play_music_content.setImageDrawable(getResources().getDrawable(R.drawable.player_bg));
+		
+		if(imageLoader!=null&&mMusic!=null){
+			//加载图片
+			imageLoader.setAlphaImageView(play_music_content,mMusic.getArtist());
+		}
 	}
 
 	@Override
@@ -371,7 +394,11 @@ public class PlayMusic extends Activity implements OnPlayMusicStateListener,OnCl
 			unbindService(mServiceConn);
 		}
 	
+		if(imageLoader!=null){
+			imageLoader.cancleLoading();
+		}
 	}
+	
 	
 	private void setCurrentPlayModeBg(int playMode){
 		switch (playMode) {
@@ -436,9 +463,6 @@ public class PlayMusic extends Activity implements OnPlayMusicStateListener,OnCl
 						100);
 			}
 			
-			//加载图片
-			if(mMusic!=null)
-			imageLoader.setAlphaImageView(play_music_content,mMusic.getArtist());
 		}
 
 		@Override
