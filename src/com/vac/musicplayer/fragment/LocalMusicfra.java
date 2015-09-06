@@ -3,6 +3,7 @@ package com.vac.musicplayer.fragment;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.R.array;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
@@ -12,6 +13,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
 import android.provider.MediaStore;
+import android.provider.MediaStore.Audio.Media;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
@@ -138,6 +140,7 @@ public class LocalMusicfra extends Fragment implements android.widget.AdapterVie
 				@Override
 				public Loader<List<Music>> onCreateLoader(int id, Bundle bundle) {
 					Log.i(TAG, "onCreateLoader");
+					
 					return new MusicLoader(getActivity(),null,null,MediaStore.Audio.Media.DEFAULT_SORT_ORDER);
 				}
 

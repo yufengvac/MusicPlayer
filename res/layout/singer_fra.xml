@@ -3,11 +3,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="singer"
-        android:textColor="@color/white"
-        android:gravity="center"/>
+  <ListView 
+      android:id="@+id/artist_listView"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent">
+      
+  </ListView>
 
 </LinearLayout>

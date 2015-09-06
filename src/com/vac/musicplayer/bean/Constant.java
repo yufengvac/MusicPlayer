@@ -60,4 +60,7 @@ public class Constant {
 	
 	/**获取歌词   http://geci.me/api/lyric/向往/李健*/
 	public static final String GET_LYRIC = "http://geci.me/api/lyric/%E5%90%91%E5%BE%80/%E6%9D%8E%E5%81%A5";
+
+	/**点击歌手进入详细页*/
+	public static final String ARTIST_LISTVIEW_ITEM = "artist_listview_item";
 }

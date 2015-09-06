@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
+import android.widget.ListView;
 
 import com.vac.musicplayer.R;
 import com.vac.musicplayer.adapter.MyAlbumAdapter;
@@ -21,7 +22,7 @@ import com.vac.musicplayer.loader.AlbumLoader;
 
 public class Albumfra extends Fragment {
 
-	private GridView album_gridView;
+	private ListView album_listView;
 	private static final int PRIVATE_LOCAL_ALBUM=1;
 	private List<Album> mAlbumList = new ArrayList<Album>();
 	private MyAlbumAdapter mAdapter=null;
@@ -29,9 +30,9 @@ public class Albumfra extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.album_fra, null);
-		album_gridView = (GridView) view.findViewById(R.id.album_gridView);
+		album_listView = (ListView) view.findViewById(R.id.album_listView);
 		mAdapter = new MyAlbumAdapter(getActivity(), mAlbumList);
-		album_gridView.setAdapter(mAdapter);
+		album_listView.setAdapter(mAdapter);
 		return view;
 	}
 	

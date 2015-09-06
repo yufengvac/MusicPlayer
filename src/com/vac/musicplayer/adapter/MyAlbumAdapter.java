@@ -50,15 +50,15 @@ public class MyAlbumAdapter extends BaseAdapter {
 		if(convertView==null){
 			holder = new ViewHolder();
 			convertView = LayoutInflater.from(mContext).inflate(R.layout.item_ablum, null);
-			holder.pic = (ImageView) convertView.findViewById(R.id.item_album_pic);
+//			holder.pic = (ImageView) convertView.findViewById(R.id.item_album_pic);
 			holder.name = (TextView) convertView.findViewById(R.id.item_blum_name);
 			holder.artist = (TextView) convertView.findViewById(R.id.item_blum_artist);
 			convertView.setTag(holder);
 		}else{
 			holder = (ViewHolder) convertView.getTag();
 		}
-		Log.v("TAG", mData.get(position).getAlbum_pic()+","+mData.get(position).getAlbum_name()+","+mData.get(position).getAlbum_num());
-		String url = mData.get(position).getAlbum_pic();
+//		Log.v("TAG", mData.get(position).getAlbum_pic()+","+mData.get(position).getAlbum_name()+","+mData.get(position).getAlbum_num());
+//		String url = mData.get(position).getAlbum_pic();
 //		if (url != null) {
 //			if (url.endsWith(".jpg") || url.endsWith(".png")) {
 //				Bitmap bitmap = BitmapFactory.decodeFile(url);
