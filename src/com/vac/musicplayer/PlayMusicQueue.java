@@ -39,6 +39,7 @@ public class PlayMusicQueue extends Activity implements OnPlayMusicStateListener
 	private MusicServiceBinder mBinder=null;
 	private List<Music> mCurrentMusicList = new ArrayList<Music>();
 	private MusicListQueueAdapter mAdapter =null;
+	private String music_list_type;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -79,6 +80,7 @@ public class PlayMusicQueue extends Activity implements OnPlayMusicStateListener
 				intent.setAction(MusicService.ACTION_PLAY);
 				intent.putExtra(Constant.CLICK_MUSIC_LIST, true);
 				intent.putExtra(Constant.PLAYLIST_MUSIC_REQUEST_ID, mAdapter.getItemId(position));
+				intent.putExtra(Constant.MUSIC_LIST_TYPE, music_list_type);
 				startService(intent);
 			}
 		});
@@ -130,6 +132,9 @@ public class PlayMusicQueue extends Activity implements OnPlayMusicStateListener
 		mCurrentMusicList = bundle.getParcelableArrayList(Constant.PLAYING_MUSIC_CURRENT_LIST);
 		mAdapter = new MusicListQueueAdapter(PlayMusicQueue.this, mCurrentMusicList,mBinder);
 		play_queue_listView.setAdapter(mAdapter);
+		
+		music_list_type = bundle.getString(Constant.MUSIC_LIST_TYPE);
+		play_queue_name.setText(music_list_type);
 		
 		int currentPlayState = bundle.getInt(Constant.PLAYING_MUSIC_STATE);
 		Music music= bundle.getParcelable(Constant.PLAYING_MUSIC_ITEM);

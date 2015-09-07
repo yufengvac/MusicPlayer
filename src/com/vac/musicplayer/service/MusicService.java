@@ -141,6 +141,9 @@ public class MusicService extends Service implements OnPreparedListener,OnComple
 	/**发送消息的handler*/
 	private ServiceHandler mServiceHandler = new ServiceHandler(this);
 	
+	/**音乐列表类型*/
+	private String music_list_type="";
+	
 	private boolean mHasLyric=false;
 	
 	private LyricDownloadManager mLyricDownloadManager = null;
@@ -239,6 +242,12 @@ public class MusicService extends Service implements OnPreparedListener,OnComple
 			bundle.putInt(Constant.PLAYING_MUSIC_PLAYMODE, mPlayMode);
 			bundle.putInt(Constant.PLAYING_MUSIC_POSITION_IN_LIST, mPlayingMusicPostion);//将当前的播放的音乐在播放列表中的位置返回
 			bundle.putParcelableArrayList(Constant.PLAYING_MUSIC_CURRENT_LIST, mCurrentPlayList);//将当前的播放列表返回
+			
+			if(music_list_type.equals("")){
+				bundle.putString(Constant.MUSIC_LIST_TYPE, Constant.DEFAULT_MUSIC_LIST_TYPE);//将当前的音乐列表类型返回
+			}else{
+				bundle.putString(Constant.MUSIC_LIST_TYPE, music_list_type);//将当前的音乐列表类型返回
+			}
 			return bundle;
 		}
 		
@@ -361,6 +370,10 @@ public class MusicService extends Service implements OnPreparedListener,OnComple
 			}
 		}
 		
+		
+		public void addOneMusicIntoCurrentMusicList(){
+			
+		}
 	}
 	
 	@Override
@@ -384,8 +397,12 @@ public class MusicService extends Service implements OnPreparedListener,OnComple
 		if(action.equals(ACTION_PLAY)){//播放音乐的消息
 
 			if(intent.getBooleanExtra(Constant.CLICK_MUSIC_LIST, false)){//如果是从播放列表点击
+				music_list_type = intent.getStringExtra(Constant.MUSIC_LIST_TYPE);
 				mRequestPlayMusicId = intent.getLongExtra(Constant.PLAYLIST_MUSIC_REQUEST_ID, -1);
 				mRequestMusicPosition = findPositionByMusicId(mCurrentPlayList, mRequestPlayMusicId);
+				if(mRequestMusicPosition==-1){//没有找到该歌曲
+					mBinder.addOneMusicIntoCurrentMusicList();
+				}
 			}else{
 				mRequestPlayMusicId = mCurrentPlayList.get(mRequestMusicPosition).getId();
 			}

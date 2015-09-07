@@ -3,7 +3,6 @@ package com.vac.musicplayer.fragment;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.R.array;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
@@ -13,7 +12,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
 import android.provider.MediaStore;
-import android.provider.MediaStore.Audio.Media;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
@@ -229,6 +227,7 @@ public class LocalMusicfra extends Fragment implements android.widget.AdapterVie
 		intent.setAction(MusicService.ACTION_PLAY);
 		intent.putExtra(Constant.CLICK_MUSIC_LIST, true);
 		intent.putExtra(Constant.PLAYLIST_MUSIC_REQUEST_ID, mAdapter.getItemId(position));
+		intent.putExtra(Constant.MUSIC_LIST_TYPE, Constant.DEFAULT_MUSIC_LIST_TYPE);
 		getActivity().startService(intent);
 	}
 	

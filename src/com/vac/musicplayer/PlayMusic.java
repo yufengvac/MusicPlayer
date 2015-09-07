@@ -131,7 +131,7 @@ public class PlayMusic extends Activity implements OnPlayMusicStateListener,OnCl
 			mBinder = (MusicServiceBinder) binder;
 			mBinder.registerOnPlayMusicStateListener(PlayMusic.this);
 		
-			mBinder.setCurrentPlayList(playMusicList);
+//			mBinder.setCurrentPlayList(playMusicList);
 			
 			/**传递LyricListener对象给Service，以便歌词发生变化时通知本Activity*/
 			mBinder.registerLyricListener(mLyricListener);
@@ -257,6 +257,7 @@ public class PlayMusic extends Activity implements OnPlayMusicStateListener,OnCl
 		int currentPlayState = bundle.getInt(Constant.PLAYING_MUSIC_STATE);
 	
 		if(currentPlayState==PlayState.Stopped){
+			mBinder.setCurrentPlayList(playMusicList);
 			int sharePosition = PreferHelper.readInt(PlayMusic.this, Constant.SHARE_NMAE_MUSIC,
 					Constant.SHARE_NMAE_MUSIC_POSITION, -1);
 			if(sharePosition!=-1){
@@ -271,11 +272,14 @@ public class PlayMusic extends Activity implements OnPlayMusicStateListener,OnCl
 		}
 		
 		
+		ArrayList<Music> currentPlayMusicList = bundle.getParcelableArrayList(Constant.PLAYING_MUSIC_CURRENT_LIST);
+		playMusicList = currentPlayMusicList;
 		mMusic = bundle.getParcelable(Constant.PLAYING_MUSIC_ITEM);
 		
 		int currentPlayProgress = bundle.getInt(Constant.PLAYING_MUSIC_PROGRESS);
 		int currentPlayPosition = bundle.getInt(Constant.PLAYING_MUSIC_POSITION_IN_LIST);
 		int currentPlayMode = bundle.getInt(Constant.PLAYING_MUSIC_PLAYMODE);
+
 		if(currentPlayState==PlayState.Playing||currentPlayState==PlayState.Prepraing){
 			play_music_pause.setBackgroundResource(R.drawable.play_music_pause_sele);
 			isPlaying=true;
@@ -297,7 +301,7 @@ public class PlayMusic extends Activity implements OnPlayMusicStateListener,OnCl
 		
 		play_music_cursong.setText((currentPlayPosition+1)+"");
 		
-		ArrayList<Music> currentPlayMusicList = bundle.getParcelableArrayList(Constant.PLAYING_MUSIC_CURRENT_LIST);
+		
 		play_music_totalsong.setText(currentPlayMusicList.size()+"");
 		setCurrentPlayModeBg(currentPlayMode);
 	}

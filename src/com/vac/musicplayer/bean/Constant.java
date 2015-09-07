@@ -63,4 +63,9 @@ public class Constant {
 
 	/**点击歌手进入详细页*/
 	public static final String ARTIST_LISTVIEW_ITEM = "artist_listview_item";
+	
+	/**列表类型  默认 / 许嵩 / 周杰伦.... */
+	public static final String MUSIC_LIST_TYPE = "music_list_type";
+	
+	public static final String DEFAULT_MUSIC_LIST_TYPE = "默认列表";
 }

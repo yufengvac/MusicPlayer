@@ -4,6 +4,35 @@
     android:layout_height="match_parent"
     android:orientation="vertical" 
     android:background="@drawable/bg">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:orientation="horizontal"
+        android:clickable="true"
+        android:onClick="playAllMusic"
+        android:background="@drawable/click_playall_bg"
+        >
+        <TextView 
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="播放全部"
+            android:textSize="18sp"
+            android:textColor="@color/white"
+            android:paddingLeft="20dp"
+            android:layout_gravity="center_vertical"/>
+        <ImageView 
+            android:layout_width="27dp"
+            android:layout_height="27dp"
+            android:layout_gravity="center_vertical|right"
+            android:layout_marginRight="20dp"
+            android:background="@drawable/img_button_play_landscape_normal"/>
+    </LinearLayout>
+    <TextView 
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginLeft="20dp"
+        android:background="@color/white_translucence2"/>
     <ListView 
         android:id="@+id/artist_activity_listview"
         android:layout_width="match_parent"
