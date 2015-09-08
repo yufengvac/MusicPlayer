@@ -3,6 +3,7 @@ package com.vac.musicplayer.utils;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -27,20 +28,27 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.http.AndroidHttpClient;
 import android.os.AsyncTask;
 import android.os.Handler;
+import android.os.ParcelFileDescriptor;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.support.v4.view.ViewPager.PageTransformer;
 import android.util.Log;
-import android.view.animation.AlphaAnimation;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout.LayoutParams;
 
 import com.vac.musicplayer.bean.Constant;
 
@@ -55,13 +63,26 @@ public class MyImageLoader {
 	private String artistFile =null;
 	private Handler mHandler = new Handler();
 	
+	private Context mContext;
+	
 	private String[] picList ;
 	private int count=0;//计数
 	private List<String> downloadpicList;//下载图片的地址
 	
-	public MyImageLoader(int height, int width) {
+	private ViewPager viewPager;
+	private List<ImageView> imageList = new ArrayList<ImageView>();
+	
+	public MyImageLoader(int height, int width,ImageView imageView) {
 		this.height = height;
 		this.width = width;
+		this.rl_content = imageView;
+	}
+	
+	public  MyImageLoader(int height, int width,ViewPager viewPager,Context context){
+		this.height = height;
+		this.width = width;
+		this.viewPager = viewPager;
+		this.mContext =context;
 	}
 
 	public Bitmap downloadBitmap(String url){
@@ -101,9 +122,8 @@ public class MyImageLoader {
 	 * 根据歌手名字设置背景
 	 * @param artist
 	 */
-	public void setAlphaImageView(ImageView rl,String artist){
+	public void setAlphaImageView(String artist){
 		try {
-			this.rl_content = rl;
 			if(artist.equals("未知艺术家")){
 				return;
 			}
@@ -133,19 +153,6 @@ public class MyImageLoader {
 				new getAritstPicAsyncTask().execute(url);
 				isStartLoading =false;
 			}else{
-				
-//				Timer time = new Timer();
-//				TimerTask task = new TimerTask() {
-//					
-//					@Override
-//					public void run() {
-//						Bitmap bitmap =BitmapFactory.decodeFile(picList[]);
-//						Drawable drawable = new BitmapDrawable(result);
-//						drawable.setColorFilter(Color.GRAY,PorterDuff.Mode.MULTIPLY);
-//						rl_content.setImageDrawable(drawable);
-//					}
-//				};
-//				time.schedule(task, 5000);
 				//直接从本地获取
 				picList = artistF.list();
 				if(picList.length==0){
@@ -338,10 +345,6 @@ public class MyImageLoader {
             Log.d(TAG, "图片存储成功！");
         } catch (IOException e) {
             e.printStackTrace();
-        }finally{
-//        	if(bitmap!=null){
-//            	bitmap.recycle();
-//            }
         }
     }
     
@@ -355,9 +358,12 @@ public class MyImageLoader {
     	isStartLoading =false;
     }
     
+    
     public void toLoadingLocalPic(){
     	isStartLoading =true;
     	picList = artistF.list();
+    	count=0;
+    	imageList.clear();
     	new Thread(){
 			public void run() {
 				int i=0;
@@ -388,6 +394,171 @@ public class MyImageLoader {
 				}
 			};
 		}.start();
+    	
+    	
+//    	if(picList.length>=8){
+//    		for(int i=0;i<8;i++){
+//        		ImageView imageView = new ImageView(mContext);
+//        		android.view.ViewGroup.LayoutParams params_ = new LayoutParams(width, height);
+//        		imageView.setLayoutParams(params_);
+//        		imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+//        		Bitmap bitmap = decodeSampledBitmapFromResource(artistFile+picList[i],width,height);
+//        		Log.v(TAG, "bitmap.height="+bitmap.getHeight()+",bitmap.width="+bitmap.getWidth());
+//        		Drawable drawable = new BitmapDrawable(bitmap);
+//    			drawable.setColorFilter(Color.GRAY,PorterDuff.Mode.MULTIPLY);
+//    			imageView.setImageDrawable(drawable);
+//    			imageList.add(imageView);
+//        	}
+//    	}else{
+//    		for(int i=0;i<picList.length;i++){
+//        		ImageView imageView = new ImageView(mContext);
+//        		Bitmap bitmap = decodeSampledBitmapFromResource(artistFile+picList[i],width,height);
+//        		Log.v(TAG, "bitmap.height="+bitmap.getHeight()+",bitmap.width="+bitmap.getWidth());
+//        		Drawable drawable = new BitmapDrawable(bitmap);
+//    			drawable.setColorFilter(Color.GRAY,PorterDuff.Mode.MULTIPLY);
+//    			imageView.setImageDrawable(drawable);
+//    			imageList.add(imageView);
+//        	}
+//    	}
+//    	
+//    	MyPagerAdapter mAdapter = new MyPagerAdapter();
+//    	viewPager.setVisibility(View.VISIBLE);
+//    	
+//    	viewPager.setAdapter(mAdapter);
+//    	viewPager.setPageTransformer(true,new DepthPageTransformer());
+//    	
+//    	new Thread(){
+//    		public void run() {
+//    			while(isStartLoading){
+//    				try {
+//    					Thread.sleep(4000);
+//    					count++;
+//    					mHandler.post(new Runnable() {
+//    						
+//    						@Override
+//    						public void run() {
+//    							Log.v(TAG, "count="+count);
+//    							viewPager.setCurrentItem(count%imageList.size(),false);
+//    						}
+//    					});
+//    				} catch (InterruptedException e) {
+//    					e.printStackTrace();
+//    					Log.e(TAG, "InterruptedException"+e.getMessage());
+//    				}
+//        		}
+//    		};
+//    	}.start();
     }
+    
+    private class MyPagerAdapter extends PagerAdapter{
+
+		@Override
+		public int getCount() {
+			return imageList.size();
+		}
+
+		@Override
+		public boolean isViewFromObject(View arg0, Object arg1) {
+			return arg0 == arg1; 
+		}
+
+		@Override
+		public void destroyItem(ViewGroup container, int position, Object object) {
+			  container.removeView(imageList.get(position));
+		}
+
+		@Override
+		public Object instantiateItem(ViewGroup container, int position) {
+			container.addView(imageList.get(position));  
+            return imageList.get(position);  
+		}
+    }
+
+    
+    public Bitmap decodeSampledBitmapFromResource(String pathName, int reqWidth, int reqHeight) {
+
+		// 给定的BitmapFactory设置解码的参数
+		final BitmapFactory.Options options = new BitmapFactory.Options();
+		// 从解码器中获取原始图片的宽高，这样避免了直接申请内存空间
+		options.inJustDecodeBounds = true;
+		BitmapFactory.decodeFile(pathName,options);
+
+		// Calculate inSampleSize
+//		options.inSampleSize = calculateInSampleSize(options, reqWidth,reqHeight);
+		options.inSampleSize = 2;
+
+		// 压缩完后便可以将inJustDecodeBounds设置为false了。
+		options.inJustDecodeBounds = false;
 	
+		return BitmapFactory.decodeFile(pathName,options);
+	}
+
+
+	public static int calculateInSampleSize(BitmapFactory.Options options,
+			int reqWidth, int reqHeight) {
+		// 原始图片的宽、高
+		final int height = options.outHeight;
+		final int width = options.outWidth;
+		Log.v(TAG, "原始图片的宽度是："+width+",原始图片的高度是："+height);
+		int inSampleSize = 1;
+
+//		if (height > reqHeight || width > reqWidth) {
+//			//这里有两种压缩方式，可供选择。
+//			/**
+//			 * 压缩方式二
+//			 */
+//			// final int halfHeight = height / 2;
+//			// final int halfWidth = width / 2;
+//			// while ((halfHeight / inSampleSize) > reqHeight
+//			// && (halfWidth / inSampleSize) > reqWidth) {
+//			// inSampleSize *= 2;
+//			// }
+//			
+			/**
+			 * 压缩方式一
+			 */
+			// 计算压缩的比例：分为宽高比例
+			final int heightRatio = Math.round((float) height
+					/ (float) reqHeight);
+			final int widthRatio = Math.round((float) width / (float) reqWidth);
+			inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
+//		}
+			Log.v(TAG, "inSampleSize="+inSampleSize);
+		return inSampleSize;
+	}
+
+	public class DepthPageTransformer implements PageTransformer {
+		private static final float MIN_SCALE = 0.5f;
+		@Override
+		public void transformPage(View view, float position) {
+			int pageWidth = view.getWidth();
+			if (position < -1) { // [-Infinity,-1)
+									// This page is way off-screen to the left.
+				view.setAlpha(0);
+				view.setTranslationX(0);
+			} else if (position <= 0) { // [-1,0]
+										// Use the default slide transition when
+										// moving to the left page
+				view.setAlpha(1);
+				view.setTranslationX(0);
+				view.setScaleX(1);
+				view.setScaleY(1);
+			} else if (position <= 1) { // (0,1]
+										// Fade the page out.
+				view.setAlpha(1 - position);
+				// Counteract the default slide transition
+				view.setTranslationX(pageWidth * -position);
+				// Scale the page down (between MIN_SCALE and 1)
+				float scaleFactor = MIN_SCALE + (1 - MIN_SCALE)
+						* (1 - Math.abs(position));
+				view.setScaleX(scaleFactor);
+				view.setScaleY(scaleFactor);
+			} else { // (1,+Infinity]
+						// This page is way off-screen to the right.
+				view.setAlpha(0);
+				view.setScaleX(1);
+				view.setScaleY(1);
+			}
+		}
+	}
 }

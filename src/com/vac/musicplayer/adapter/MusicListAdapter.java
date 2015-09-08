@@ -24,7 +24,7 @@ import com.vac.musicplayer.bean.Music;
 public class MusicListAdapter extends BaseAdapter implements OnClickListener {
 	private Context mContext = null;
 	/** 数据源 */
-	private static ArrayList<Music> mData = null;
+	private ArrayList<Music> mData = null;
 
 	/** 播放时为相应播放条目显示一个播放标记 */
 	private int mActivateItemPos = -1;
@@ -50,9 +50,9 @@ public class MusicListAdapter extends BaseAdapter implements OnClickListener {
 		notifyDataSetChanged();
 	}
 
-	public static ArrayList<Music> getData() {
-		return mData;
-	}
+//	public static ArrayList<Music> getData() {
+//		return mData;
+//	}
 
 	/** 让指定位置的条目显示一个正在播放标记（活动状态标记） */
 	public void setSpecifiedIndicator(int state,int position) {

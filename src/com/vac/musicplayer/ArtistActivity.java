@@ -174,6 +174,7 @@ public class ArtistActivity extends FragmentActivity implements LoaderCallbacks<
 		if(mServiceConnection!=null){
 			Log.v(TAG, "LocalMusicFragment中解绑服务");
 			unbindService(mServiceConnection);
+			isHasList =false;
 		}
 	}
 	
@@ -213,7 +214,7 @@ public class ArtistActivity extends FragmentActivity implements LoaderCallbacks<
 	}
 	@Override
 	public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
-		Log.d(TAG, "位置是："+arg1);
+		Log.d(TAG, "位置是："+arg1+",isHasList="+isHasList);
 		
 		if(isHasList&&mBinder!=null){
 			mBinder.setCurrentPlayList(mCurrentMusicList);

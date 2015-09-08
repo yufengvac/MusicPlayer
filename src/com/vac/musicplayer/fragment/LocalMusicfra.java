@@ -218,6 +218,7 @@ public class LocalMusicfra extends Fragment implements android.widget.AdapterVie
 	@Override
 	public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
 //		mAdapter.setSpecifiedIndicator(MusicListAdapter.ANIMATION_START,position);
+		Log.v(TAG, "isHashList="+isHasList);
 		if(!isHasList){
 			Log.v(TAG, "mBinder.setCurrentPlayList(data)");
 			mBinder.setCurrentPlayList(mCurrentMusicList);
@@ -240,6 +241,7 @@ public class LocalMusicfra extends Fragment implements android.widget.AdapterVie
 		if(mServiceConnection!=null){
 			Log.v(TAG, "LocalMusicFragment中解绑服务");
 			mMainActivity.unbindService(mServiceConnection);
+			isHasList =false;
 		}
 	}
 	

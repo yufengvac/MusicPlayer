@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -20,7 +21,6 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
@@ -51,6 +51,8 @@ public class PlayMusic extends Activity implements OnPlayMusicStateListener,OnCl
 	private Music mMusic=null;//当前播放音乐
 	
 	private boolean isPlaying=false;//是否在播放音乐
+	
+	private ViewPager play_music_content_viewPager;
 	
 	/**音乐名称、音乐歌手、音乐所属专辑*/
 	private TextView play_music_title,play_music_artist,play_music_album;
@@ -144,24 +146,29 @@ public class PlayMusic extends Activity implements OnPlayMusicStateListener,OnCl
 			
 			if(imageLoader!=null&&mMusic!=null){
 				//加载图片
-				imageLoader.setAlphaImageView(play_music_content,mMusic.getArtist());
+				imageLoader.setAlphaImageView(mMusic.getArtist());
 			}
 		}
 	};
-	@SuppressWarnings("unchecked")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.play_music);
 		initView();
-		playMusicList = (List<Music>) getIntent().getSerializableExtra(Constant.PLAYLIST_MUISC);
+//		playMusicList = (List<Music>) getIntent().getSerializableExtra(Constant.PLAYLIST_MUISC);
 		
 		mAdapter = new LyricAdapter(PlayMusic.this);
 		play_music_listview_lyricshow.setAdapter(mAdapter);
 		play_music_listview_lyricshow.setEmptyView(play_music_emptylyric);
 //		play_music_listview_lyricshow.startAnimation(AnimationUtils.loadAnimation(this,
 //				android.R.anim.fade_in));
-		imageLoader = new MyImageLoader(getResources().getDisplayMetrics().heightPixels,getResources().getDisplayMetrics().widthPixels);
+//		imageLoader = new MyImageLoader(getResources().getDisplayMetrics().heightPixels,
+//				getResources().getDisplayMetrics().widthPixels,
+//				play_music_content_viewPager,PlayMusic.this);
+		
+		imageLoader = new MyImageLoader(getResources().getDisplayMetrics().heightPixels,
+				getResources().getDisplayMetrics().widthPixels,
+				play_music_content);
 	}
 	
 	/**
@@ -238,6 +245,7 @@ public class PlayMusic extends Activity implements OnPlayMusicStateListener,OnCl
 		
 		play_music_content = (ImageView) findViewById(R.id.play_music_content);
 		
+		play_music_content_viewPager = (ViewPager) findViewById(R.id.play_music_content_viewPager);
 	}
 	
 	/**
@@ -256,7 +264,7 @@ public class PlayMusic extends Activity implements OnPlayMusicStateListener,OnCl
 	private void initCurrentPlayMusicInfo(Bundle bundle){
 		int currentPlayState = bundle.getInt(Constant.PLAYING_MUSIC_STATE);
 	
-		if(currentPlayState==PlayState.Stopped){
+		if(currentPlayState==PlayState.Stopped&&playMusicList!=null){
 			mBinder.setCurrentPlayList(playMusicList);
 			int sharePosition = PreferHelper.readInt(PlayMusic.this, Constant.SHARE_NMAE_MUSIC,
 					Constant.SHARE_NMAE_MUSIC_POSITION, -1);
@@ -379,7 +387,7 @@ public class PlayMusic extends Activity implements OnPlayMusicStateListener,OnCl
 		
 		if(imageLoader!=null&&mMusic!=null){
 			//加载图片
-			imageLoader.setAlphaImageView(play_music_content,mMusic.getArtist());
+			imageLoader.setAlphaImageView(mMusic.getArtist());
 		}
 	}
 

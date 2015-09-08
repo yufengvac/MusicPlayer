@@ -114,7 +114,7 @@ OnCheckedChangeListener,OnPageChangeListener,onMusicTotalCountListener {
 			@Override
 			public void onClick(View arg0) {
 				Intent intent = new Intent(MainActivity.this,PlayMusic.class);
-				intent.putExtra(Constant.PLAYLIST_MUISC, MusicListAdapter.getData());
+//				intent.putExtra(Constant.PLAYLIST_MUISC, MusicListAdapter.getData());
 				startActivity(intent);
 			}
 		});
