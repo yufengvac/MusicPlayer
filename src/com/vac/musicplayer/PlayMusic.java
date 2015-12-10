@@ -144,10 +144,10 @@ public class PlayMusic extends Activity implements OnPlayMusicStateListener,OnCl
 			/**初始化当前的播放信息*/
 			initCurrentPlayMusicInfo(mBinder.getCurrentPlayMusicInfo());
 			
-			if(imageLoader!=null&&mMusic!=null){
-				//加载图片
-				imageLoader.setAlphaImageView(mMusic.getArtist());
-			}
+//			if(imageLoader!=null&&mMusic!=null){
+//				//加载图片
+//				imageLoader.setAlphaImageView(mMusic.getArtist());
+//			}
 		}
 	};
 	@Override
@@ -166,9 +166,9 @@ public class PlayMusic extends Activity implements OnPlayMusicStateListener,OnCl
 //				getResources().getDisplayMetrics().widthPixels,
 //				play_music_content_viewPager,PlayMusic.this);
 		
-		imageLoader = new MyImageLoader(getResources().getDisplayMetrics().heightPixels,
-				getResources().getDisplayMetrics().widthPixels,
-				play_music_content);
+//		imageLoader = new MyImageLoader(getResources().getDisplayMetrics().heightPixels,
+//				getResources().getDisplayMetrics().widthPixels,
+//				play_music_content);
 	}
 	
 	/**
@@ -330,9 +330,9 @@ public class PlayMusic extends Activity implements OnPlayMusicStateListener,OnCl
 		isPlaying =true;
 		play_music_pause.setBackgroundResource(R.drawable.play_music_pause_sele);
 
-		if(imageLoader!=null){
-			imageLoader.toLoadingLocalPic();
-		}
+//		if(imageLoader!=null){
+//			imageLoader.toLoadingLocalPic();
+//		}
 	}
 
 
@@ -342,9 +342,9 @@ public class PlayMusic extends Activity implements OnPlayMusicStateListener,OnCl
 		isPlaying =false;
 		play_music_pause.setBackgroundResource(R.drawable.play_music_play_sele);
 		
-		if(imageLoader!=null){
-			imageLoader.cancleLoading();
-		}
+//		if(imageLoader!=null){
+//			imageLoader.cancleLoading();
+//		}
 	}
 
 	@Override
@@ -355,9 +355,9 @@ public class PlayMusic extends Activity implements OnPlayMusicStateListener,OnCl
 		mAdapter.notifyDataSetChanged();
 		mMusic=null;
 		
-		if(imageLoader!=null){
-			imageLoader.cancleLoading();
-		}
+//		if(imageLoader!=null){
+//			imageLoader.cancleLoading();
+//		}
 	}
 
 	@Override
@@ -383,12 +383,12 @@ public class PlayMusic extends Activity implements OnPlayMusicStateListener,OnCl
 //		mAdapter.notifyDataSetChanged();
 		// 歌词秀清空
 		play_music_emptylyric.setText("正在加载中...");
-		play_music_content.setImageDrawable(getResources().getDrawable(R.drawable.player_bg));
+		play_music_content.setImageResource(R.drawable.player_bg);
 		
-		if(imageLoader!=null&&mMusic!=null){
-			//加载图片
-			imageLoader.setAlphaImageView(mMusic.getArtist());
-		}
+//		if(imageLoader!=null&&mMusic!=null){
+//			//加载图片
+//			imageLoader.setAlphaImageView(mMusic.getArtist());
+//		}
 	}
 
 	@Override
@@ -406,9 +406,9 @@ public class PlayMusic extends Activity implements OnPlayMusicStateListener,OnCl
 			unbindService(mServiceConn);
 		}
 	
-		if(imageLoader!=null){
-			imageLoader.cancleLoading();
-		}
+//		if(imageLoader!=null){
+//			imageLoader.cancleLoading();
+//		}
 	}
 	
 	

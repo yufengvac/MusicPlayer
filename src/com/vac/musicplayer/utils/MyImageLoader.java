@@ -41,6 +41,7 @@ import android.net.http.AndroidHttpClient;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.ParcelFileDescriptor;
+import android.os.SystemClock;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.PageTransformer;
@@ -48,6 +49,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextClock;
 import android.widget.LinearLayout.LayoutParams;
 
 import com.vac.musicplayer.bean.Constant;
@@ -364,36 +366,39 @@ public class MyImageLoader {
     	picList = artistF.list();
     	count=0;
     	imageList.clear();
-    	new Thread(){
-			public void run() {
-				int i=0;
-				for(;i<picList.length;i++){
-					if(isStartLoading){
-						Log.d(TAG, "本地图片路径是："+picList[i]);
-						Bitmap bitmap = BitmapFactory.decodeFile(artistFile+picList[i]);
-						final Drawable drawable = new BitmapDrawable(bitmap);
-						drawable.setColorFilter(Color.GRAY,PorterDuff.Mode.MULTIPLY);
-						mHandler.post(new Runnable() {
-							
-							@Override
-							public void run() {
-								rl_content.setImageDrawable(drawable);
-							}
-						});
-						if(i==picList.length-1){
-							i=0;
-						}
-						try {
-							Thread.sleep(4000);
-						} catch (InterruptedException e) {
-							e.printStackTrace();
-						}
-					}else{
-						break;
-					}
-				}
-			};
-		}.start();
+    	Thread thread = new Thread(mTicker);
+    	thread.start();
+//    	new Thread(){
+//			public void run() {
+//				int i=0;
+//				for(;i<picList.length;i++){
+//					if(isStartLoading){
+//						Log.d(TAG, "本地图片路径是："+picList[i]);
+//						Bitmap bitmap = BitmapFactory.decodeFile(artistFile+picList[i]);
+//						final Drawable drawable = new BitmapDrawable(bitmap);
+//						drawable.setColorFilter(Color.GRAY,PorterDuff.Mode.MULTIPLY);
+//						mHandler.post(new Runnable() {
+//							
+//							@Override
+//							public void run() {
+//								rl_content.setImageDrawable(drawable);
+//							}
+//						});
+//						if(i==picList.length-1){
+//							i=0;
+//						}
+//						try {
+//							Thread.sleep(4000);
+//						} catch (InterruptedException e) {
+//							e.printStackTrace();
+//						}
+//						
+//					}else{
+//						break;
+//					}
+//				}
+//			};
+//		}.start();
     	
     	
 //    	if(picList.length>=8){
@@ -448,7 +453,38 @@ public class MyImageLoader {
 //        		}
 //    		};
 //    	}.start();
+		
+		
     }
+    int i=0;
+    private final Runnable mTicker = new Runnable() {
+        public void run() {
+        	if(isStartLoading){
+				Log.d(TAG, "本地图片路径是："+picList[i]);
+				Bitmap bitmap = BitmapFactory.decodeFile(artistFile+picList[i]);
+				final Drawable drawable = new BitmapDrawable(bitmap);
+				drawable.setColorFilter(Color.GRAY,PorterDuff.Mode.MULTIPLY);
+				mHandler.post(new Runnable() {
+					
+					@Override
+					public void run() {
+						rl_content.setImageDrawable(drawable);
+					}
+				});
+				
+			
+				if(i==picList.length-1){
+					i=0;
+				}
+				i++;
+			}
+
+            long now = SystemClock.uptimeMillis();
+            long next = now + (4000 - now % 4000);
+
+            mHandler.postAtTime(mTicker, next);
+        }
+    };
     
     private class MyPagerAdapter extends PagerAdapter{
 

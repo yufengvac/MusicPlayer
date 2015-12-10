@@ -22,13 +22,12 @@ import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
 
-import com.vac.musicplayer.adapter.MusicListAdapter;
 import com.vac.musicplayer.adapter.MyPagerAdapter;
 import com.vac.musicplayer.bean.Constant;
-import com.vac.musicplayer.fragment.Albumfra;
-import com.vac.musicplayer.fragment.LocalMusicfra;
-import com.vac.musicplayer.fragment.LocalMusicfra.onMusicTotalCountListener;
-import com.vac.musicplayer.fragment.Singerfra;
+import com.vac.musicplayer.fragment.localmusic.Albumfra;
+import com.vac.musicplayer.fragment.localmusic.LocalMusicfra;
+import com.vac.musicplayer.fragment.localmusic.LocalMusicfra.onMusicTotalCountListener;
+import com.vac.musicplayer.fragment.localmusic.Singerfra;
 import com.vac.musicplayer.service.MusicService;
 
 public class MainActivity extends FragmentActivity implements 

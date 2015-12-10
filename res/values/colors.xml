@@ -35,4 +35,6 @@
     <color name="grey_dark_light2">#55aaaaaa</color>
     <color name="transparent">#00000000</color>
 
+    <color name="main_head_grey">#353440</color>
+    <color name="main_bg">#EFEFF4</color>
 </resources>
