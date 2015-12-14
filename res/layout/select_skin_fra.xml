@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal" >
+
+    <ImageView
+        android:id="@+id/select_skin_1"
+        android:layout_width="0dp"
+        android:layout_height="90dp"
+        android:layout_marginLeft="15dp"
+        android:contentDescription="@string/app_name"
+        android:scaleType="centerCrop"
+        android:clickable="true"
+        android:layout_weight="1" />
+
+    <ImageView
+        android:id="@+id/select_skin_2"
+        android:layout_width="0dp"
+        android:layout_height="90dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:contentDescription="@string/app_name"
+        android:scaleType="centerCrop"
+        android:clickable="true"
+        android:layout_weight="1" />
+
+    <ImageView
+        android:id="@+id/select_skin_3"
+        android:layout_width="0dp"
+        android:layout_height="90dp"
+        android:contentDescription="@string/app_name"
+        android:layout_marginRight="15dp"
+        android:scaleType="centerCrop"
+        android:clickable="true"
+        android:layout_weight="1" />
+
+</LinearLayout>

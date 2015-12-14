@@ -68,4 +68,7 @@ public class Constant {
 	public static final String MUSIC_LIST_TYPE = "music_list_type";
 	
 	public static final String DEFAULT_MUSIC_LIST_TYPE = "默认列表";
+	
+	/**图片缓存地址*/
+	public static final String IMAGECACHE = Environment.getExternalStorageDirectory().getAbsolutePath()+"MusicPlayer"+File.separator+"cache"+File.separator+"image";
 }

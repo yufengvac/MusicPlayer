@@ -11,13 +11,24 @@
         android:orientation="vertical" >
 
         <RelativeLayout
+            android:id="@+id/my_music_fra_skin"
             android:layout_width="match_parent"
-            android:layout_height="200dp" >
+            android:layout_height="200dp" 
+            android:clickable="true">
 
             <ImageView
+                android:id="@+id/my_music_bg"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:contentDescription="@string/app_name"
+                android:scaleType="centerCrop"
+                android:src="@drawable/default_my_music_bg" />
+            <ImageView
+                android:id="@+id/my_music_bg1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="@string/app_name"
+                android:scaleType="centerCrop"
                 android:src="@drawable/default_my_music_bg" />
 
             <LinearLayout
@@ -56,6 +67,7 @@
                 android:orientation="horizontal" >
 
                 <RelativeLayout
+                    android:id="@+id/my_music_fra_module_1"
                     android:layout_width="0dp"
                     android:layout_height="80dp"
                     android:layout_weight="1"
@@ -92,6 +104,7 @@
                 </RelativeLayout>
 
                 <RelativeLayout
+                    android:id="@+id/my_music_fra_module_2"
                     android:layout_width="0dp"
                     android:layout_height="80dp"
                     android:layout_marginLeft="10dp"
@@ -129,6 +142,7 @@
                 android:orientation="horizontal" >
 
                 <RelativeLayout
+                    android:id="@+id/my_music_fra_module_3"
                     android:layout_width="0dp"
                     android:layout_height="80dp"
                     android:layout_weight="1"
@@ -157,6 +171,7 @@
                 </RelativeLayout>
 
                 <RelativeLayout
+                    android:id="@+id/my_music_fra_module_4"
                     android:layout_width="0dp"
                     android:layout_height="80dp"
                     android:layout_marginLeft="10dp"
@@ -211,9 +226,10 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_marginTop="10dp">
-                <LinearLayout 
-                     android:layout_width="80dp"
-                    android:layout_height="80dp"
+                <LinearLayout
+                    android:id="@+id/my_music_fra_module_favor" 
+                     android:layout_width="70dp"
+                    android:layout_height="70dp"
                     android:background="#9f00"
                     android:gravity="center">
                 <ImageView
@@ -238,6 +254,94 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
                         android:text="0首"/>
+                </LinearLayout>
+                <ImageView 
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/img_setting_right_arrow"/>
+            </LinearLayout>
+        </LinearLayout>
+        <View 
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_marginLeft="10dp"
+            android:background="#DBDADB"/>
+        
+        <LinearLayout 
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="10dp">
+            <LinearLayout 
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                 <TextView 
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:text="我的歌单"
+	                android:textColor="@color/grey_dark"
+	                android:textSize="18sp"/>
+                 <TextView 
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:text="0个"
+                     android:textColor="#90454545"
+                     android:layout_marginLeft="10dp"
+                     android:textSize="14sp"/>
+                 <LinearLayout 
+                     android:layout_width="0dp"
+                     android:layout_weight="1"
+                     android:gravity="right"
+                     android:layout_height="match_parent">
+                     <TextView 
+                         android:layout_width="40dp"
+                         android:layout_height="match_parent"
+                         android:text="新建"
+                         android:gravity="center"
+                         android:textColor="@color/grey_dark"/>
+                     <TextView 
+                         android:layout_width="40dp"
+                         android:layout_height="match_parent"
+                         android:text="管理"
+                         android:gravity="center"
+                         android:textColor="@color/grey_dark"/>
+                 </LinearLayout>
+            </LinearLayout>
+           
+            <LinearLayout 
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="10dp">
+                <LinearLayout 
+                     android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:background="#9f00"
+                    android:gravity="center">
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/app_name"
+                    android:src="@drawable/ktv_song_icon"/>
+                </LinearLayout>
+                <LinearLayout 
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="10dp">
+                    <TextView 
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="慢歌"/>
+                    <TextView 
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="10首"/>
                 </LinearLayout>
                 <ImageView 
                     android:layout_width="wrap_content"

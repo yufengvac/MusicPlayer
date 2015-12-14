@@ -1,0 +1,177 @@
+package com.vac.musicplayer.fragment;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import android.graphics.Color;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.vac.musicplayer.R;
+import com.vac.musicplayer.application.MyApplication;
+import com.vac.musicplayer.listener.OnSkinChangerListener;
+
+public class SelectSkinFra extends Fragment implements OnClickListener{
+
+	private ImageView skin_1,skin_2,skin_3;
+	private ImageLoader mImageLoader = ImageLoader.getInstance();
+	private DisplayImageOptions options =null;
+	private int index=0;
+	private static List<OnSkinChangerListener> listenerList = new ArrayList<OnSkinChangerListener>();
+	private int[] colorArray = new int[9];
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		View view = inflater.inflate(R.layout.select_skin_fra, container,false);
+		initView(view);
+		
+		MyApplication app =new MyApplication();
+		options = app.getImageOptions(R.drawable.launcher, 0);
+		
+		Bundle bundle = getArguments();
+		index = bundle.getInt("index");
+		switch (index) {
+		case 1:
+			final String uri1 = "drawable://"+R.drawable.default_1;
+			mImageLoader.displayImage(uri1, skin_1, options);
+			final String uri2 = "drawable://"+R.drawable.default_2;
+			mImageLoader.displayImage(uri2, skin_2, options);
+			final String uri3 = "drawable://"+R.drawable.default_3;
+			mImageLoader.displayImage(uri3, skin_3, options);
+			skin_1.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View arg0) {
+					changeAllskin(colorArray[0],uri1);
+				}
+			});
+			skin_2.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View arg0) {
+					changeAllskin(colorArray[1],uri2);
+				}
+			});
+			skin_3.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View arg0) {
+					changeAllskin(colorArray[2],uri3);
+				}
+			});
+			break;
+		case 2:
+			final String uri4 = "drawable://"+R.drawable.default_4;
+			mImageLoader.displayImage(uri4, skin_1, options);
+			final String uri5 =  "drawable://"+R.drawable.default_5;
+			mImageLoader.displayImage(uri5, skin_2, options);
+			final String uri6 = "drawable://"+R.drawable.default_6;
+			mImageLoader.displayImage(uri6, skin_3, options);
+			skin_1.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View arg0) {
+					changeAllskin(colorArray[3],uri4);
+				}
+			});
+			skin_2.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View arg0) {
+					changeAllskin(colorArray[4],uri5);
+				}
+			});
+			skin_3.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View arg0) {
+					changeAllskin(colorArray[5],uri6);
+				}
+			});
+			break;
+		case 3:
+			final String uri7 = "drawable://"+R.drawable.default_7;
+			mImageLoader.displayImage(uri7, skin_1, options);
+			final String uri8 = "drawable://"+R.drawable.default_8;
+			mImageLoader.displayImage(uri8, skin_2, options);
+			final String uri9 = "drawable://"+R.drawable.default_9;
+			mImageLoader.displayImage(uri9, skin_3, options);
+			skin_1.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View arg0) {
+					changeAllskin(colorArray[6],uri7);
+				}
+			});
+			skin_2.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View arg0) {
+					changeAllskin(colorArray[7],uri8);
+				}
+			});
+			skin_3.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View arg0) {
+					changeAllskin(colorArray[8],uri9);
+				}
+			});
+			break;
+		case 4:
+			
+			break;
+		case 5:
+			
+			break;
+		case 6:
+			
+			break;
+			
+
+		default:
+			break;
+		}
+		return view;
+	}
+	private void initView(View view) {
+		skin_1 = (ImageView) view.findViewById(R.id.select_skin_1);
+		skin_2 = (ImageView) view.findViewById(R.id.select_skin_2);
+		skin_3 = (ImageView) view.findViewById(R.id.select_skin_3);
+		
+		colorArray[0]=Color.rgb(255, 25, 0);//#FF1900
+		colorArray[1]=Color.rgb(81, 135, 163);//#5187A3
+		colorArray[2]=Color.rgb(228, 176, 200);//#E4B0C8
+		colorArray[3]=Color.rgb(255, 135, 61);//#FF873D
+		colorArray[4]=Color.rgb(120, 178, 190);//#78B2BE
+		colorArray[5]=Color.rgb(0, 151, 111);//#00976F
+		colorArray[6]=Color.rgb(255, 201, 120);//#FFC978
+		colorArray[7]=Color.rgb(130, 146, 36);//#829224
+		colorArray[8]=Color.rgb(85, 134, 81);//#558651
+	}
+	public void changeAllskin(int colorValue,String url){
+		for (int i = 0; i < listenerList.size(); i++) {
+			listenerList.get(i).onSkinChange(colorValue,url);
+		}
+	}
+	@Override
+	public void onClick(View v) {
+		
+	}
+	public static void setOnSkinChangerListener(OnSkinChangerListener listener){
+		if(listener!=null){
+			listenerList.add(listener);
+		}
+	}
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+	}
+}

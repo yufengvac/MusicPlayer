@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" 
+    android:background="@color/white">
+    
+	<LinearLayout 
+	    android:layout_width="match_parent"
+	    android:layout_height="40dp"
+	    android:gravity="center_vertical"
+	    android:paddingLeft="20dp"
+	    android:paddingRight="20dp"
+	    android:orientation="horizontal">
+	    <TextView 
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="壁纸精选"
+	        android:textColor="@color/grey_dark"/>
+	    <TextView 
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:text="更多"
+	        android:gravity="right"
+	        android:textColor="#90454545"/>
+	</LinearLayout>
+	<RelativeLayout 
+	    android:layout_width="match_parent"
+	    android:layout_height="100dp">
+		<android.support.v4.view.ViewPager
+		    android:id="@+id/change_skin_viewPager"
+		    android:layout_width="match_parent"
+		    android:layout_height="100dp"/>
+
+		<ProgressBar
+		    android:id="@+id/change_skin_progressBar"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_centerHorizontal="true"
+		    android:visibility="gone"
+		    android:layout_centerVertical="true" />
+	</RelativeLayout>
+</LinearLayout>
