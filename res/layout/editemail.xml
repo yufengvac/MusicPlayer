@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:paddingLeft="35dp"
+    android:paddingRight="35dp"
+    android:paddingTop="15dp"
+    android:paddingBottom="15dp"
+    android:orientation="vertical" 
+     android:background="@drawable/edit_dialog_bg"
+    >
+
+    <LinearLayout 
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+       >
+    
+    <EditText
+        android:id="@+id/person_info_inputemail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:inputType="textEmailAddress"
+        android:hint="请输入歌单名称"
+        android:textColor="@color/black"
+        android:textCursorDrawable="@null"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:background="@drawable/edit_bg_greenline_selector"
+        android:focusable="true"
+        android:singleLine="true" />
+    <EditText
+        android:id="@+id/person_info_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:inputType="textPassword"
+        android:hint="请输入密码"
+        android:textColor="@color/black"
+        android:textCursorDrawable="@null"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:visibility="gone"
+        android:background="@drawable/edit_bg_greenline_selector"
+        android:singleLine="true" />
+    <EditText
+        android:id="@+id/person_info_passwordconfirm"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:inputType="textPassword"
+        android:hint="请重新输入密码"
+        android:textColor="@color/black"
+        android:textCursorDrawable="@null"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:visibility="gone"
+        android:background="@drawable/edit_bg_greenline_selector"
+        android:singleLine="true" />
+    
+    <TextView 
+        android:id="@+id/person_info_msg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:visibility="gone"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" 
+        android:gravity="center_horizontal">
+
+        <Button
+            android:id="@+id/person_info_ok"
+            android:layout_width="wrap_content"
+            android:layout_height="35dp"
+            android:text="确定" 
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+             android:background="@drawable/send_comment_sele"
+              android:textColor="@color/white"
+            android:textSize="15sp" 
+            android:layout_marginRight="30dp"/>
+
+        <Button
+            android:id="@+id/person_info_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="35dp"
+            android:text="取消" 
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:layout_marginLeft="30dp"
+            android:background="@drawable/send_comment_sele"
+            android:textColor="@color/white"
+            android:textSize="15sp" />
+    </LinearLayout>
+        
+    </LinearLayout>
+</LinearLayout>

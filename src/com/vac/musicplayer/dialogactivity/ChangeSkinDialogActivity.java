@@ -11,6 +11,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
@@ -40,6 +41,7 @@ public class ChangeSkinDialogActivity extends FragmentActivity implements OnSkin
 		public void handleMessage(android.os.Message msg) {
 			if (msg.what==1) {
 				progressBar.setVisibility(View.GONE);
+				viewPager.setOffscreenPageLimit(1);
 				MyFragmentPagerAdapter mAdapter = new MyFragmentPagerAdapter(getSupportFragmentManager());
 				viewPager.setAdapter(mAdapter);
 			}

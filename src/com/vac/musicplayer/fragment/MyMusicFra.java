@@ -1,28 +1,28 @@
 package com.vac.musicplayer.fragment;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
-import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.vac.musicplayer.Main;
 import com.vac.musicplayer.R;
 import com.vac.musicplayer.application.MyApplication;
 import com.vac.musicplayer.bean.Constant;
 import com.vac.musicplayer.dialogactivity.ChangeSkinDialogActivity;
 import com.vac.musicplayer.listener.OnSkinChangerListener;
+import com.vac.musicplayer.myview.ListViewForScrollView;
 import com.vac.musicplayer.utils.PreferHelper;
 /**
  * @title MyMusicFra
@@ -42,6 +42,8 @@ public class MyMusicFra extends Fragment implements OnClickListener , OnSkinChan
 	private ImageView img;
 	private String lastUrl ="";
 	private OnSkinChangerListener mSkinChangeListener = null;
+	private ListViewForScrollView mFavorListview;
+	private TextView createlist_textview;
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
@@ -83,6 +85,17 @@ public class MyMusicFra extends Fragment implements OnClickListener , OnSkinChan
 			content4.setBackgroundColor(colorValue);
 			favor_content.setBackgroundColor(colorValue);
 		}
+		
+		mFavorListview = (ListViewForScrollView) view.findViewById(R.id.my_music_fra_favor_listview);
+		/**创建一个新的歌单*/
+		createlist_textview = (TextView) view.findViewById(R.id.my_music_fra_createlist_textview);
+		createlist_textview.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				createNewList();
+			}
+		});
 	}
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -136,5 +149,13 @@ public class MyMusicFra extends Fragment implements OnClickListener , OnSkinChan
 		}
 	}
 
-	
+	/***
+	 * @author vac
+	 * @description 创建一个新的歌单
+	 * @date 2015年12月15日18:26:01
+	 */
+	public void createNewList(){
+		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(),AlertDialog.THEME_HOLO_LIGHT);
+		
+	}
 }

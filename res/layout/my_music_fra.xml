@@ -296,10 +296,12 @@
                      android:gravity="right"
                      android:layout_height="match_parent">
                      <TextView 
+						android:id="@+id/my_music_fra_createlist_textview"
                          android:layout_width="40dp"
                          android:layout_height="match_parent"
                          android:text="新建"
                          android:gravity="center"
+                         android:clickable="true"
                          android:textColor="@color/grey_dark"/>
                      <TextView 
                          android:layout_width="40dp"
@@ -310,7 +312,7 @@
                  </LinearLayout>
             </LinearLayout>
            
-            <LinearLayout 
+            <!-- <LinearLayout 
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
@@ -348,7 +350,12 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:src="@drawable/img_setting_right_arrow"/>
-            </LinearLayout>
+            </LinearLayout> -->
+            <com.vac.musicplayer.myview.ListViewForScrollView
+                android:id="@+id/my_music_fra_favor_listview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                />
         </LinearLayout>
     </LinearLayout>
 
