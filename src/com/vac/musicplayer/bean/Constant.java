@@ -69,6 +69,9 @@ public class Constant {
 	
 	public static final String DEFAULT_MUSIC_LIST_TYPE = "默认列表";
 	
+	/**首页选择的图片地址和颜色值*/
+	public static final String MAIN_BG_COLOR = "main_bg_color";
+	
 	/**图片缓存地址*/
-	public static final String IMAGECACHE = Environment.getExternalStorageDirectory().getAbsolutePath()+"MusicPlayer"+File.separator+"cache"+File.separator+"image";
+	public static final String IMAGECACHE = Environment.getExternalStorageDirectory().getAbsolutePath()+"yufengvac"+File.separator+"cache"+File.separator+"image";
 }

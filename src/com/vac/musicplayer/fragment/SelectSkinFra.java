@@ -3,19 +3,24 @@ package com.vac.musicplayer.fragment;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.vac.musicplayer.Main;
 import com.vac.musicplayer.R;
 import com.vac.musicplayer.application.MyApplication;
+import com.vac.musicplayer.dialogactivity.ChangeSkinDialogActivity;
 import com.vac.musicplayer.listener.OnSkinChangerListener;
 
 public class SelectSkinFra extends Fragment implements OnClickListener{
@@ -24,8 +29,17 @@ public class SelectSkinFra extends Fragment implements OnClickListener{
 	private ImageLoader mImageLoader = ImageLoader.getInstance();
 	private DisplayImageOptions options =null;
 	private int index=0;
-	private static List<OnSkinChangerListener> listenerList = new ArrayList<OnSkinChangerListener>();
+	public static List<OnSkinChangerListener> listenerList = new ArrayList<OnSkinChangerListener>();
 	private int[] colorArray = new int[9];
+	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+		if(activity instanceof ChangeSkinDialogActivity){
+			if (!listenerList.contains((OnSkinChangerListener)activity)) {
+				listenerList.add((OnSkinChangerListener)activity);
+			}
+		}
+	}
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -158,20 +172,28 @@ public class SelectSkinFra extends Fragment implements OnClickListener{
 	}
 	public void changeAllskin(int colorValue,String url){
 		for (int i = 0; i < listenerList.size(); i++) {
-			listenerList.get(i).onSkinChange(colorValue,url);
+			if(listenerList.get(i)!=null){
+				listenerList.get(i).onSkinChange(colorValue,url);
+			}
 		}
 	}
 	@Override
 	public void onClick(View v) {
 		
 	}
-	public static void setOnSkinChangerListener(OnSkinChangerListener listener){
+	public static void addOnSkinChangerListener(OnSkinChangerListener listener){
 		if(listener!=null){
-			listenerList.add(listener);
+			if (listener instanceof MyMusicFra||listener instanceof Main) {
+				if (!listenerList.contains(listener)) {
+					Log.v("TAG", "添加listener="+listener);
+					listenerList.add(listener);
+				}
+			}
 		}
 	}
 	@Override
 	public void onDestroy() {
+		listenerList.clear();
 		super.onDestroy();
 	}
 }

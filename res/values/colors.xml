@@ -38,4 +38,6 @@
 
     <color name="main_head_grey">#353440</color>
     <color name="main_bg">#EFEFF4</color>
+    
+    <color name="grey_white_">#90454545</color>
 </resources>

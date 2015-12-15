@@ -15,10 +15,12 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 
+import com.vac.musicplayer.bean.Constant;
 import com.vac.musicplayer.fragment.MyMusicFra;
 import com.vac.musicplayer.fragment.NetMusicFra;
 import com.vac.musicplayer.fragment.SelectSkinFra;
 import com.vac.musicplayer.listener.OnSkinChangerListener;
+import com.vac.musicplayer.utils.PreferHelper;
 
 public class Main extends FragmentActivity implements OnSkinChangerListener{
 	private ViewPager viewPager;
@@ -87,6 +89,12 @@ public class Main extends FragmentActivity implements OnSkinChangerListener{
 			}
 		});
 		content = (LinearLayout) findViewById(R.id.main_titlebar_content);
+		String urlAndColor = PreferHelper.readString(Main.this, Constant.MAIN_BG_COLOR, Constant.MAIN_BG_COLOR);
+		if (urlAndColor!=null) {
+			int colorValue = Integer.parseInt(urlAndColor.split(",")[1]);
+			content.setBackgroundColor(colorValue);
+		}
+		
 	}
 	
 	private class MyFragmentPagerAdapter extends FragmentPagerAdapter{
@@ -110,7 +118,7 @@ public class Main extends FragmentActivity implements OnSkinChangerListener{
 	@Override
 	protected void onResume() {
 		super.onResume();
-		SelectSkinFra.setOnSkinChangerListener(this);
+//		SelectSkinFra.setOnSkinChangerListener(this);
 	}
 	@Override
 	public void onSkinChange(int coloValue,String url) {

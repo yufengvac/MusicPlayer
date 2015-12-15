@@ -1,5 +1,6 @@
 package com.vac.musicplayer.fragment;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -16,10 +17,13 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.vac.musicplayer.Main;
 import com.vac.musicplayer.R;
 import com.vac.musicplayer.application.MyApplication;
+import com.vac.musicplayer.bean.Constant;
 import com.vac.musicplayer.dialogactivity.ChangeSkinDialogActivity;
 import com.vac.musicplayer.listener.OnSkinChangerListener;
+import com.vac.musicplayer.utils.PreferHelper;
 /**
  * @title MyMusicFra
  * @description 我的音乐Fragment
@@ -36,6 +40,15 @@ public class MyMusicFra extends Fragment implements OnClickListener , OnSkinChan
 	private ImageLoader mImageLoader = ImageLoader.getInstance();
 	private Animation appAnim;
 	private ImageView img;
+	private String lastUrl ="";
+	private OnSkinChangerListener mSkinChangeListener = null;
+	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+		if(activity instanceof OnSkinChangerListener){
+			mSkinChangeListener = (OnSkinChangerListener) activity;
+		}
+	}
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -54,8 +67,22 @@ public class MyMusicFra extends Fragment implements OnClickListener , OnSkinChan
 		changeSkinRela.setOnClickListener(this);
 		
 		my_music_bg = (ImageView) view.findViewById(R.id.my_music_bg);
-		my_music_bg1 = (ImageView) view.findViewById(R.id.my_music_bg1);
-		img = my_music_bg1;
+//		my_music_bg1 = (ImageView) view.findViewById(R.id.my_music_bg1);
+//		img = my_music_bg1;
+		
+		String urlAndColor = PreferHelper.readString(getActivity().getApplicationContext(), Constant.MAIN_BG_COLOR, Constant.MAIN_BG_COLOR);
+		if (urlAndColor!=null) {
+			String[] array = urlAndColor.split(",");
+			mImageLoader.displayImage(array[0], my_music_bg, new MyApplication().getImageOptionsNoWaittingDrawable(200));
+			int colorValue = Integer.parseInt(array[1]);
+			content1.setBackgroundColor(colorValue);
+			content2.setBackgroundColor(colorValue);
+			content2.getBackground().setAlpha(150);
+			content3.setBackgroundColor(colorValue);
+			content3.getBackground().setAlpha(150);
+			content4.setBackgroundColor(colorValue);
+			favor_content.setBackgroundColor(colorValue);
+		}
 	}
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -68,6 +95,8 @@ public class MyMusicFra extends Fragment implements OnClickListener , OnSkinChan
 		switch (id) {
 		case R.id.my_music_fra_skin:
 			Intent intent = new Intent(getActivity(),ChangeSkinDialogActivity.class);
+			SelectSkinFra.addOnSkinChangerListener(mSkinChangeListener);
+			SelectSkinFra.addOnSkinChangerListener(this);
 			startActivity(intent);
 			getActivity().overridePendingTransition(R.anim.push_bottom_in, R.anim.push_bottom_out);
 			break;
@@ -85,46 +114,27 @@ public class MyMusicFra extends Fragment implements OnClickListener , OnSkinChan
 		content3.getBackground().setAlpha(150);
 		content4.setBackgroundColor(coloValue);
 		favor_content.setBackgroundColor(coloValue);
-		if(img==my_music_bg1){
-			mImageLoader.displayImage(url, my_music_bg1, new MyApplication().getImageOptionsNoWaittingDrawable(500));
-			my_music_bg.startAnimation(appAnim);
-			img = my_music_bg;
-			Log.i("TAG", "bg1渐显，bg渐隐");
-		}else if(img == my_music_bg){
-			mImageLoader.displayImage(url, my_music_bg, new MyApplication().getImageOptionsNoWaittingDrawable(500));
-			my_music_bg1.startAnimation(appAnim);
-			img = my_music_bg1;
-			Log.i("TAG", "bg1渐隐，bg渐显");
+		lastUrl = url;
+//		if(img==my_music_bg1){
+//			mImageLoader.displayImage(url, my_music_bg1, new MyApplication().getImageOptionsNoWaittingDrawable(500));
+//			my_music_bg.startAnimation(appAnim);
+//			img = my_music_bg;
+//			Log.i("TAG", "bg1渐显，bg渐隐");
+//		}else if(img == my_music_bg){
+		if (!url.isEmpty()) {
+			mImageLoader.displayImage(url, my_music_bg, new MyApplication().getImageOptionsNoWaittingDrawable(200));
 		}
-		appAnim.setAnimationListener(new AnimationListener() {
-			
-			@Override
-			public void onAnimationStart(Animation arg0) {
-//				if (img==my_music_bg1) {
-//					my_music_bg.setVisibility(View.GONE);
-//				}else{
-//					my_music_bg1.setVisibility(View.GONE);
-//				}
-			}
-			
-			@Override
-			public void onAnimationRepeat(Animation arg0) {
-				
-			}
-			
-			@Override
-			public void onAnimationEnd(Animation arg0) {
-//				if (img==my_music_bg1) {
-//					my_music_bg1.setVisibility(View.GONE);
-//				}else{
-//					my_music_bg.setVisibility(View.GONE);
-//				}
-			}
-		});
+//			my_music_bg1.startAnimation(appAnim);
+//			img = my_music_bg1;
+//			Log.i("TAG", "bg1渐隐，bg渐显");
+//		}
+		if (url.isEmpty()&&(!lastUrl.isEmpty())) {
+			PreferHelper.write(getActivity().getApplicationContext(), Constant.MAIN_BG_COLOR, Constant.MAIN_BG_COLOR, lastUrl+","+coloValue);
+		}
+		if(!url.isEmpty()){
+			PreferHelper.write(getActivity().getApplicationContext(), Constant.MAIN_BG_COLOR, Constant.MAIN_BG_COLOR, url+","+coloValue);
+		}
 	}
-	@Override
-	public void onResume() {
-		super.onResume();
-		SelectSkinFra.setOnSkinChangerListener(this);
-	}
+
+	
 }

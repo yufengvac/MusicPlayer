@@ -24,6 +24,9 @@ public class MyApplication extends Application {
 	@Override
 	public void onCreate() {
 		super.onCreate();
+			if (!new File(Constant.IMAGECACHE).exists()) {
+				new File(Constant.IMAGECACHE).mkdirs(); 
+			}
 		   File cacheDir =StorageUtils.getOwnCacheDirectory(this, Constant.IMAGECACHE);
 	        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this)
 	    	        .threadPoolSize(3) // default  线程池内加载的数量

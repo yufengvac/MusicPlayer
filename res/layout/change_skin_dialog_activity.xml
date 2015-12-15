@@ -7,9 +7,10 @@
     
 	<LinearLayout 
 	    android:layout_width="match_parent"
-	    android:layout_height="40dp"
+	    android:layout_height="35dp"
 	    android:gravity="center_vertical"
 	    android:paddingLeft="20dp"
+	    android:paddingTop="10dp"
 	    android:paddingRight="20dp"
 	    android:orientation="horizontal">
 	    <TextView 
@@ -22,11 +23,58 @@
 	        android:layout_height="wrap_content"
 	        android:text="更多"
 	        android:gravity="right"
-	        android:textColor="#90454545"/>
+	        android:textColor="@color/grey_white_"/>
+	</LinearLayout>
+	<LinearLayout 
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:orientation="horizontal"
+	    android:paddingLeft="20dp"
+	    >
+	    <LinearLayout 
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:orientation="vertical">
+	        <TextView
+	            android:id="@+id/skin_indicator_text_1" 
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:text="图片"
+	            android:onClick="selectPic"
+	            android:clickable="true"
+	            android:paddingRight="25dp"
+	            android:textColor="#8f00"/>
+	    <TextView
+	            android:id="@+id/skin_indicator_line_1"  
+	            android:layout_width="25dp"
+	            android:layout_height="1dp"
+	            android:background="#8f00"/>
+	    </LinearLayout>
+	    <LinearLayout 
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:orientation="vertical">
+	            <TextView
+	            android:id="@+id/skin_indicator_text_2"  
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:paddingRight="25dp"
+	            android:onClick="selectColor"
+	            android:clickable="true"
+	            android:textColor="@color/grey_white_"
+	            android:text="颜色"/>
+	        <TextView
+	            android:id="@+id/skin_indicator_line_2"  
+	            android:layout_width="27dp"
+	            android:layout_height="1dp"
+	            android:visibility="gone"
+	            android:background="#f00"/>
+	    </LinearLayout>
 	</LinearLayout>
 	<RelativeLayout 
 	    android:layout_width="match_parent"
-	    android:layout_height="100dp">
+	    android:layout_height="100dp"
+	    android:layout_marginTop="10dp">
 		<android.support.v4.view.ViewPager
 		    android:id="@+id/change_skin_viewPager"
 		    android:layout_width="match_parent"
@@ -39,5 +87,11 @@
 		    android:layout_centerHorizontal="true"
 		    android:visibility="gone"
 		    android:layout_centerVertical="true" />
+		<com.vac.musicplayer.myview.ColorPickerView
+	        android:id="@+id/change_skin_colorpicker"
+	        android:layout_width="wrap_content"
+	        android:visibility="gone"
+	        android:layout_height="wrap_content"
+	        android:layout_centerInParent="true" />
 	</RelativeLayout>
 </LinearLayout>
