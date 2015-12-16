@@ -2,22 +2,36 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:paddingLeft="35dp"
-    android:paddingRight="35dp"
     android:paddingTop="15dp"
     android:paddingBottom="15dp"
     android:orientation="vertical" 
      android:background="@drawable/edit_dialog_bg"
     >
 
+    <TextView 
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="新建歌单"
+        android:textSize="18sp"
+        android:paddingLeft="20dp"
+        android:textColor="@color/grey_white_"/>
+    <View 
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:background="#DBDADB"/>
     <LinearLayout 
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
        >
     
     <EditText
-        android:id="@+id/person_info_inputemail"
+        android:id="@+id/edit_dialog_edittext"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
@@ -71,22 +85,23 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal" 
+        android:layout_marginTop="10dp"
         android:gravity="center_horizontal">
 
         <Button
-            android:id="@+id/person_info_ok"
+            android:id="@+id/edit_dialog_ok"
             android:layout_width="wrap_content"
             android:layout_height="35dp"
             android:text="确定" 
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
+            android:paddingLeft="25dp"
+            android:paddingRight="25dp"
              android:background="@drawable/send_comment_sele"
               android:textColor="@color/white"
             android:textSize="15sp" 
             android:layout_marginRight="30dp"/>
 
         <Button
-            android:id="@+id/person_info_cancel"
+            android:id="@+id/edit_dialog_cancel"
             android:layout_width="wrap_content"
             android:layout_height="35dp"
             android:text="取消" 

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/my_music_fra_scrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/main_bg"
@@ -23,13 +24,14 @@
                 android:contentDescription="@string/app_name"
                 android:scaleType="centerCrop"
                 android:src="@drawable/default_my_music_bg" />
-        <!--     <ImageView
+            <ImageView
                 android:id="@+id/my_music_bg1"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:contentDescription="@string/app_name"
                 android:scaleType="centerCrop"
-                android:src="@drawable/default_my_music_bg" /> -->
+                android:visibility="gone"
+                android:src="@drawable/default_my_music_bg" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -225,6 +227,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
+                android:background="@drawable/item_list_divider"
                 android:layout_marginTop="10dp">
                 <LinearLayout
                     android:id="@+id/my_music_fra_module_favor" 
@@ -262,12 +265,6 @@
                     android:src="@drawable/img_setting_right_arrow"/>
             </LinearLayout>
         </LinearLayout>
-        <View 
-            android:layout_width="match_parent"
-            android:layout_height="0.5dp"
-            android:layout_marginLeft="10dp"
-            android:background="#DBDADB"/>
-        
         <LinearLayout 
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -283,7 +280,8 @@
 	                android:text="我的歌单"
 	                android:textColor="@color/grey_dark"
 	                android:textSize="18sp"/>
-                 <TextView 
+                 <TextView
+                     android:id="@+id/my_music_fra_num" 
                      android:layout_width="wrap_content"
                      android:layout_height="wrap_content"
                      android:text="0个"

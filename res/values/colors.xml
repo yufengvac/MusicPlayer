@@ -40,4 +40,5 @@
     <color name="main_bg">#EFEFF4</color>
     
     <color name="grey_white_">#90454545</color>
+    <color name="line_bg">#DBDADB</color>
 </resources>

@@ -206,16 +206,16 @@ public class SelectSkinFra extends Fragment implements OnClickListener{
 	public void onClick(View v) {
 		
 	}
-	public static void addOnSkinChangerListener(OnSkinChangerListener listener){
-		if(listener!=null){
-			if (listener instanceof MyMusicFra||listener instanceof Main) {
-				if (!listenerList.contains(listener)) {
-					Log.v("TAG", "添加listener="+listener);
-					listenerList.add(listener);
-				}
-			}
-		}
-	}
+//	public static void addOnSkinChangerListener(OnSkinChangerListener listener){
+//		if(listener!=null){
+//			if (listener instanceof MyMusicFra||listener instanceof Main) {
+//				if (!listenerList.contains(listener)) {
+//					Log.v("TAG", "添加listener="+listener);
+//					listenerList.add(listener);
+//				}
+//			}
+//		}
+//	}
 	@Override
 	public void onDestroy() {
 		listenerList.clear();

@@ -1,5 +1,7 @@
 package com.vac.musicplayer.fragment;
 
+import java.lang.reflect.Field;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -10,14 +12,21 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.vac.musicplayer.R;
+import com.vac.musicplayer.R.drawable;
+import com.vac.musicplayer.adapter.MyFavorSongListAdapter;
 import com.vac.musicplayer.application.MyApplication;
 import com.vac.musicplayer.bean.Constant;
 import com.vac.musicplayer.dialogactivity.ChangeSkinDialogActivity;
@@ -38,12 +47,15 @@ public class MyMusicFra extends Fragment implements OnClickListener , OnSkinChan
 	private RelativeLayout changeSkinRela; 
 	private ImageView my_music_bg,my_music_bg1;
 	private ImageLoader mImageLoader = ImageLoader.getInstance();
-	private Animation appAnim;
+	private Animation appAnim_fade_oute,appAnim_fade_in;
 	private ImageView img;
 	private String lastUrl ="";
 	private OnSkinChangerListener mSkinChangeListener = null;
 	private ListViewForScrollView mFavorListview;
 	private TextView createlist_textview;
+	private MyFavorSongListAdapter mFavorAdapter=null;
+	private TextView my_music_songlist_count;
+	private ScrollView scrollView;
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
@@ -59,6 +71,9 @@ public class MyMusicFra extends Fragment implements OnClickListener , OnSkinChan
 		return view;
 	}
 	private void initView(View view) {
+		
+		scrollView = (ScrollView) view.findViewById(R.id.my_music_fra_scrollView);
+		
 		content1 = (RelativeLayout) view.findViewById(R.id.my_music_fra_module_1);
 		content2 = (RelativeLayout) view.findViewById(R.id.my_music_fra_module_2);
 		content3 = (RelativeLayout) view.findViewById(R.id.my_music_fra_module_3);
@@ -69,8 +84,14 @@ public class MyMusicFra extends Fragment implements OnClickListener , OnSkinChan
 		changeSkinRela.setOnClickListener(this);
 		
 		my_music_bg = (ImageView) view.findViewById(R.id.my_music_bg);
-//		my_music_bg1 = (ImageView) view.findViewById(R.id.my_music_bg1);
-//		img = my_music_bg1;
+		my_music_bg1 = (ImageView) view.findViewById(R.id.my_music_bg1);
+		img = my_music_bg1;
+		
+		mFavorListview = (ListViewForScrollView) view.findViewById(R.id.my_music_fra_favor_listview);
+		mFavorAdapter = new MyFavorSongListAdapter(getActivity());
+		mFavorListview.setAdapter(mFavorAdapter);
+		
+		my_music_songlist_count = (TextView) view.findViewById(R.id.my_music_fra_num);
 		
 		String urlAndColor = PreferHelper.readString(getActivity().getApplicationContext(), Constant.MAIN_BG_COLOR, Constant.MAIN_BG_COLOR);
 		if (urlAndColor!=null) {
@@ -84,9 +105,9 @@ public class MyMusicFra extends Fragment implements OnClickListener , OnSkinChan
 			content3.getBackground().setAlpha(150);
 			content4.setBackgroundColor(colorValue);
 			favor_content.setBackgroundColor(colorValue);
+			mFavorAdapter.setColorValue(colorValue);
 		}
 		
-		mFavorListview = (ListViewForScrollView) view.findViewById(R.id.my_music_fra_favor_listview);
 		/**创建一个新的歌单*/
 		createlist_textview = (TextView) view.findViewById(R.id.my_music_fra_createlist_textview);
 		createlist_textview.setOnClickListener(new OnClickListener() {
@@ -96,11 +117,64 @@ public class MyMusicFra extends Fragment implements OnClickListener , OnSkinChan
 				createNewList();
 			}
 		});
+		
+		String name = PreferHelper.readString(getActivity(),Constant.MY_CREATE_SONG_LIST, Constant.MY_CREATE_SONG_LIST, "");
+		String[] songListNameArray = name.split(",");
+		mFavorAdapter.clear();
+		for (int i = 0; i < songListNameArray.length; i++) {
+			if (!songListNameArray[i].isEmpty()) {
+				mFavorAdapter.addOneData(songListNameArray[i]);
+			}
+		}
+		mFavorAdapter.notifyDataSetChanged();
+		my_music_songlist_count.setText(mFavorAdapter.getCount()+"个");
+		scrollView.smoothScrollTo(0	, 0);
 	}
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		appAnim = AnimationUtils.loadAnimation(getActivity(), R.anim.fade_out);  
+		appAnim_fade_oute = AnimationUtils.loadAnimation(getActivity(), R.anim.fade_out); 
+		appAnim_fade_in = AnimationUtils.loadAnimation(getActivity(), R.anim.fade_in);
+		appAnim_fade_in.setAnimationListener(new AnimationListener() {
+			
+			@Override
+			public void onAnimationStart(Animation arg0) {
+				if (img==my_music_bg1) {
+					my_music_bg1.setVisibility(View.VISIBLE);
+				}else{
+					my_music_bg.setVisibility(View.VISIBLE);
+				}
+			}
+			
+			@Override
+			public void onAnimationRepeat(Animation arg0) {
+			}
+			
+			@Override
+			public void onAnimationEnd(Animation arg0) {
+			}
+		});
+		appAnim_fade_oute.setAnimationListener(new AnimationListener() {
+			
+			@Override
+			public void onAnimationStart(Animation arg0) {
+			}
+			
+			@Override
+			public void onAnimationRepeat(Animation arg0) {
+			}
+			
+			@Override
+			public void onAnimationEnd(Animation arg0) {
+				if (img==my_music_bg1) {
+					my_music_bg.setVisibility(View.GONE);
+					img = my_music_bg;
+				}else if(img==my_music_bg){
+					my_music_bg1.setVisibility(View.GONE);
+					img = my_music_bg1;
+				}
+			}
+		});
 	}
 	@Override
 	public void onClick(View v) {
@@ -108,8 +182,8 @@ public class MyMusicFra extends Fragment implements OnClickListener , OnSkinChan
 		switch (id) {
 		case R.id.my_music_fra_skin:
 			Intent intent = new Intent(getActivity(),ChangeSkinDialogActivity.class);
-			SelectSkinFra.addOnSkinChangerListener(mSkinChangeListener);
-			SelectSkinFra.addOnSkinChangerListener(this);
+			ChangeSkinDialogActivity.addOnSkinChangerListener(mSkinChangeListener);
+			ChangeSkinDialogActivity.addOnSkinChangerListener(this);
 			startActivity(intent);
 			getActivity().overridePendingTransition(R.anim.push_bottom_in, R.anim.push_bottom_out);
 			break;
@@ -128,27 +202,47 @@ public class MyMusicFra extends Fragment implements OnClickListener , OnSkinChan
 		content4.setBackgroundColor(coloValue);
 		favor_content.setBackgroundColor(coloValue);
 		lastUrl = url;
-//		if(img==my_music_bg1){
-//			mImageLoader.displayImage(url, my_music_bg1, new MyApplication().getImageOptionsNoWaittingDrawable(500));
-//			my_music_bg.startAnimation(appAnim);
-//			img = my_music_bg;
-//			Log.i("TAG", "bg1渐显，bg渐隐");
-//		}else if(img == my_music_bg){
+/*		if(img==my_music_bg1){
+//			my_music_bg1.setImageResource();
+				my_music_bg1.setImageResource(R.drawable.default_3); 
+				my_music_bg1.startAnimation(appAnim_fade_in);
+				my_music_bg.startAnimation(appAnim_fade_oute);
+//				img = my_music_bg;
+				Log.i("TAG", "bg1渐显，bg渐隐");
+			
+		}else if(img == my_music_bg){
+			my_music_bg.setImageResource(R.drawable.default_4); 
+			my_music_bg.startAnimation(appAnim_fade_in);
+			my_music_bg1.startAnimation(appAnim_fade_oute);
+//			img = my_music_bg1;
+			Log.i("TAG", "bg1渐隐，bg渐显");
+		}*/
+		
 		if (!url.isEmpty()) {
 			mImageLoader.displayImage(url, my_music_bg, new MyApplication().getImageOptionsNoWaittingDrawable(200));
 		}
-//			my_music_bg1.startAnimation(appAnim);
-//			img = my_music_bg1;
-//			Log.i("TAG", "bg1渐隐，bg渐显");
-//		}
 		if (url.isEmpty()&&(!lastUrl.isEmpty())) {
 			PreferHelper.write(getActivity().getApplicationContext(), Constant.MAIN_BG_COLOR, Constant.MAIN_BG_COLOR, lastUrl+","+coloValue);
 		}
 		if(!url.isEmpty()){
 			PreferHelper.write(getActivity().getApplicationContext(), Constant.MAIN_BG_COLOR, Constant.MAIN_BG_COLOR, url+","+coloValue);
 		}
+		
+		mFavorAdapter.setColorValue(coloValue);
 	}
+    public int getRes(String name) {
+    	int r_id = 0;
+    	Class<drawable> drawable  =  R.drawable.class;
+        Field field = null;
+        try {
+             field = drawable.getField(name);
+             r_id  = field.getInt(field.getName());
+        } catch (Exception e) {
+        }
+        return r_id;
+    }
 
+    AlertDialog dialog=null;
 	/***
 	 * @author vac
 	 * @description 创建一个新的歌单
@@ -156,6 +250,41 @@ public class MyMusicFra extends Fragment implements OnClickListener , OnSkinChan
 	 */
 	public void createNewList(){
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(),AlertDialog.THEME_HOLO_LIGHT);
-		
+		View dialogView = LayoutInflater.from(getActivity()).inflate(R.layout.editemail, null);
+		final EditText edit = (EditText) dialogView.findViewById(R.id.edit_dialog_edittext);
+		Button ok = (Button) dialogView.findViewById(R.id.edit_dialog_ok);
+		Button cancle = (Button) dialogView.findViewById(R.id.edit_dialog_cancel);
+		ok.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				if (edit.getText().toString().trim().isEmpty()) {
+					Toast.makeText(getActivity(), "歌单名称不能为空！", Toast.LENGTH_SHORT).show();
+					return;
+				}
+				String name = PreferHelper.readString(getActivity(),Constant.MY_CREATE_SONG_LIST, Constant.MY_CREATE_SONG_LIST, "");
+				String songListName = name+","+edit.getText().toString().trim();
+				PreferHelper.write(getActivity(), Constant.MY_CREATE_SONG_LIST, Constant.MY_CREATE_SONG_LIST,songListName);
+				String[] songListNameArray = songListName.split(",");
+				mFavorAdapter.clear();
+				for (int i = 0; i < songListNameArray.length; i++) {
+					if (!songListNameArray[i].isEmpty()) {
+						mFavorAdapter.addOneData(songListNameArray[i]);
+					}
+				}
+				mFavorAdapter.notifyDataSetChanged();
+				my_music_songlist_count.setText(mFavorAdapter.getCount()+"个");
+			}
+		});
+		cancle.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				dialog.dismiss();
+			}
+		});
+		builder.setView(dialogView);
+		dialog = builder.create();
+		dialog.show();
 	}
 }

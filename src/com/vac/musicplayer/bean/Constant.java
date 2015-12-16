@@ -74,4 +74,8 @@ public class Constant {
 	
 	/**图片缓存地址*/
 	public static final String IMAGECACHE = Environment.getExternalStorageDirectory().getAbsolutePath()+"yufengvac"+File.separator+"cache"+File.separator+"image";
+	
+	/***我创建的歌单*/
+	public static final String MY_CREATE_SONG_LIST ="my_create_song_list";
+	
 }
