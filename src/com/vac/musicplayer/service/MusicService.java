@@ -726,7 +726,8 @@ public class MusicService extends Service implements OnPreparedListener,OnComple
 		mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 		try {
 			Log.i(TAG, ContentUris.withAppendedId(Media.EXTERNAL_CONTENT_URI, mPlayingMusic.getId())+"-000");
-			mPlayer.setDataSource(getApplicationContext(), ContentUris.withAppendedId(Media.EXTERNAL_CONTENT_URI, mPlayingMusic.getId()));
+//			mPlayer.setDataSource(getApplicationContext(), ContentUris.withAppendedId(Media.EXTERNAL_CONTENT_URI, mPlayingMusic.getId()));
+			mPlayer.setDataSource(mPlayingMusic.getData());
 			mState = PlayState.Prepraing;
 			if (mLyricListener != null) {
 				loadLyric(mPlayingMusic.getData());

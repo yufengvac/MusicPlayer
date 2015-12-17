@@ -3,6 +3,9 @@ package com.vac.musicplayer.utils;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -150,5 +153,30 @@ public class SDUtils {
      */
     public static boolean isFileExists(File dir, String fileName) {
         return new File(dir, fileName).exists();
+    }
+    
+//    private List<> l = new ArrayList<>();
+//    private HashMap hm;
+//常见的图片格式
+    private static String[] img = new String[] { ".mp3" };
+ 
+    public static void checkFile(File file) {// 遍历文件，在这里是遍历sdcard
+    	if (file.isDirectory()) {// 判断是否是文件夹
+    		File[] files = file.listFiles();// 以该文件夹的子文件或文件夹生成一个数组
+    			if (files != null) {// 如果文件夹不为空
+    				for (int i = 0; i < files.length; i++) {
+    					File f = files[i];
+    					checkFile(f);// 递归调用
+    				}
+    			}
+    	} else if (file.isFile()) {// 判断是否是文件
+    		int dot = file.getName().lastIndexOf(".");
+    		if (dot > -1 && dot < file.getName().length()) {
+    			String extriName = file.getName().substring(dot,file.getName().length());// 得到文件的扩展名
+    			if (extriName.equals(img[0])) {// 判断是否是图片文件 www.it165.net
+    				Log.i("SDUtils", "音乐是："+file.getName()+"，音乐文件路径是："+file.getAbsolutePath());
+    			}
+    		}
+    	}
     }
 }

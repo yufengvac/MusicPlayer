@@ -11,6 +11,7 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
@@ -90,13 +91,27 @@ public class PlayMusicQueue extends Activity implements OnPlayMusicStateListener
 	public void onAttachedToWindow() {
 		super.onAttachedToWindow();
 		View view = getWindow().getDecorView();
+		view.setPadding(0, 0, 0, 0);
 		WindowManager.LayoutParams lp = (LayoutParams) view.getLayoutParams();
 		lp.gravity = Gravity.BOTTOM|Gravity.RIGHT;
-		lp.x = getResources().getDimensionPixelSize(R.dimen.playqueue_dialog_marginright);
-		lp.y = getResources().getDimensionPixelSize(R.dimen.playqueue_dialog_marginbottom);
-		lp.width = getResources().getDimensionPixelSize(R.dimen.playqueue_dialog_width);
-		lp.height = getResources().getDimensionPixelSize(R.dimen.playqueue_dialog_height);
+//		lp.x = getResources().getDimensionPixelSize(R.dimen.playqueue_dialog_marginright);
+//		lp.y = getResources().getDimensionPixelSize(R.dimen.playqueue_dialog_marginbottom);
+		lp.width = LayoutParams.MATCH_PARENT;
+		lp.height = getResources().getDisplayMetrics().heightPixels/2;
 		getWindowManager().updateViewLayout(view, lp);
+	}
+	
+	public void close(View view){
+		finish();
+		this.overridePendingTransition(R.anim.push_bottom_out, 0);
+	}
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (keyCode==KeyEvent.KEYCODE_BACK) {
+			finish();
+			this.overridePendingTransition(R.anim.push_bottom_out, 0);
+		}
+		return super.onKeyDown(keyCode, event);
 	}
 	
 	@Override

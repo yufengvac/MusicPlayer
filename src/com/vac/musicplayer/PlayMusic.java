@@ -15,6 +15,7 @@ import android.os.IBinder;
 import android.os.Message;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -254,6 +255,15 @@ public class PlayMusic extends Activity implements OnPlayMusicStateListener,OnCl
 	 */
 	public void playMusicClick(View view){
 		finish();
+		this.overridePendingTransition(R.anim.push_bottom_out, 0);
+	}
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (keyCode==KeyEvent.KEYCODE_BACK) {
+			finish();
+			this.overridePendingTransition(R.anim.push_bottom_out, 0);
+		}
+		return super.onKeyDown(keyCode, event);
 	}
 	
 	/**

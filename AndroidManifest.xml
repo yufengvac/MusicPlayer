@@ -27,7 +27,8 @@
             </intent-filter>
         </activity>
         <activity 
-            android:name="com.vac.musicplayer.MainActivity"></activity>
+            android:name="com.vac.musicplayer.MainActivity"
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar"></activity>
         
         <activity android:name="com.vac.musicplayer.PlayMusic"
             android:launchMode="singleTop"
@@ -35,7 +36,8 @@
         
         <activity android:name="com.vac.musicplayer.PlayMusicQueue"
             android:launchMode="singleTop"
-              android:theme="@android:style/Theme.Holo.Light.Dialog.NoActionBar" ></activity>
+              android:theme="@style/MyDialogStyleBottom"></activity>
+        
         <activity android:name="com.vac.musicplayer.ArtistActivity"
             android:launchMode="singleTop"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar" ></activity>

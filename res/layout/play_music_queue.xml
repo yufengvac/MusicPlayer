@@ -2,13 +2,15 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical" 
+    android:background="#9000">
     
     <RelativeLayout 
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:paddingTop="6dp"
+        android:background="@drawable/item_list_divider"
         android:paddingBottom="6dp">
         <TextView 
             android:id="@+id/play_music_queue_name"
@@ -35,8 +37,20 @@
     <ListView
         android:id="@+id/play_music_queue_listView" 
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        
+        android:layout_height="0dp"
+        android:dividerHeight="0dp"
+        android:divider="@color/transparent"
+        android:layout_weight="1">
     </ListView>
+    <TextView 
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:textColor="@color/white"
+        android:background="@drawable/item_list_divider_top"
+        android:textSize="17sp"
+        android:gravity="center"
+        android:clickable="true"
+        android:onClick="close"
+        android:text="关闭"/>
 
 </LinearLayout>

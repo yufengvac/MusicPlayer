@@ -19,6 +19,14 @@ public class Music implements Parcelable{
 	private long date_add;
 	private long data_modify;
 	
+	private String path;
+	
+	public String getPath() {
+		return path;
+	}
+	public void setPath(String path) {
+		this.path = path;
+	}
 	public Music(){}
 	public long getDate_add() {
 		return date_add;
@@ -105,6 +113,7 @@ public class Music implements Parcelable{
 		bundle.putInt("duration", duration);
 		bundle.putLong("date_add", date_add);
 		bundle.putLong("data_modify", data_modify);
+		bundle.putString("path", path);
 		dest.writeBundle(bundle);
 	}
 	
@@ -131,5 +140,6 @@ public class Music implements Parcelable{
 		duration = bundle.getInt("duration");
 		date_add = bundle.getLong("date_add");
 		data_modify = bundle.getLong("data_modify");
+		path = bundle.getString("path");
 	}
 }

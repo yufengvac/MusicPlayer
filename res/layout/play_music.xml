@@ -281,7 +281,8 @@
             android:minHeight="2dp"
             android:progress="0"
             android:progressDrawable="@drawable/seekbar_horizontal"
-            android:thumb="@drawable/seekbar_play_music_thumb" />
+            android:thumb="@drawable/seekbar_play_music_thumb" 
+            />
     </LinearLayout>
  </RelativeLayout>
 </RelativeLayout>

@@ -1,6 +1,7 @@
 package com.vac.musicplayer.fragment;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -24,14 +25,19 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.vac.musicplayer.Main;
+import com.vac.musicplayer.MainActivity;
 import com.vac.musicplayer.R;
 import com.vac.musicplayer.R.drawable;
 import com.vac.musicplayer.adapter.MyFavorSongListAdapter;
 import com.vac.musicplayer.application.MyApplication;
 import com.vac.musicplayer.bean.Constant;
+import com.vac.musicplayer.bean.MusicGroup;
+import com.vac.musicplayer.db.MusicGroupDao;
 import com.vac.musicplayer.dialogactivity.ChangeSkinDialogActivity;
 import com.vac.musicplayer.listener.OnSkinChangerListener;
 import com.vac.musicplayer.myview.ListViewForScrollView;
+import com.vac.musicplayer.service.MusicService.MusicServiceBinder;
 import com.vac.musicplayer.utils.PreferHelper;
 /**
  * @title MyMusicFra
@@ -56,12 +62,18 @@ public class MyMusicFra extends Fragment implements OnClickListener , OnSkinChan
 	private MyFavorSongListAdapter mFavorAdapter=null;
 	private TextView my_music_songlist_count;
 	private ScrollView scrollView;
+	
+	private MusicServiceBinder mBinder = null;
+	private TextView total_music_number_textivew;
+	
+	private int currColorValue = -1;
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
 		if(activity instanceof OnSkinChangerListener){
 			mSkinChangeListener = (OnSkinChangerListener) activity;
 		}
+		mBinder = ((Main)activity).getBinder();
 	}
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -106,6 +118,7 @@ public class MyMusicFra extends Fragment implements OnClickListener , OnSkinChan
 			content4.setBackgroundColor(colorValue);
 			favor_content.setBackgroundColor(colorValue);
 			mFavorAdapter.setColorValue(colorValue);
+			currColorValue = colorValue;
 		}
 		
 		/**创建一个新的歌单*/
@@ -118,17 +131,26 @@ public class MyMusicFra extends Fragment implements OnClickListener , OnSkinChan
 			}
 		});
 		
-		String name = PreferHelper.readString(getActivity(),Constant.MY_CREATE_SONG_LIST, Constant.MY_CREATE_SONG_LIST, "");
-		String[] songListNameArray = name.split(",");
-		mFavorAdapter.clear();
-		for (int i = 0; i < songListNameArray.length; i++) {
-			if (!songListNameArray[i].isEmpty()) {
-				mFavorAdapter.addOneData(songListNameArray[i]);
-			}
-		}
-		mFavorAdapter.notifyDataSetChanged();
-		my_music_songlist_count.setText(mFavorAdapter.getCount()+"个");
+
+		MusicGroupDao mgd = new MusicGroupDao(getActivity());
+		ArrayList<MusicGroup> groupList = mgd.getGroups();
+		mFavorAdapter.setData(groupList);
+		
 		scrollView.smoothScrollTo(0	, 0);
+		
+		total_music_number_textivew = (TextView) view.findViewById(R.id.my_music_fra_totalnumber);
+		
+		content1.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				Intent intent = new Intent(getActivity(),MainActivity.class);
+				intent.putExtra("color", currColorValue);
+				startActivity(intent);
+//				getActivity().getSupportFragmentManager().beginTransaction()
+//				.replace(R.id.main_viewPager, new NetMusicFra()).commit();
+			}
+		});
 	}
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -194,6 +216,7 @@ public class MyMusicFra extends Fragment implements OnClickListener , OnSkinChan
 	}
 	@Override
 	public void onSkinChange(int coloValue,String url) {
+		currColorValue = coloValue;
 		content1.setBackgroundColor(coloValue);
 		content2.setBackgroundColor(coloValue);
 		content2.getBackground().setAlpha(150);
@@ -262,18 +285,20 @@ public class MyMusicFra extends Fragment implements OnClickListener , OnSkinChan
 					Toast.makeText(getActivity(), "歌单名称不能为空！", Toast.LENGTH_SHORT).show();
 					return;
 				}
-				String name = PreferHelper.readString(getActivity(),Constant.MY_CREATE_SONG_LIST, Constant.MY_CREATE_SONG_LIST, "");
-				String songListName = name+","+edit.getText().toString().trim();
-				PreferHelper.write(getActivity(), Constant.MY_CREATE_SONG_LIST, Constant.MY_CREATE_SONG_LIST,songListName);
-				String[] songListNameArray = songListName.split(",");
-				mFavorAdapter.clear();
-				for (int i = 0; i < songListNameArray.length; i++) {
-					if (!songListNameArray[i].isEmpty()) {
-						mFavorAdapter.addOneData(songListNameArray[i]);
-					}
-				}
-				mFavorAdapter.notifyDataSetChanged();
-				my_music_songlist_count.setText(mFavorAdapter.getCount()+"个");
+//				String name = PreferHelper.readString(getActivity(),Constant.MY_CREATE_SONG_LIST, Constant.MY_CREATE_SONG_LIST, "");
+//				String songListName = name+","+edit.getText().toString().trim();
+//				PreferHelper.write(getActivity(), Constant.MY_CREATE_SONG_LIST, Constant.MY_CREATE_SONG_LIST,songListName);
+//				String[] songListNameArray = songListName.split(",");
+//				mFavorAdapter.clear();
+//				for (int i = 0; i < songListNameArray.length; i++) {
+//					if (!songListNameArray[i].isEmpty()) {
+//						mFavorAdapter.addOneData(songListNameArray[i]);
+//					}
+//				}
+//				mFavorAdapter.notifyDataSetChanged();
+//				my_music_songlist_count.setText(mFavorAdapter.getCount()+"个");
+				addMySongList(edit.getText().toString().trim());
+				dialog.dismiss();
 			}
 		});
 		cancle.setOnClickListener(new OnClickListener() {
@@ -286,5 +311,19 @@ public class MyMusicFra extends Fragment implements OnClickListener , OnSkinChan
 		builder.setView(dialogView);
 		dialog = builder.create();
 		dialog.show();
+	}
+	/***
+	 * @author vac
+	 * @description 创建一个新的歌单
+	 * @param name
+	 */
+	private void addMySongList(String name){
+		MusicGroup mg = new MusicGroup();
+		mg.setId(System.currentTimeMillis());
+		mg.setTitle(name);
+		MusicGroupDao md = new MusicGroupDao(getActivity());
+		md.addGroup(mg);
+		ArrayList<MusicGroup> groupList = md.getGroups();
+		mFavorAdapter.setData(groupList);
 	}
 }

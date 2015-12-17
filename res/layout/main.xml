@@ -71,16 +71,24 @@
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:orientation="vertical"
-        android:background="@color/main_bg">
+        android:clickable="true"
+        android:onClick="toPlayActivity"
+        android:background="@color/widget_bg">
 
-        <ProgressBar
+         <ProgressBar
             android:id="@+id/main_progressbar"
-            style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
-            android:progress="0"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="0dp"
+            android:layout_marginRight="0dp"
             android:max="300"
-            android:layout_height="3dp" 
-            android:maxHeight="3dp"/>
+            android:maxHeight="2dp"
+            android:minHeight="2dp"
+            android:progress="0"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:progressDrawable="@drawable/progress_horizontal_widget"
+            android:background="@color/progress_bg"
+            />
         <LinearLayout 
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -93,27 +101,35 @@
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="10dp"
                 android:contentDescription="@string/app_name"/>
-            <LinearLayout 
+
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
+                android:gravity="center_vertical"
                 android:orientation="vertical"
-                android:paddingLeft="10dp"
-                android:gravity="center_vertical">
+                android:paddingLeft="10dp" >
+
                 <TextView
-                    android:id="@+id/main_song_name" 
+                    android:id="@+id/main_song_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text=""
-                    android:textSize="17sp"/>
-                 <TextView
-                    android:id="@+id/main_song_artist" 
+                    android:ellipsize="marquee"
+                    android:focusable="true"
+                    android:singleLine="true"
+                    android:textSize="17sp" />
+
+                <TextView
+                    android:id="@+id/main_song_artist"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
-                    android:textColor="@color/grey_white_"
-                    android:text=""/>
+                    android:ellipsize="marquee"
+                    android:focusable="true"
+                    android:singleLine="true"
+                    android:textColor="@color/grey_white_" />
             </LinearLayout>
+
             <LinearLayout 
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
@@ -133,6 +149,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:clickable="true"
+                    android:onClick="openPlayingSongQueue"
                     android:layout_marginLeft="10dp"
                     android:contentDescription="@string/app_name"
                     android:src="@drawable/img_media_controller_pause"/>

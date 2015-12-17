@@ -41,6 +41,7 @@ import com.vac.musicplayer.service.MusicService;
 import com.vac.musicplayer.service.MusicService.MusicServiceBinder;
 import com.vac.musicplayer.service.MusicService.PlayState;
 import com.vac.musicplayer.utils.PreferHelper;
+import com.vac.musicplayer.utils.SDUtils;
 
 public class Main extends FragmentActivity implements OnSkinChangerListener,OnPlayMusicStateListener{
 	private final static String TAG = Main.class.getSimpleName();
@@ -52,7 +53,7 @@ public class Main extends FragmentActivity implements OnSkinChangerListener,OnPl
 	private RadioButton rb_localmusic,rb_netmusic;
 	private RadioGroup rg_navigation;
 	private LinearLayout content;
-	private ProgressBar main_progressbar;
+	private ProgressBar main_progress;
 	
 	private int SharePosition = -2;
 	private Music mMusic;
@@ -77,37 +78,12 @@ public class Main extends FragmentActivity implements OnSkinChangerListener,OnPl
 			
 			mBinder.registerOnPlayMusicStateListener(Main.this);
 			toLoadMusic();
-			/*if(currentMusicBundle!=null){
-				Log.d(TAG, "在此onServiceConnected设置currentMusicBundle");
-				Music mMusic = null;
-				
-				int currentPlayState = currentMusicBundle.getInt(Constant.PLAYING_MUSIC_STATE);
-				Log.v(TAG, "LocalMusicFragment.class====+currentPlayState==="+currentPlayState);
-				if(currentPlayState==PlayState.Stopped){
-					int SharePosition = PreferHelper.readInt(Main.this, Constant.SHARE_NMAE_MUSIC,
-							Constant.SHARE_NMAE_MUSIC_POSITION, -1);
-//					mAdapter.setSpecifiedIndicator(MusicListAdapter.ANIMATION_PAUSE,SharePosition);
-//					int offest = listView.getHeight();
-//					listView.setSelectionFromTop(SharePosition,offest/2);
-				}
-				
-				
-				mMusic =currentMusicBundle.getParcelable(Constant.PLAYING_MUSIC_ITEM);
-				
-//				if(mMusic!=null){
-//					int currentPlayPosition = MusicService.findPositionByMusicId(mCurrentMusicList,mMusic.getId());
-//					Log.v(TAG, "currentPlayState="+currentPlayState+",Position="+currentPlayPosition);
-//					if(currentPlayState==PlayState.Playing){
-//						mAdapter.setSpecifiedIndicator(MusicListAdapter.ANIMATION_START,currentPlayPosition);
-//					}else{
-//						mAdapter.setSpecifiedIndicator(MusicListAdapter.ANIMATION_PAUSE,currentPlayPosition);
-//					}
-//					int offest = listView.getHeight();
-//					listView.setSelectionFromTop(currentPlayPosition,offest/2);
-//				}
-			}*/
 		}
 	};
+	
+	public MusicServiceBinder getBinder(){
+		return mBinder;
+	}
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -174,8 +150,8 @@ public class Main extends FragmentActivity implements OnSkinChangerListener,OnPl
 			content.setBackgroundColor(colorValue);
 		}
 		
-		main_progressbar = (ProgressBar) findViewById(R.id.main_progressbar);
-		main_progressbar.setMax(300);
+		main_progress= (ProgressBar) findViewById(R.id.main_progressbar);
+		main_progress.setMax(300);
 		
 		song_name_textview = (TextView) findViewById(R.id.main_song_name);
 		artist_name_textview = (TextView) findViewById(R.id.main_song_artist);
@@ -212,8 +188,10 @@ public class Main extends FragmentActivity implements OnSkinChangerListener,OnPl
 		
 		if(mServiceConnection!=null){
 			Log.v(TAG, "在onStart中的绑定服务======================");
-			bindService(new Intent(this,MusicService.class), mServiceConnection, Context.BIND_AUTO_CREATE);
+			boolean isOk = bindService(new Intent(this,MusicService.class), mServiceConnection, Context.BIND_AUTO_CREATE);
+			Log.v(TAG, "绑定service是否成功："+isOk);
 		}
+//		SDUtils.checkFile(Environment.getExternalStorageDirectory().getAbsoluteFile());
 	}
 	@Override
 	public void onSkinChange(int coloValue,String url) {
@@ -222,13 +200,16 @@ public class Main extends FragmentActivity implements OnSkinChangerListener,OnPl
 	@Override
 	protected void onStop() {
 		super.onStop();
-		if(mBinder!=null){
-			mBinder.unRegisterPlayMusicStateListener(this);
-		}
-		if(mServiceConnection!=null){
-			Log.v(TAG, "LocalMusicFragment中解绑服务");
-			unbindService(mServiceConnection);
-		}
+	}
+	
+	@Override
+	protected void onRestart() {
+		super.onRestart();
+//		if(mServiceConnection!=null){
+//			Log.v(TAG, "在onReStart中的绑定服务");
+//			boolean isOk = bindService(new Intent(this,MusicService.class), mServiceConnection, Context.BIND_AUTO_CREATE);
+//			Log.v(TAG, "绑定service是否成功："+isOk);
+//		}
 	}
 	
 	@Override
@@ -263,9 +244,9 @@ public class Main extends FragmentActivity implements OnSkinChangerListener,OnPl
 					if(data!=null&&data.size()>0){
 						mCurrentMusicList.addAll(data);
 						Log.i(TAG, "main中的音乐列表数是："+mCurrentMusicList.size());
-//						mAdapter.setData(data);
-//						musicTotalListener.musicTotalCount(data.size());//设置音乐的总数，接口回调给宿主MainActivity.class
 						mBinder.setCurrentPlayList(data);
+						
+						((TextView)(fraList.get(0).getView().findViewById(R.id.my_music_fra_totalnumber))).setText(data.size()+"首");
 					}
 					if(data!=null&&mBinder!=null){
 						Log.d(TAG, "在此onLoadFinished设置currentMusicBundle");
@@ -308,11 +289,18 @@ public class Main extends FragmentActivity implements OnSkinChangerListener,OnPl
 			
 		}
 	}
+	/***
+	 * @author vac
+	 * @description 播放音乐
+	 * @param view
+	 */
 	public void playSong(View view){
 		if (SharePosition==-1) {
 			playSongInPosition(mCurrentMusicList.get(0).getId());
 		}else{
-			playSongInPosition(mCurrentMusicList.get(SharePosition).getId());
+			int share = PreferHelper.readInt(Main.this, Constant.SHARE_NMAE_MUSIC,
+					Constant.SHARE_NMAE_MUSIC_POSITION, -1);
+			playSongInPosition(mCurrentMusicList.get(share).getId());
 		}
 	}
 	
@@ -323,6 +311,30 @@ public class Main extends FragmentActivity implements OnSkinChangerListener,OnPl
 		intent.putExtra(Constant.PLAYLIST_MUSIC_REQUEST_ID, id);
 		intent.putExtra(Constant.MUSIC_LIST_TYPE, Constant.DEFAULT_MUSIC_LIST_TYPE);
 		startService(intent);
+	}
+	
+	/**
+	 * @author vac
+	 * @description 打开播放音乐界面
+	 * @param view
+	 */
+	public void toPlayActivity(View view){
+		Intent intent = new Intent(Main.this,PlayMusic.class);
+		startActivity(intent);
+		overridePendingTransition(R.anim.push_bottom_in, 0);
+	}
+	
+	
+	/***
+	 * @author vac
+	 * @description 打开当前的播放队列
+	 * @param view
+	 * @date 2015年12月17日10:20:48
+	 */
+	public void openPlayingSongQueue(View view){
+		//打开当前的播放列表
+		Intent intent = new Intent(Main.this,PlayMusicQueue.class);
+		startActivity(intent);
 	}
 	
 	@Override
@@ -355,11 +367,6 @@ public class Main extends FragmentActivity implements OnSkinChangerListener,OnPl
 	}
 	@Override
 	public void onPlayProgressUpdate(long currenMillis) {
-		if (mMusic==null) {
-			Log.e(TAG, "onPlayProgressUpdate-->mMusic是空的");
-		}
-		Log.e(TAG, "currenMillis="+currenMillis+",mMusic.getDuration()="+mMusic.getDuration()+""
-				+ ","+(int)(currenMillis*1.0/mMusic.getDuration() *main_progressbar.getMax()));
-		main_progressbar.setProgress((int)(currenMillis*1.0/mMusic.getDuration() *main_progressbar.getMax()));
+		main_progress.setProgress((int)(currenMillis*1.0/mMusic.getDuration() *main_progress.getMax()));
 	}
 }

@@ -1,81 +1,91 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="com.vac.musicplayer.MainActivity"
-    tools:ignore="MergeRootFrame" >
-
-    <LinearLayout 
+    tools:ignore="MergeRootFrame" 
+    android:background="@color/main_bg">
+    <LinearLayout
+        android:id="@+id/activity_main_titlebar_content" 
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:background="#10000000">
-        <ImageView 
+        android:layout_height="45dp"
+        android:orientation="horizontal">
+        <LinearLayout 
             android:layout_width="wrap_content"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
             android:layout_height="match_parent"
-            android:contentDescription="@string/app_name"
-            android:layout_gravity="center_vertical"
-            android:paddingLeft="15dp"
-            android:paddingRight="15dp"
-            android:clickable="true"
-            android:src="@drawable/selector_main_head_left"/>
+            android:gravity="center_vertical">
+            <TextView 
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="本地歌曲"
+                android:textColor="@color/white"
+                android:textSize="17sp"
+                android:gravity="center_vertical"
+                android:drawableLeft="@drawable/back_normal"/>
+        </LinearLayout>
+    </LinearLayout>
+
     <RadioGroup
         android:id="@+id/activity_rg_navigation"
-        android:layout_width="0dp"
-        android:layout_weight="1"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
         android:gravity="center_horizontal"
-        android:paddingTop="15dp"
-        android:paddingBottom="15dp"
-        android:orientation="horizontal" >
+        android:orientation="horizontal">
 
         <RadioButton
             android:id="@+id/activity_rb_localmusic"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
             android:button="@null"
-            android:text="歌曲"
             android:checked="true"
-            android:textColor="@drawable/navigation_text_check" />
+            android:text="歌曲"
+            android:gravity="center"
+            android:textColor="@color/black" />
 
         <RadioButton
             android:id="@+id/activity_rb_singer"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
             android:button="@null"
             android:text="歌手"
-            android:layout_marginLeft="40dp"
-            android:layout_marginRight="40dp"
-            android:textColor="@drawable/navigation_text_check" />
+            android:gravity="center"/>
 
         <RadioButton
             android:id="@+id/activity_rb_alblum"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
             android:button="@null"
             android:text="专辑"
-            android:textColor="@drawable/navigation_text_check" />
-    </RadioGroup>
-    <ImageView 
-            android:layout_width="wrap_content"
+            android:gravity="center"
+            android:textColor="@color/black" />
+
+        <RadioButton
+            android:id="@+id/activity_rb_file"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:contentDescription="@string/app_name"
-            android:layout_gravity="center_vertical"
-            android:paddingLeft="15dp"
-            android:paddingRight="15dp"
-            android:clickable="true"
-            android:src="@drawable/selector_main_head_search"/>
-</LinearLayout>
+            android:layout_weight="1"
+            android:button="@null"
+            android:text="文件夹"
+            android:gravity="center"
+            android:textColor="@color/black" />
+    </RadioGroup>
+    <TextView
+        android:id="@+id/activity_main_cursor" 
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/black"/>
+
     <android.support.v4.view.ViewPager
         android:id="@+id/activity_viewPager"
         android:layout_width="match_parent"
+        android:background="@color/white"
         android:layout_height="match_parent" />
 
-    <include
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        layout="@layout/top_of_local_music" 
-        android:visibility="gone"/>
-</RelativeLayout>
+</LinearLayout>

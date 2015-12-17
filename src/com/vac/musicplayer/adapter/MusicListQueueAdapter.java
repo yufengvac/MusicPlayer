@@ -96,8 +96,8 @@ public class MusicListQueueAdapter extends BaseAdapter {
 			}
 		}else{
 			holder.play_indicator.setVisibility(View.INVISIBLE);
-			holder.play_title.setTextColor(mContext.getResources().getColor(R.color.black));
-			holder.play_artist.setTextColor(mContext.getResources().getColor(R.color.black));
+			holder.play_title.setTextColor(mContext.getResources().getColor(R.color.white));
+			holder.play_artist.setTextColor(mContext.getResources().getColor(R.color.white));
 		}
 		
 		return convertView;
