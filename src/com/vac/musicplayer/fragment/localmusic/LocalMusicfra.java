@@ -42,9 +42,9 @@ public class LocalMusicfra extends Fragment implements android.widget.AdapterVie
 	private ListView listView;
 	private MusicListAdapter mAdapter=null;
 	
-	private onMusicTotalCountListener musicTotalListener=null;
+//	private onMusicTotalCountListener musicTotalListener=null;
 	
-	private Activity mMainActivity;
+//	private Activity mMainActivity;
 	
 	private MusicServiceBinder mBinder=null;
 	
@@ -102,8 +102,8 @@ public class LocalMusicfra extends Fragment implements android.widget.AdapterVie
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
 		if(activity instanceof MainActivity){
-			musicTotalListener = (onMusicTotalCountListener) activity;
-			mMainActivity = activity;
+//			musicTotalListener = (onMusicTotalCountListener) activity;
+//			mMainActivity = activity;
 		}
 	}
 	
@@ -150,7 +150,7 @@ public class LocalMusicfra extends Fragment implements android.widget.AdapterVie
 					if(data!=null&&data.size()>0){
 						mCurrentMusicList.addAll(data);
 						mAdapter.setData(data);
-						musicTotalListener.musicTotalCount(data.size());//设置音乐的总数，接口回调给宿主MainActivity.class
+//						musicTotalListener.musicTotalCount(data.size());//设置音乐的总数，接口回调给宿主MainActivity.class
 					}
 					if(data!=null&&mBinder!=null&&currentMusicBundle!=null){
 						Log.d(TAG, "在此onLoadFinished设置currentMusicBundle");
@@ -240,7 +240,7 @@ public class LocalMusicfra extends Fragment implements android.widget.AdapterVie
 		}
 		if(mServiceConnection!=null){
 			Log.v(TAG, "LocalMusicFragment中解绑服务");
-			mMainActivity.unbindService(mServiceConnection);
+			getActivity().unbindService(mServiceConnection);
 			isHasList =false;
 		}
 	}

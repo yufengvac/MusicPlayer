@@ -11,48 +11,35 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
 import android.provider.MediaStore;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
-import android.support.v4.view.ViewPager;
-import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.vac.musicplayer.bean.Constant;
 import com.vac.musicplayer.bean.Music;
-import com.vac.musicplayer.fragment.MyMusicFra;
-import com.vac.musicplayer.fragment.NetMusicFra;
+import com.vac.musicplayer.fragment.TabMainFra;
 import com.vac.musicplayer.listener.OnPlayMusicStateListener;
-import com.vac.musicplayer.listener.OnSkinChangerListener;
 import com.vac.musicplayer.loader.MusicLoader;
 import com.vac.musicplayer.service.MusicService;
 import com.vac.musicplayer.service.MusicService.MusicServiceBinder;
 import com.vac.musicplayer.service.MusicService.PlayState;
 import com.vac.musicplayer.utils.PreferHelper;
-import com.vac.musicplayer.utils.SDUtils;
 
-public class Main extends FragmentActivity implements OnSkinChangerListener,OnPlayMusicStateListener{
+public class Main extends FragmentActivity implements OnPlayMusicStateListener{
 	private final static String TAG = Main.class.getSimpleName();
 	private static final int PRIVATE_LOCAL_MUSIC=100;
-	private ViewPager viewPager;
-	private MyFragmentPagerAdapter mAdapter;
-	private List<Fragment> fraList = new ArrayList<Fragment>();
+	
 	private List<Music> mCurrentMusicList = new ArrayList<Music>();
-	private RadioButton rb_localmusic,rb_netmusic;
-	private RadioGroup rg_navigation;
-	private LinearLayout content;
+	
 	private ProgressBar main_progress;
 	
 	private int SharePosition = -2;
@@ -62,6 +49,9 @@ public class Main extends FragmentActivity implements OnSkinChangerListener,OnPl
 	
 	private MusicServiceBinder mBinder=null;
 	private Bundle currentMusicBundle = null;
+	
+	private LinearLayout main_content;
+	
 	private ServiceConnection mServiceConnection = new ServiceConnection() {
 		
 		@Override
@@ -89,67 +79,15 @@ public class Main extends FragmentActivity implements OnSkinChangerListener,OnPl
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 		initView();
+		FragmentManager fm = getSupportFragmentManager();
+		FragmentTransaction ft = fm.beginTransaction();
+		TabMainFra tmf = new TabMainFra();
+		ft.replace(R.id.main_content,tmf);
+		ft.addToBackStack("tabmainfra");
+		ft.commit();
 	}
 	private void initView() {
-		viewPager = (ViewPager) findViewById(R.id.main_viewPager);
-		
-		MyMusicFra musicFra = new MyMusicFra();
-		fraList.add(musicFra);
-		NetMusicFra netMusicFra = new NetMusicFra();
-		fraList.add(netMusicFra);
-		mAdapter = new MyFragmentPagerAdapter(getSupportFragmentManager());
-		viewPager.setAdapter(mAdapter);
-		
-		rb_localmusic = (RadioButton) findViewById(R.id.main_rb_localmusic);
-		rb_netmusic = (RadioButton) findViewById(R.id.main_rb_netmusic);
-		
-		rg_navigation = (RadioGroup) findViewById(R.id.main_rg_navigation);
-		
-		viewPager.setOnPageChangeListener(new OnPageChangeListener() {
-			
-			@Override
-			public void onPageSelected(int arg0) {
-				rb_localmusic.setChecked(false);
-				rb_netmusic.setChecked(false);
-				if (arg0==0) {
-					rb_localmusic.setChecked(true);
-				}else if(arg0==1){
-					rb_netmusic.setChecked(true);
-				}
-			}
-			
-			@Override
-			public void onPageScrolled(int arg0, float arg1, int arg2) {
-				
-			}
-			
-			@Override
-			public void onPageScrollStateChanged(int arg0) {
-				
-			}
-		});
-		rg_navigation.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-			
-			@Override
-			public void onCheckedChanged(RadioGroup arg0, int arg1) {
-				rb_localmusic.setChecked(false);
-				rb_netmusic.setChecked(false);
-					if (arg1==R.id.main_rb_localmusic) {
-						rb_localmusic.setChecked(true);
-						viewPager.setCurrentItem(0);
-					}else if(arg1==R.id.main_rb_netmusic){
-						rb_netmusic.setChecked(true);
-						viewPager.setCurrentItem(1);
-					}
-			}
-		});
-		content = (LinearLayout) findViewById(R.id.main_titlebar_content);
-		String urlAndColor = PreferHelper.readString(Main.this, Constant.MAIN_BG_COLOR, Constant.MAIN_BG_COLOR);
-		if (urlAndColor!=null) {
-			int colorValue = Integer.parseInt(urlAndColor.split(",")[1]);
-			content.setBackgroundColor(colorValue);
-		}
-		
+	
 		main_progress= (ProgressBar) findViewById(R.id.main_progressbar);
 		main_progress.setMax(300);
 		
@@ -157,26 +95,10 @@ public class Main extends FragmentActivity implements OnSkinChangerListener,OnPl
 		artist_name_textview = (TextView) findViewById(R.id.main_song_artist);
 		
 		main_play_imageview = (ImageView) findViewById(R.id.main_play_imageview);
+		
+		main_content = (LinearLayout) findViewById(R.id.main_content);
 	}
 	
-	private class MyFragmentPagerAdapter extends FragmentPagerAdapter{
-
-		public MyFragmentPagerAdapter(FragmentManager fm) {
-			super(fm);
-		}
-
-		@Override
-		public Fragment getItem(int arg0) {
-			return fraList.get(arg0);
-		}
-
-		@Override
-		public int getCount() {
-			return fraList.size();
-		}
-		
-	}
-
 	@Override
 	protected void onStart() {
 		Log.v(TAG, "MainActivity-->OnStart===============startService");
@@ -193,10 +115,10 @@ public class Main extends FragmentActivity implements OnSkinChangerListener,OnPl
 		}
 //		SDUtils.checkFile(Environment.getExternalStorageDirectory().getAbsoluteFile());
 	}
-	@Override
-	public void onSkinChange(int coloValue,String url) {
-		content.setBackgroundColor(coloValue);
-	}
+//	@Override
+//	public void onSkinChange(int coloValue,String url) {
+//		content.setBackgroundColor(coloValue);
+//	}
 	@Override
 	protected void onStop() {
 		super.onStop();
@@ -205,11 +127,6 @@ public class Main extends FragmentActivity implements OnSkinChangerListener,OnPl
 	@Override
 	protected void onRestart() {
 		super.onRestart();
-//		if(mServiceConnection!=null){
-//			Log.v(TAG, "在onReStart中的绑定服务");
-//			boolean isOk = bindService(new Intent(this,MusicService.class), mServiceConnection, Context.BIND_AUTO_CREATE);
-//			Log.v(TAG, "绑定service是否成功："+isOk);
-//		}
 	}
 	
 	@Override
@@ -246,7 +163,7 @@ public class Main extends FragmentActivity implements OnSkinChangerListener,OnPl
 						Log.i(TAG, "main中的音乐列表数是："+mCurrentMusicList.size());
 						mBinder.setCurrentPlayList(data);
 						
-						((TextView)(fraList.get(0).getView().findViewById(R.id.my_music_fra_totalnumber))).setText(data.size()+"首");
+//						((TextView)(fraList.get(0).getView().findViewById(R.id.my_music_fra_totalnumber))).setText(data.size()+"首");
 					}
 					if(data!=null&&mBinder!=null){
 						Log.d(TAG, "在此onLoadFinished设置currentMusicBundle");
@@ -369,4 +286,5 @@ public class Main extends FragmentActivity implements OnSkinChangerListener,OnPl
 	public void onPlayProgressUpdate(long currenMillis) {
 		main_progress.setProgress((int)(currenMillis*1.0/mMusic.getDuration() *main_progress.getMax()));
 	}
+
 }

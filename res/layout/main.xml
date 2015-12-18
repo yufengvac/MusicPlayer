@@ -5,102 +5,50 @@
     android:orientation="vertical" >
 
     <LinearLayout
-        android:id="@+id/main_titlebar_content"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#6f00"
-        android:orientation="horizontal" >
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="center_vertical"
-            android:clickable="true"
-            android:contentDescription="@string/app_name"
-            android:paddingLeft="15dp"
-            android:paddingRight="15dp"
-            android:src="@drawable/selector_main_head_left" />
-
-        <RadioGroup
-            android:id="@+id/main_rg_navigation"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center_horizontal"
-            android:orientation="horizontal"
-            android:paddingBottom="15dp"
-            android:paddingTop="15dp" >
-
-            <RadioButton
-                android:id="@+id/main_rb_localmusic"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:button="@null"
-                android:checked="true"
-                android:text="我的"
-                android:textColor="@drawable/navigation_text_check"
-                android:textSize="17sp" />
-
-            <RadioButton
-                android:id="@+id/main_rb_netmusic"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="40dp"
-                android:button="@null"
-                android:text="乐库"
-                android:textColor="@drawable/navigation_text_check"
-                android:textSize="17sp" />
-        </RadioGroup>
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="center_vertical"
-            android:clickable="true"
-            android:contentDescription="@string/app_name"
-            android:paddingLeft="15dp"
-            android:paddingRight="15dp"
-            android:src="@drawable/selector_main_head_search" />
-    </LinearLayout>
-    <android.support.v4.view.ViewPager
-        android:id="@+id/main_viewPager"
+        android:id="@+id/main_content"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"/>
-    <LinearLayout 
+        android:layout_weight="1"
+        android:orientation="vertical" >
+
+        
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:orientation="vertical"
+        android:background="@color/widget_bg"
         android:clickable="true"
         android:onClick="toPlayActivity"
-        android:background="@color/widget_bg">
+        android:orientation="vertical" >
 
-         <ProgressBar
+        <ProgressBar
             android:id="@+id/main_progressbar"
+            style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="0dp"
             android:layout_marginRight="0dp"
+            android:background="@color/progress_bg"
             android:max="300"
             android:maxHeight="2dp"
             android:minHeight="2dp"
             android:progress="0"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:progressDrawable="@drawable/progress_horizontal_widget"
-            android:background="@color/progress_bg"
-            />
-        <LinearLayout 
+            android:progressDrawable="@drawable/progress_horizontal_widget" />
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal">
+            android:orientation="horizontal" >
+
             <ImageView
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/launcher"
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="10dp"
-                android:contentDescription="@string/app_name"/>
+                android:contentDescription="@string/app_name"
+                android:scaleType="centerCrop"
+                android:src="@drawable/launcher" />
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -130,31 +78,33 @@
                     android:textColor="@color/grey_white_" />
             </LinearLayout>
 
-            <LinearLayout 
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:orientation="horizontal"
-                android:paddingRight="10dp">
+                android:paddingRight="10dp" >
+
                 <ImageView
                     android:id="@+id/main_play_imageview"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:clickable="true"
-                    android:onClick="playSong"
                     android:contentDescription="@string/app_name"
-                    android:src="@drawable/img_media_controller_play"/>
+                    android:onClick="playSong"
+                    android:src="@drawable/img_media_controller_play" />
+
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:clickable="true"
-                    android:onClick="openPlayingSongQueue"
                     android:layout_marginLeft="10dp"
+                    android:clickable="true"
                     android:contentDescription="@string/app_name"
-                    android:src="@drawable/img_media_controller_pause"/>
+                    android:onClick="openPlayingSongQueue"
+                    android:src="@drawable/img_media_controller_pause" />
             </LinearLayout>
         </LinearLayout>
-        
     </LinearLayout>
+
 </LinearLayout>

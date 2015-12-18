@@ -8,6 +8,7 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -26,7 +27,6 @@ import android.widget.Toast;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.vac.musicplayer.Main;
-import com.vac.musicplayer.MainActivity;
 import com.vac.musicplayer.R;
 import com.vac.musicplayer.R.drawable;
 import com.vac.musicplayer.adapter.MyFavorSongListAdapter;
@@ -144,11 +144,21 @@ public class MyMusicFra extends Fragment implements OnClickListener , OnSkinChan
 			
 			@Override
 			public void onClick(View arg0) {
-				Intent intent = new Intent(getActivity(),MainActivity.class);
-				intent.putExtra("color", currColorValue);
-				startActivity(intent);
-//				getActivity().getSupportFragmentManager().beginTransaction()
-//				.replace(R.id.main_viewPager, new NetMusicFra()).commit();
+//				Intent intent = new Intent(getActivity(),MainActivity.class);
+//				intent.putExtra("color", currColorValue);
+//				startActivity(intent);
+				TabMusicLocalFra tmlf = new TabMusicLocalFra();
+				Bundle bundle = new Bundle();
+				bundle.putInt("color", currColorValue);
+				tmlf.setArguments(bundle);
+				FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+				transaction.replace(R.id.main_content,tmlf);
+				transaction.addToBackStack("tabmusiclocalfra");
+//				transaction.add(R.id.main_content, tmlf);
+//				transaction.show(tmlf);
+//				transaction.hide(getParentFragment());
+				transaction.setCustomAnimations(R.anim.push_bottom_in, 0);
+				transaction.commit();
 			}
 		});
 	}
