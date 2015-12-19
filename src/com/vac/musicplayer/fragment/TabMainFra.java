@@ -14,20 +14,18 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
-import android.widget.TextView;
 
-import com.vac.musicplayer.Main;
 import com.vac.musicplayer.R;
 import com.vac.musicplayer.bean.Constant;
+import com.vac.musicplayer.fragment.MyMusicFra.OnLocalViewClickListener;
+import com.vac.musicplayer.listener.OnSkinChangerListener;
 import com.vac.musicplayer.utils.PreferHelper;
 
-public class TabMainFra extends Fragment {
+public class TabMainFra extends Fragment implements OnSkinChangerListener {
 
 	private final static String TAG = TabMainFra.class.getSimpleName();
 	private ViewPager viewPager;
@@ -37,10 +35,12 @@ public class TabMainFra extends Fragment {
 	private RadioGroup rg_navigation;
 	private LinearLayout content;
 	
+	private OnLocalViewClickListener mListener;
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
 		Log.i(TAG, "TabMainFra->onAttach");
+		mListener = (OnLocalViewClickListener) activity;
 	}
 	@Override
 	public void onDetach() {
@@ -59,10 +59,12 @@ public class TabMainFra extends Fragment {
 		viewPager = (ViewPager) view.findViewById(R.id.main_viewPager);
 		fraList.clear();
 		MyMusicFra musicFra = new MyMusicFra();
+		musicFra.setOnLocalViewClickListener(mListener);
+		musicFra.setOnSkinChangerListener(this);
 		fraList.add(musicFra);
 		NetMusicFra netMusicFra = new NetMusicFra();
 		fraList.add(netMusicFra);
-		mAdapter = new MyFragmentPagerAdapter(getFragmentManager());
+		mAdapter = new MyFragmentPagerAdapter(getChildFragmentManager());
 		
 		viewPager.setAdapter(mAdapter);
 		
@@ -133,5 +135,10 @@ public class TabMainFra extends Fragment {
 			return fraList.size();
 		}
 		
+	}
+	@Override
+	public void onSkinChange(int coloValue, String url) {
+		Log.v(TAG, "coloValue="+coloValue);
+		content.setBackgroundColor(coloValue);
 	}
 }

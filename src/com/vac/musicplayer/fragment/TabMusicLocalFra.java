@@ -56,7 +56,7 @@ OnCheckedChangeListener,OnPageChangeListener{
 		View view = inflater.inflate(R.layout.activity_main, null);
 		Bundle bundle  = getArguments();
 		valueColor = bundle.getInt("color");
-		   fm = getFragmentManager();
+		   fm = getChildFragmentManager();
 	        initView(view);
 	        initFragment();
 		return view;
@@ -105,7 +105,22 @@ OnCheckedChangeListener,OnPageChangeListener{
 	}
 	@Override
 	public void onPageSelected(int arg0) {
-		
+		switch (arg0) {
+		case 0:
+			setColor(rb1);
+			break;
+		case 1:
+			setColor(rb2);
+			break;
+		case 2:
+			setColor(rb3);
+			break;
+		case 3:
+			setColor(rb4);
+			break;
+		default:
+			break;
+		}
 	}
 	@Override
 	public void onCheckedChanged(RadioGroup arg0, int arg1) {

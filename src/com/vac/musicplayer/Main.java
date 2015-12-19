@@ -7,6 +7,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
@@ -17,6 +18,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -26,7 +28,9 @@ import android.widget.TextView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.vac.musicplayer.bean.Constant;
 import com.vac.musicplayer.bean.Music;
+import com.vac.musicplayer.fragment.MyMusicFra.OnLocalViewClickListener;
 import com.vac.musicplayer.fragment.TabMainFra;
+import com.vac.musicplayer.fragment.TabMusicLocalFra;
 import com.vac.musicplayer.listener.OnPlayMusicStateListener;
 import com.vac.musicplayer.loader.MusicLoader;
 import com.vac.musicplayer.service.MusicService;
@@ -34,7 +38,7 @@ import com.vac.musicplayer.service.MusicService.MusicServiceBinder;
 import com.vac.musicplayer.service.MusicService.PlayState;
 import com.vac.musicplayer.utils.PreferHelper;
 
-public class Main extends FragmentActivity implements OnPlayMusicStateListener{
+public class Main extends FragmentActivity implements OnPlayMusicStateListener,OnLocalViewClickListener{
 	private final static String TAG = Main.class.getSimpleName();
 	private static final int PRIVATE_LOCAL_MUSIC=100;
 	
@@ -51,6 +55,8 @@ public class Main extends FragmentActivity implements OnPlayMusicStateListener{
 	private Bundle currentMusicBundle = null;
 	
 	private LinearLayout main_content;
+	
+	private TabMainFra tmf ;
 	
 	private ServiceConnection mServiceConnection = new ServiceConnection() {
 		
@@ -81,9 +87,9 @@ public class Main extends FragmentActivity implements OnPlayMusicStateListener{
 		initView();
 		FragmentManager fm = getSupportFragmentManager();
 		FragmentTransaction ft = fm.beginTransaction();
-		TabMainFra tmf = new TabMainFra();
-		ft.replace(R.id.main_content,tmf);
-		ft.addToBackStack("tabmainfra");
+		tmf = new TabMainFra();
+		ft.add(R.id.main_content, tmf);
+		ft.show(tmf);
 		ft.commit();
 	}
 	private void initView() {
@@ -164,6 +170,10 @@ public class Main extends FragmentActivity implements OnPlayMusicStateListener{
 						mBinder.setCurrentPlayList(data);
 						
 //						((TextView)(fraList.get(0).getView().findViewById(R.id.my_music_fra_totalnumber))).setText(data.size()+"首");
+//						List<Fragment> FraList = getSupportFragmentManager().getFragments();
+//						for (int i = 0; i < FraList.size(); i++) {
+//							
+//						}
 					}
 					if(data!=null&&mBinder!=null){
 						Log.d(TAG, "在此onLoadFinished设置currentMusicBundle");
@@ -286,5 +296,40 @@ public class Main extends FragmentActivity implements OnPlayMusicStateListener{
 	public void onPlayProgressUpdate(long currenMillis) {
 		main_progress.setProgress((int)(currenMillis*1.0/mMusic.getDuration() *main_progress.getMax()));
 	}
+	@Override
+	public void onLocalViewClickListener() {
+		TabMusicLocalFra tmlf = new TabMusicLocalFra();
+		Bundle bundle = new Bundle();
+		String urlAndColor = PreferHelper.readString(this.getApplicationContext(), Constant.MAIN_BG_COLOR, Constant.MAIN_BG_COLOR);
+		if (urlAndColor!=null) {
+			String[] array = urlAndColor.split(",");
+			int colorValue = Integer.parseInt(array[1]);
+			bundle.putInt("color", colorValue);
+		}else{
+			bundle.putInt("color", Color.rgb(249, 96, 98));
+		}
+		tmlf.setArguments(bundle);
+		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+//		transaction.replace(R.id.main_content,tmlf);
+//		transaction.addToBackStack(null);
+//		transaction.add(R.id.main_content, tmlf);
+//		transaction.show(tmlf);
+//		transaction.hide(getParentFragment());
+//		transaction.setCustomAnimations(R.anim.push_right_in,0);
+		transaction.setCustomAnimations(R.anim.push_right_in, R.anim.push_right_in, 
+				R.anim.push_right_out, R.anim.push_right_out);
+		transaction.add(R.id.main_content, tmlf);
+		transaction.hide(tmf);
+		transaction.show(tmlf);
+		transaction.addToBackStack(null);
+		transaction.commit();
+	}
 
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (keyCode==KeyEvent.KEYCODE_BACK) {
+			
+		}
+		return super.onKeyDown(keyCode, event);
+	}
 }

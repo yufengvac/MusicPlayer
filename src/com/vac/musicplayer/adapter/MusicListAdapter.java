@@ -142,10 +142,13 @@ public class MusicListAdapter extends BaseAdapter implements OnClickListener {
 				animaiton.stop();
 				Log.d("TAG", "适配器中已经开始停止了动画~~~~~~~~~~");
 			}
+			
+			holder.title.setTextColor(mContext.getResources().getColor(R.color.progress_thumb));
 		} else {
 			holder.popup_menu.setVisibility(View.GONE);
+			holder.title.setTextColor(mContext.getResources().getColor(R.color.black));
 		}
-		holder.title.setText(getItem(position).getTitle());
+		holder.title.setText((position+1)+"."+getItem(position).getTitle());
 
 		if (getItem(position).getArtist().equals("<unknown>")) {
 			holder.artist.setText(mContext.getResources().getString(

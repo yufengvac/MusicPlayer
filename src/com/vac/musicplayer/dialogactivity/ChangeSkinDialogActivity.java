@@ -27,7 +27,7 @@ import com.vac.musicplayer.R;
 import com.vac.musicplayer.adapter.ChangeSkinAdapter;
 import com.vac.musicplayer.bean.Constant;
 import com.vac.musicplayer.fragment.MyMusicFra;
-import com.vac.musicplayer.fragment.SelectSkinFra;
+import com.vac.musicplayer.fragment.TabMainFra;
 import com.vac.musicplayer.listener.OnSkinChangerListener;
 import com.vac.musicplayer.myview.ColorPickerView;
 import com.vac.musicplayer.myview.HorizonListView;
@@ -254,7 +254,7 @@ public class ChangeSkinDialogActivity extends FragmentActivity implements OnSkin
 	}
 	public static void addOnSkinChangerListener(OnSkinChangerListener listener){
 		if(listener!=null){
-			if (listener instanceof MyMusicFra||listener instanceof Main) {
+			if (listener instanceof MyMusicFra||listener instanceof Main||listener instanceof TabMainFra) {
 				if (!listenerList.contains(listener)) {
 					Log.v("TAG", "添加listener="+listener);
 					listenerList.add(listener);

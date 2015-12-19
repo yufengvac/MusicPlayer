@@ -2,7 +2,7 @@ package com.vac.musicplayer.fragment;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -24,7 +24,6 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.vac.musicplayer.Main;
 import com.vac.musicplayer.R;
@@ -35,6 +34,7 @@ import com.vac.musicplayer.bean.Constant;
 import com.vac.musicplayer.bean.MusicGroup;
 import com.vac.musicplayer.db.MusicGroupDao;
 import com.vac.musicplayer.dialogactivity.ChangeSkinDialogActivity;
+import com.vac.musicplayer.fragment.MyMusicFra.OnLocalViewClickListener;
 import com.vac.musicplayer.listener.OnSkinChangerListener;
 import com.vac.musicplayer.myview.ListViewForScrollView;
 import com.vac.musicplayer.service.MusicService.MusicServiceBinder;
@@ -46,6 +46,7 @@ import com.vac.musicplayer.utils.PreferHelper;
  * @date 2015年12月10日16:36:06
  *
  */
+@SuppressLint("ValidFragment")
 public class MyMusicFra extends Fragment implements OnClickListener , OnSkinChangerListener{
 
 	private RelativeLayout content1,content2,content3,content4;
@@ -67,6 +68,15 @@ public class MyMusicFra extends Fragment implements OnClickListener , OnSkinChan
 	private TextView total_music_number_textivew;
 	
 	private int currColorValue = -1;
+	private OnLocalViewClickListener mListener;
+	private OnSkinChangerListener mSkinListener;
+	
+	public void setOnLocalViewClickListener(OnLocalViewClickListener listener){
+		this.mListener = listener;
+	}
+	public void setOnSkinChangerListener(OnSkinChangerListener listener){
+		this.mSkinListener = listener;
+	}
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
@@ -103,6 +113,7 @@ public class MyMusicFra extends Fragment implements OnClickListener , OnSkinChan
 		mFavorAdapter = new MyFavorSongListAdapter(getActivity());
 		mFavorListview.setAdapter(mFavorAdapter);
 		
+		
 		my_music_songlist_count = (TextView) view.findViewById(R.id.my_music_fra_num);
 		
 		String urlAndColor = PreferHelper.readString(getActivity().getApplicationContext(), Constant.MAIN_BG_COLOR, Constant.MAIN_BG_COLOR);
@@ -135,6 +146,7 @@ public class MyMusicFra extends Fragment implements OnClickListener , OnSkinChan
 		MusicGroupDao mgd = new MusicGroupDao(getActivity());
 		ArrayList<MusicGroup> groupList = mgd.getGroups();
 		mFavorAdapter.setData(groupList);
+		my_music_songlist_count.setText(mFavorAdapter.getCount()+"个");
 		
 		scrollView.smoothScrollTo(0	, 0);
 		
@@ -147,20 +159,13 @@ public class MyMusicFra extends Fragment implements OnClickListener , OnSkinChan
 //				Intent intent = new Intent(getActivity(),MainActivity.class);
 //				intent.putExtra("color", currColorValue);
 //				startActivity(intent);
-				TabMusicLocalFra tmlf = new TabMusicLocalFra();
-				Bundle bundle = new Bundle();
-				bundle.putInt("color", currColorValue);
-				tmlf.setArguments(bundle);
-				FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-				transaction.replace(R.id.main_content,tmlf);
-				transaction.addToBackStack("tabmusiclocalfra");
-//				transaction.add(R.id.main_content, tmlf);
-//				transaction.show(tmlf);
-//				transaction.hide(getParentFragment());
-				transaction.setCustomAnimations(R.anim.push_bottom_in, 0);
-				transaction.commit();
+				
+				mListener.onLocalViewClickListener();
 			}
 		});
+	}
+	public interface OnLocalViewClickListener{
+		public void onLocalViewClickListener();
 	}
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -216,6 +221,7 @@ public class MyMusicFra extends Fragment implements OnClickListener , OnSkinChan
 			Intent intent = new Intent(getActivity(),ChangeSkinDialogActivity.class);
 			ChangeSkinDialogActivity.addOnSkinChangerListener(mSkinChangeListener);
 			ChangeSkinDialogActivity.addOnSkinChangerListener(this);
+			ChangeSkinDialogActivity.addOnSkinChangerListener(mSkinListener);
 			startActivity(intent);
 			getActivity().overridePendingTransition(R.anim.push_bottom_in, R.anim.push_bottom_out);
 			break;
@@ -335,5 +341,6 @@ public class MyMusicFra extends Fragment implements OnClickListener , OnSkinChan
 		md.addGroup(mg);
 		ArrayList<MusicGroup> groupList = md.getGroups();
 		mFavorAdapter.setData(groupList);
+		my_music_songlist_count.setText(mFavorAdapter.getCount()+"个");
 	}
 }
