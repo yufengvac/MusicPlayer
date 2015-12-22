@@ -52,6 +52,7 @@ public class LocalMusicfra extends Fragment implements android.widget.AdapterVie
 	
 	private boolean isHasList =false;
 	private Bundle currentMusicBundle = null;
+	private int currColor=-1;
 	private ServiceConnection mServiceConnection = new ServiceConnection() {
 		
 		@Override
@@ -107,6 +108,10 @@ public class LocalMusicfra extends Fragment implements android.widget.AdapterVie
 		}
 	}
 	
+	public void setColor(int color){
+		this.currColor = color;
+	}
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -119,6 +124,9 @@ public class LocalMusicfra extends Fragment implements android.widget.AdapterVie
 	private void initView(View v){
 		listView = (ListView) v.findViewById(R.id.localmusic_lv);
 		mAdapter = new MusicListAdapter(getActivity());
+		if (currColor!=-1) {
+			mAdapter.setColor(currColor);
+		}
 		listView.setAdapter(mAdapter);
 		
 		listView.setOnItemClickListener(this);

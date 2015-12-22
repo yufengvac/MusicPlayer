@@ -36,11 +36,13 @@ public class TabMainFra extends Fragment implements OnSkinChangerListener {
 	private LinearLayout content;
 	
 	private OnLocalViewClickListener mListener;
+	private OnSkinChangerListener mParentSkinChangerListener;
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
 		Log.i(TAG, "TabMainFra->onAttach");
 		mListener = (OnLocalViewClickListener) activity;
+		mParentSkinChangerListener = (OnSkinChangerListener) activity;
 	}
 	@Override
 	public void onDetach() {
@@ -60,7 +62,7 @@ public class TabMainFra extends Fragment implements OnSkinChangerListener {
 		fraList.clear();
 		MyMusicFra musicFra = new MyMusicFra();
 		musicFra.setOnLocalViewClickListener(mListener);
-		musicFra.setOnSkinChangerListener(this);
+		musicFra.setOnSkinChangerListener(this,mParentSkinChangerListener);
 		fraList.add(musicFra);
 		NetMusicFra netMusicFra = new NetMusicFra();
 		fraList.add(netMusicFra);

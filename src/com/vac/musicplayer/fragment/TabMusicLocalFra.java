@@ -63,7 +63,9 @@ OnCheckedChangeListener,OnPageChangeListener{
 	}
 	private void initFragment() {
 		List<Fragment> list = new ArrayList<Fragment>();
-    	list.add(new LocalMusicfra());
+		LocalMusicfra lm = new LocalMusicfra();
+		lm.setColor(valueColor);
+    	list.add(lm);
     	list.add(new Singerfra());
     	list.add(new Albumfra());
     	list.add(new FileDirectoryfra());

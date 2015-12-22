@@ -20,9 +20,7 @@ import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -32,24 +30,38 @@ import com.vac.musicplayer.fragment.MyMusicFra.OnLocalViewClickListener;
 import com.vac.musicplayer.fragment.TabMainFra;
 import com.vac.musicplayer.fragment.TabMusicLocalFra;
 import com.vac.musicplayer.listener.OnPlayMusicStateListener;
+import com.vac.musicplayer.listener.OnSkinChangerListener;
 import com.vac.musicplayer.loader.MusicLoader;
+import com.vac.musicplayer.myview.MyMenuButton;
+import com.vac.musicplayer.myview.MyPauseButton;
+import com.vac.musicplayer.myview.MyProgressbar;
+import com.vac.musicplayer.myview.MyTriangle;
 import com.vac.musicplayer.service.MusicService;
 import com.vac.musicplayer.service.MusicService.MusicServiceBinder;
 import com.vac.musicplayer.service.MusicService.PlayState;
 import com.vac.musicplayer.utils.PreferHelper;
 
-public class Main extends FragmentActivity implements OnPlayMusicStateListener,OnLocalViewClickListener{
+public class Main extends FragmentActivity implements OnPlayMusicStateListener,OnLocalViewClickListener,OnSkinChangerListener{
 	private final static String TAG = Main.class.getSimpleName();
 	private static final int PRIVATE_LOCAL_MUSIC=100;
 	
 	private List<Music> mCurrentMusicList = new ArrayList<Music>();
 	
-	private ProgressBar main_progress;
+	private MyProgressbar main_progress;
 	
 	private int SharePosition = -2;
 	private Music mMusic;
 	private TextView song_name_textview,artist_name_textview;
-	private ImageView main_play_imageview;
+//	private ImageView main_play_imageview;
+	
+	/**播放按钮*/
+	private MyTriangle myTriangle;
+	
+	/**暂停按钮*/
+	private MyPauseButton myPausebtn;
+	
+	/**菜单*/
+	private MyMenuButton myMenubtn;
 	
 	private MusicServiceBinder mBinder=null;
 	private Bundle currentMusicBundle = null;
@@ -57,6 +69,8 @@ public class Main extends FragmentActivity implements OnPlayMusicStateListener,O
 	private LinearLayout main_content;
 	
 	private TabMainFra tmf ;
+	
+	private int currentColor;
 	
 	private ServiceConnection mServiceConnection = new ServiceConnection() {
 		
@@ -74,6 +88,18 @@ public class Main extends FragmentActivity implements OnPlayMusicStateListener,O
 			
 			mBinder.registerOnPlayMusicStateListener(Main.this);
 			toLoadMusic();
+//			Music mMusic = null;
+//			currentMusicBundle = mBinder.getCurrentPlayMusicInfo();
+//			if (currentMusicBundle!=null) {
+//				int playState = currentMusicBundle.getInt(Constant.PLAYING_MUSIC_STATE);
+//				if (playState==MusicService.PlayState.Playing||playState == MusicService.PlayState.Paused) {
+//					mMusic = currentMusicBundle.getParcelable(Constant.PLAYING_MUSIC_ITEM);
+//					song_name_textview.setText(mMusic.getTitle());
+//					artist_name_textview.setText(mMusic.getArtist());
+//				}else{
+//					toLoadMusic();
+//				}
+//			}
 		}
 	};
 	
@@ -91,16 +117,32 @@ public class Main extends FragmentActivity implements OnPlayMusicStateListener,O
 		ft.add(R.id.main_content, tmf);
 		ft.show(tmf);
 		ft.commit();
+		
+		String urlAndColor = PreferHelper.readString(this.getApplicationContext(), Constant.MAIN_BG_COLOR, Constant.MAIN_BG_COLOR);
+		if (urlAndColor!=null) {
+			String[] array = urlAndColor.split(",");
+			currentColor= Integer.parseInt(array[1]);
+		}else{
+			currentColor = Color.rgb(249, 96, 98);
+		}
+		myTriangle.setColor(currentColor);
+		myPausebtn.setColor(currentColor);
+		myMenubtn.setColor(currentColor);
+		main_progress.setProgressColor(currentColor);
 	}
 	private void initView() {
 	
-		main_progress= (ProgressBar) findViewById(R.id.main_progressbar);
-		main_progress.setMax(300);
+		main_progress= (MyProgressbar) findViewById(R.id.main_progressbar);
 		
 		song_name_textview = (TextView) findViewById(R.id.main_song_name);
 		artist_name_textview = (TextView) findViewById(R.id.main_song_artist);
 		
-		main_play_imageview = (ImageView) findViewById(R.id.main_play_imageview);
+//		main_play_imageview = (ImageView) findViewById(R.id.main_play_imageview);
+		myTriangle = (MyTriangle) findViewById(R.id.main_play_mytriangle);
+		
+		myPausebtn = (MyPauseButton) findViewById(R.id.main_play_pause_mypausebtn);
+		
+		myMenubtn = (MyMenuButton) findViewById(R.id.main_menu_mymenubtn);
 		
 		main_content = (LinearLayout) findViewById(R.id.main_content);
 	}
@@ -122,9 +164,14 @@ public class Main extends FragmentActivity implements OnPlayMusicStateListener,O
 //		SDUtils.checkFile(Environment.getExternalStorageDirectory().getAbsoluteFile());
 	}
 //	@Override
-//	public void onSkinChange(int coloValue,String url) {
-//		content.setBackgroundColor(coloValue);
-//	}
+	public void onSkinChange(int coloValue,String url) {
+		Log.i(TAG, "onSkinChange-->"+coloValue);
+		currentColor = coloValue;
+		myTriangle.setColor(coloValue);
+		myPausebtn.setColor(coloValue);
+		myMenubtn.setColor(coloValue);
+		main_progress.setProgressColor(coloValue);
+	}
 	@Override
 	protected void onStop() {
 		super.onStop();
@@ -189,16 +236,20 @@ public class Main extends FragmentActivity implements OnPlayMusicStateListener,O
 							song_name_textview.setText(mCurrentMusicList.get(0).getTitle());
 							artist_name_textview.setText(mCurrentMusicList.get(0).getArtist());
 						}else if (SharePosition!=-2&&SharePosition>=0) {
-							song_name_textview.setText(mCurrentMusicList.get(SharePosition).getTitle());
-							artist_name_textview.setText(mCurrentMusicList.get(SharePosition).getArtist());
+							if (currentPlayState==PlayState.Playing||currentPlayState==PlayState.Paused) {
+								mMusic =currentMusicBundle.getParcelable(Constant.PLAYING_MUSIC_ITEM);
+								song_name_textview.setText(mMusic.getTitle());
+								artist_name_textview.setText(mMusic.getArtist());
+							}else{
+								song_name_textview.setText(mCurrentMusicList.get(SharePosition).getTitle());
+								artist_name_textview.setText(mCurrentMusicList.get(SharePosition).getArtist());
+							}
 						}
 						
-						mMusic =currentMusicBundle.getParcelable(Constant.PLAYING_MUSIC_ITEM);
 						
 						if(mMusic!=null){
 							int currentPlayPosition = MusicService.findPositionByMusicId(mCurrentMusicList,mMusic.getId());
 							Log.v(TAG, "currentPlayState="+currentPlayState+",Position="+currentPlayPosition);
-//							
 						}
 					}
 					
@@ -261,6 +312,7 @@ public class Main extends FragmentActivity implements OnPlayMusicStateListener,O
 	public void openPlayingSongQueue(View view){
 		//打开当前的播放列表
 		Intent intent = new Intent(Main.this,PlayMusicQueue.class);
+		intent.putExtra("color", currentColor);
 		startActivity(intent);
 	}
 	
@@ -270,12 +322,16 @@ public class Main extends FragmentActivity implements OnPlayMusicStateListener,O
 		mMusic = music;
 		song_name_textview.setText(mMusic.getTitle());
 		artist_name_textview.setText(mMusic.getArtist());
-		main_play_imageview.setImageResource(R.drawable.img_media_controller_play);
+//		main_play_imageview.setImageResource(R.drawable.img_media_controller_play);
+		myTriangle.setVisibility(View.GONE);
+		myPausebtn.setVisibility(View.VISIBLE);
 	}
 	@Override
 	public void onMusicPaused(Music music) {
 		Log.v(TAG, "PlayMusic-onPlayMusicStateListener--onMusicPaused");
-		main_play_imageview.setImageResource(R.drawable.img_media_controller_pause);
+//		main_play_imageview.setImageResource(R.drawable.img_media_controller_pause);
+		myTriangle.setVisibility(View.VISIBLE);
+		myPausebtn.setVisibility(View.GONE);
 	}
 	@Override
 	public void onMusicStoped() {
@@ -300,23 +356,10 @@ public class Main extends FragmentActivity implements OnPlayMusicStateListener,O
 	public void onLocalViewClickListener() {
 		TabMusicLocalFra tmlf = new TabMusicLocalFra();
 		Bundle bundle = new Bundle();
-		String urlAndColor = PreferHelper.readString(this.getApplicationContext(), Constant.MAIN_BG_COLOR, Constant.MAIN_BG_COLOR);
-		if (urlAndColor!=null) {
-			String[] array = urlAndColor.split(",");
-			int colorValue = Integer.parseInt(array[1]);
-			bundle.putInt("color", colorValue);
-		}else{
-			bundle.putInt("color", Color.rgb(249, 96, 98));
-		}
+		bundle.putInt("color", currentColor);
 		tmlf.setArguments(bundle);
 		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-//		transaction.replace(R.id.main_content,tmlf);
-//		transaction.addToBackStack(null);
-//		transaction.add(R.id.main_content, tmlf);
-//		transaction.show(tmlf);
-//		transaction.hide(getParentFragment());
-//		transaction.setCustomAnimations(R.anim.push_right_in,0);
-		transaction.setCustomAnimations(R.anim.push_right_in, R.anim.push_right_in, 
+			transaction.setCustomAnimations(R.anim.push_right_in, R.anim.push_right_in, 
 				R.anim.push_right_out, R.anim.push_right_out);
 		transaction.add(R.id.main_content, tmlf);
 		transaction.hide(tmf);

@@ -8,6 +8,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.view.Gravity;
@@ -22,6 +23,7 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.vac.musicplayer.R.color;
 import com.vac.musicplayer.adapter.MusicListQueueAdapter;
 import com.vac.musicplayer.bean.Constant;
 import com.vac.musicplayer.bean.Music;
@@ -41,11 +43,22 @@ public class PlayMusicQueue extends Activity implements OnPlayMusicStateListener
 	private List<Music> mCurrentMusicList = new ArrayList<Music>();
 	private MusicListQueueAdapter mAdapter =null;
 	private String music_list_type;
+	private int colorValue=-1;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.play_music_queue);
-		
+		if (getIntent().getIntExtra("color", -1)!=-1) {
+			colorValue = getIntent().getIntExtra("color", -1);
+		}else{
+			String urlAndColor = PreferHelper.readString(this.getApplicationContext(), Constant.MAIN_BG_COLOR, Constant.MAIN_BG_COLOR);
+			if (urlAndColor!=null) {
+				String[] array = urlAndColor.split(",");
+				colorValue= Integer.parseInt(array[1]);
+			}else{
+				colorValue = Color.rgb(249, 96, 98);
+			}
+		}
 		initView();
 		
 	}
@@ -146,6 +159,9 @@ public class PlayMusicQueue extends Activity implements OnPlayMusicStateListener
 		mCurrentMusicList.clear();
 		mCurrentMusicList = bundle.getParcelableArrayList(Constant.PLAYING_MUSIC_CURRENT_LIST);
 		mAdapter = new MusicListQueueAdapter(PlayMusicQueue.this, mCurrentMusicList,mBinder);
+		if (colorValue!=-1) {
+			mAdapter.setColor(colorValue);
+		}
 		play_queue_listView.setAdapter(mAdapter);
 		
 		music_list_type = bundle.getString(Constant.MUSIC_LIST_TYPE);

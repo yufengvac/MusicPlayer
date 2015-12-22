@@ -69,13 +69,14 @@ public class MyMusicFra extends Fragment implements OnClickListener , OnSkinChan
 	
 	private int currColorValue = -1;
 	private OnLocalViewClickListener mListener;
-	private OnSkinChangerListener mSkinListener;
+	private OnSkinChangerListener mSkinListener,mParentSkinListener;
 	
 	public void setOnLocalViewClickListener(OnLocalViewClickListener listener){
 		this.mListener = listener;
 	}
-	public void setOnSkinChangerListener(OnSkinChangerListener listener){
+	public void setOnSkinChangerListener(OnSkinChangerListener listener,OnSkinChangerListener parentListener){
 		this.mSkinListener = listener;
+		this.mParentSkinListener = parentListener;
 	}
 	@Override
 	public void onAttach(Activity activity) {

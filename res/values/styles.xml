@@ -20,4 +20,10 @@
         <item name="android:backgroundDimEnabled">true</item><!--模糊-->
      </style>
 
+     <attr name="length" format="dimension"></attr>
+    <attr name="color" format="color"></attr>
+    <declare-styleable name="myTriangle">  
+        <attr name="length" />  
+        <attr name="color" /> 
+    </declare-styleable>  
 </resources>

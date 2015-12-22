@@ -14,6 +14,8 @@ import android.widget.TextView;
 
 import com.vac.musicplayer.R;
 import com.vac.musicplayer.bean.Music;
+import com.vac.musicplayer.myview.MyPauseButton;
+import com.vac.musicplayer.myview.MyTriangle;
 import com.vac.musicplayer.service.MusicService.MusicServiceBinder;
 import com.vac.musicplayer.service.MusicService.PlayState;
 
@@ -24,6 +26,11 @@ public class MusicListQueueAdapter extends BaseAdapter {
 	private int mActivitedPosition=-1;
 	private int mState =-1;
 	private MusicServiceBinder mBinder;
+	
+	private int colorValue;
+	public void setColor(int color){
+		this.colorValue = color;
+	}
 	
 	public MusicListQueueAdapter(Context mContext, List<Music> mData,MusicServiceBinder binder) {
 		this.mContext = mContext;
@@ -63,7 +70,9 @@ public class MusicListQueueAdapter extends BaseAdapter {
 		if(convertView==null){
 			holder = new ViewHolder();
 			convertView = LayoutInflater.from(mContext).inflate(R.layout.item_music_list_queue, null);
-			holder.play_indicator = (ImageView) convertView.findViewById(R.id.play_queue_indicator);
+			holder.play_indicator = (MyTriangle) convertView.findViewById(R.id.play_queue_indicator);
+			holder.play_indicator_pause = (MyPauseButton) convertView.findViewById(R.id.play_queue_indicator_pause);
+			
 			holder.play_title = (TextView) convertView.findViewById(R.id.play_queue_music_title);
 			holder.play_artist = (TextView) convertView.findViewById(R.id.play_queue_music_singer);
 			holder.play_delete = (ImageView) convertView.findViewById(R.id.play_queue_delete);
@@ -87,24 +96,29 @@ public class MusicListQueueAdapter extends BaseAdapter {
 		
 		if(position==mActivitedPosition){
 			holder.play_indicator.setVisibility(View.VISIBLE);
-			holder.play_title.setTextColor(mContext.getResources().getColor(R.color.holo_blue_dark));
-			holder.play_artist.setTextColor(mContext.getResources().getColor(R.color.holo_blue_dark));
+			holder.play_title.setTextColor(colorValue);
+			holder.play_artist.setTextColor(colorValue);
+			holder.play_indicator.setColor(colorValue);
+			holder.play_indicator_pause.setColor(colorValue);
 			if(mState==PlayState.Playing){
-				holder.play_indicator.setBackgroundResource(R.drawable.img_media_controller_play);
+				holder.play_indicator.setVisibility(View.VISIBLE);
+				holder.play_indicator_pause.setVisibility(View.GONE);
 			}else if(mState==PlayState.Paused){
-				holder.play_indicator.setBackgroundResource(R.drawable.img_media_controller_pause);
+				holder.play_indicator.setVisibility(View.GONE);
+				holder.play_indicator_pause.setVisibility(View.VISIBLE);
 			}
 		}else{
 			holder.play_indicator.setVisibility(View.INVISIBLE);
 			holder.play_title.setTextColor(mContext.getResources().getColor(R.color.white));
-			holder.play_artist.setTextColor(mContext.getResources().getColor(R.color.white));
+			holder.play_artist.setTextColor(mContext.getResources().getColor(R.color.grey_white));
 		}
 		
 		return convertView;
 	}
 
 	private class ViewHolder{
-		private ImageView play_indicator;
+		private MyTriangle play_indicator;
+		private MyPauseButton play_indicator_pause;
 		private TextView play_title;
 		private TextView play_artist;
 		private ImageView play_delete;

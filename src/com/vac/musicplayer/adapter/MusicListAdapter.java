@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Random;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.drawable.AnimationDrawable;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -34,6 +35,11 @@ public class MusicListAdapter extends BaseAdapter implements OnClickListener {
 	public static final int ANIMATION_START=0;
 	public static final int ANIMATION_PAUSE=1;
 	private int musicAnimation =-1;
+	
+	private int color;
+	public void setColor(int color){
+		this.color = color;
+	}
 
 	public MusicListAdapter(Context context) {
 		mContext = context;
@@ -108,45 +114,17 @@ public class MusicListAdapter extends BaseAdapter implements OnClickListener {
 				animaiton.start();
 				Log.d("TAG", "适配器中已经开始播放了动画~~~~~~~~~~");
 			}else if(musicAnimation==ANIMATION_PAUSE){
-				int random = new Random().nextInt(7)+1;
-				switch (random) {
-				case 1:
-					
-					break;
-				case 2:
-					
-					break;
-				case 3:
-					
-					break;
-				case 4:
-					
-					break;
-				case 5:
-					
-					break;
-					
-				case 6:
-					
-					break;
-				case 7:
-					
-					break;
-
-				default:
-					break;
-				}
-//				holder.popup_menu.setBackgroundResource(R.drawable.spectrum_4);
-//				holder.popup_menu.setBackgroundResource(R.drawable.start_music_animaiton);
 				animaiton = (AnimationDrawable) holder.popup_menu.getBackground();
 				animaiton.stop();
 				Log.d("TAG", "适配器中已经开始停止了动画~~~~~~~~~~");
 			}
 			
-			holder.title.setTextColor(mContext.getResources().getColor(R.color.progress_thumb));
+			holder.title.setTextColor(color);
+			holder.artist.setTextColor(color);
 		} else {
 			holder.popup_menu.setVisibility(View.GONE);
 			holder.title.setTextColor(mContext.getResources().getColor(R.color.black));
+			holder.artist.setTextColor(mContext.getResources().getColor(android.R.color.darker_gray));
 		}
 		holder.title.setText((position+1)+"."+getItem(position).getTitle());
 
