@@ -2,10 +2,8 @@ package com.vac.musicplayer.adapter;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.drawable.AnimationDrawable;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -96,12 +94,9 @@ public class MusicListAdapter extends BaseAdapter implements OnClickListener {
 					R.layout.item_music_list, parent, false);
 			holder = new ViewHolder();
 			holder.indicator = convertView.findViewById(R.id.play_indicator);
-			holder.title = (TextView) convertView
-					.findViewById(R.id.textview_music_title);
-			holder.artist = (TextView) convertView
-					.findViewById(R.id.textview_music_singer);
-			holder.popup_menu = (ImageView) convertView
-					.findViewById(R.id.track_popup_menu);
+			holder.title = (TextView) convertView.findViewById(R.id.textview_music_title);
+			holder.artist = (TextView) convertView.findViewById(R.id.textview_music_singer);
+			holder.popup_menu = (ImageView) convertView.findViewById(R.id.track_popup_menu);
 			convertView.setTag(holder);
 		} else {
 			holder = (ViewHolder) convertView.getTag();
@@ -109,7 +104,6 @@ public class MusicListAdapter extends BaseAdapter implements OnClickListener {
 		if (mActivateItemPos == position) {
 			holder.popup_menu.setVisibility(View.VISIBLE);
 			if(musicAnimation==ANIMATION_START){		
-//				holder.popup_menu.setBackgroundResource(R.drawable.start_music_animaiton);
 				animaiton = (AnimationDrawable) holder.popup_menu.getBackground();
 				animaiton.start();
 				Log.d("TAG", "适配器中已经开始播放了动画~~~~~~~~~~");
@@ -150,29 +144,29 @@ public class MusicListAdapter extends BaseAdapter implements OnClickListener {
 		v.showContextMenu();
 	}
 	
-	private void startMusicAnimation(int animationState,ImageView imageview){
-
-		if(animationState==ANIMATION_START){
-			startImageAni(imageview);
-		}else if(animationState==ANIMATION_PAUSE){
-			stopMusicAnimation(imageview);
-		}
-		
-	}
+//	private void startMusicAnimation(int animationState,ImageView imageview){
+//
+//		if(animationState==ANIMATION_START){
+//			startImageAni(imageview);
+//		}else if(animationState==ANIMATION_PAUSE){
+//			stopMusicAnimation(imageview);
+//		}
+//		
+//	}
 	
-	private void stopMusicAnimation(ImageView imageView){
-		Log.i("TAG", "停止了动画");
-		if(animaiton==null){
-			animaiton = (AnimationDrawable) imageView.getBackground();  
-		}
-		animaiton.stop();  
-	}
+//	private void stopMusicAnimation(ImageView imageView){
+//		Log.i("TAG", "停止了动画");
+//		if(animaiton==null){
+//			animaiton = (AnimationDrawable) imageView.getBackground();  
+//		}
+//		animaiton.stop();  
+//	}
 	
-	private void startImageAni(ImageView imageView){
-		Log.i("TAG", "启动了动画");
-		if(animaiton==null){
-			animaiton = (AnimationDrawable) imageView.getBackground();
-		}
-		animaiton.start();
-	}
+//	private void startImageAni(ImageView imageView){
+//		Log.i("TAG", "启动了动画");
+//		if(animaiton==null){
+//			animaiton = (AnimationDrawable) imageView.getBackground();
+//		}
+//		animaiton.start();
+//	}
 }

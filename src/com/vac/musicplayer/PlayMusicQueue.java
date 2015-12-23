@@ -44,10 +44,12 @@ public class PlayMusicQueue extends Activity implements OnPlayMusicStateListener
 	private MusicListQueueAdapter mAdapter =null;
 	private String music_list_type;
 	private int colorValue=-1;
+	private int playState;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.play_music_queue);
+		
 		if (getIntent().getIntExtra("color", -1)!=-1) {
 			colorValue = getIntent().getIntExtra("color", -1);
 		}else{
@@ -185,6 +187,9 @@ public class PlayMusicQueue extends Activity implements OnPlayMusicStateListener
 			int sharePosition = PreferHelper.readInt(PlayMusicQueue.this, Constant.SHARE_NMAE_MUSIC,
 					Constant.SHARE_NMAE_MUSIC_POSITION, -1);
 			mAdapter.setFlagInPosition( PlayState.Paused, sharePosition);
+		}else{
+			mCurrentMusicList.clear();
+			mAdapter.notifyDataSetChanged();
 		}
 		
 	}

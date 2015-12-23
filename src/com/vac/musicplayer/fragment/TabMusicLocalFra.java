@@ -26,9 +26,9 @@ import com.vac.musicplayer.fragment.localmusic.Albumfra;
 import com.vac.musicplayer.fragment.localmusic.FileDirectoryfra;
 import com.vac.musicplayer.fragment.localmusic.LocalMusicfra;
 import com.vac.musicplayer.fragment.localmusic.Singerfra;
+import com.vac.musicplayer.listener.OnPageAddListener;
 
-public class TabMusicLocalFra extends Fragment implements 
-OnCheckedChangeListener,OnPageChangeListener{
+public class TabMusicLocalFra extends Fragment implements OnCheckedChangeListener,OnPageChangeListener{
 	private final static String TAG = TabMusicLocalFra.class.getSimpleName();
 	private int valueColor = -1;
 	private ViewPager viewPager;
@@ -40,6 +40,7 @@ OnCheckedChangeListener,OnPageChangeListener{
 	
 	private TextView cursor;
 	
+	private OnPageAddListener mPageListener;
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
@@ -50,6 +51,11 @@ OnCheckedChangeListener,OnPageChangeListener{
 		super.onDetach();
 		Log.d(TAG, "TabMusicLocalFra->onDetach");
 	}
+	
+	public void setPageAddListener(OnPageAddListener listener){
+		this.mPageListener = listener;
+	}
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -66,7 +72,14 @@ OnCheckedChangeListener,OnPageChangeListener{
 		LocalMusicfra lm = new LocalMusicfra();
 		lm.setColor(valueColor);
     	list.add(lm);
-    	list.add(new Singerfra());
+    	
+    	Singerfra sf = new Singerfra();
+    	sf.setPageAddListener(mPageListener);
+    	Bundle bundle = new Bundle();
+    	bundle.putInt("color", valueColor);
+    	sf.setArguments(bundle);
+    	list.add(sf);
+    	
     	list.add(new Albumfra());
     	list.add(new FileDirectoryfra());
     	mAdapter = new MyPagerAdapter(fm, list);

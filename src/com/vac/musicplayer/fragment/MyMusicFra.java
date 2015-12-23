@@ -2,13 +2,13 @@ package com.vac.musicplayer.fragment;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -24,6 +24,7 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.vac.musicplayer.Main;
 import com.vac.musicplayer.R;
@@ -34,7 +35,7 @@ import com.vac.musicplayer.bean.Constant;
 import com.vac.musicplayer.bean.MusicGroup;
 import com.vac.musicplayer.db.MusicGroupDao;
 import com.vac.musicplayer.dialogactivity.ChangeSkinDialogActivity;
-import com.vac.musicplayer.fragment.MyMusicFra.OnLocalViewClickListener;
+import com.vac.musicplayer.listener.OnPageAddListener;
 import com.vac.musicplayer.listener.OnSkinChangerListener;
 import com.vac.musicplayer.myview.ListViewForScrollView;
 import com.vac.musicplayer.service.MusicService.MusicServiceBinder;
@@ -68,11 +69,11 @@ public class MyMusicFra extends Fragment implements OnClickListener , OnSkinChan
 	private TextView total_music_number_textivew;
 	
 	private int currColorValue = -1;
-	private OnLocalViewClickListener mListener;
+	private OnPageAddListener mPageListener;
 	private OnSkinChangerListener mSkinListener,mParentSkinListener;
 	
-	public void setOnLocalViewClickListener(OnLocalViewClickListener listener){
-		this.mListener = listener;
+	public void setOnLocalViewClickListener(OnPageAddListener listener){
+		this.mPageListener = listener;
 	}
 	public void setOnSkinChangerListener(OnSkinChangerListener listener,OnSkinChangerListener parentListener){
 		this.mSkinListener = listener;
@@ -157,16 +158,9 @@ public class MyMusicFra extends Fragment implements OnClickListener , OnSkinChan
 			
 			@Override
 			public void onClick(View arg0) {
-//				Intent intent = new Intent(getActivity(),MainActivity.class);
-//				intent.putExtra("color", currColorValue);
-//				startActivity(intent);
-				
-				mListener.onLocalViewClickListener();
+				mPageListener.onPageAddListener(OnPageAddListener.TABMUSICLOCALFRA,null);
 			}
 		});
-	}
-	public interface OnLocalViewClickListener{
-		public void onLocalViewClickListener();
 	}
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {

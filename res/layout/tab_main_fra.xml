@@ -52,6 +52,7 @@
             </RadioGroup>
 
             <ImageView
+                android:id="@+id/tab_main_fra_search"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="center_vertical"

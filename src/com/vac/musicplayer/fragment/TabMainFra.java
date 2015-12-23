@@ -13,7 +13,9 @@ import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -21,7 +23,7 @@ import android.widget.RadioGroup.OnCheckedChangeListener;
 
 import com.vac.musicplayer.R;
 import com.vac.musicplayer.bean.Constant;
-import com.vac.musicplayer.fragment.MyMusicFra.OnLocalViewClickListener;
+import com.vac.musicplayer.listener.OnPageAddListener;
 import com.vac.musicplayer.listener.OnSkinChangerListener;
 import com.vac.musicplayer.utils.PreferHelper;
 
@@ -35,13 +37,15 @@ public class TabMainFra extends Fragment implements OnSkinChangerListener {
 	private RadioGroup rg_navigation;
 	private LinearLayout content;
 	
-	private OnLocalViewClickListener mListener;
+	private OnPageAddListener mPageListener;
 	private OnSkinChangerListener mParentSkinChangerListener;
+	
+	private ImageView searchView;
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
 		Log.i(TAG, "TabMainFra->onAttach");
-		mListener = (OnLocalViewClickListener) activity;
+		mPageListener = (OnPageAddListener) activity;
 		mParentSkinChangerListener = (OnSkinChangerListener) activity;
 	}
 	@Override
@@ -60,10 +64,12 @@ public class TabMainFra extends Fragment implements OnSkinChangerListener {
 	private void initView(View view) {
 		viewPager = (ViewPager) view.findViewById(R.id.main_viewPager);
 		fraList.clear();
+		
 		MyMusicFra musicFra = new MyMusicFra();
-		musicFra.setOnLocalViewClickListener(mListener);
+		musicFra.setOnLocalViewClickListener(mPageListener);
 		musicFra.setOnSkinChangerListener(this,mParentSkinChangerListener);
 		fraList.add(musicFra);
+		
 		NetMusicFra netMusicFra = new NetMusicFra();
 		fraList.add(netMusicFra);
 		mAdapter = new MyFragmentPagerAdapter(getChildFragmentManager());
@@ -120,6 +126,15 @@ public class TabMainFra extends Fragment implements OnSkinChangerListener {
 			content.setBackgroundColor(colorValue);
 		}
 		
+		
+		searchView = (ImageView) view.findViewById(R.id.tab_main_fra_search);
+		searchView.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				mPageListener.onPageAddListener(OnPageAddListener.SEARCHFRAGMENT, null);
+			}
+		});
 	}
 	private class MyFragmentPagerAdapter extends FragmentPagerAdapter{
 

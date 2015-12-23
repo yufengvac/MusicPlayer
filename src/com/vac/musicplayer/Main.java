@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
 import android.provider.MediaStore;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -26,9 +27,11 @@ import android.widget.TextView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.vac.musicplayer.bean.Constant;
 import com.vac.musicplayer.bean.Music;
-import com.vac.musicplayer.fragment.MyMusicFra.OnLocalViewClickListener;
+import com.vac.musicplayer.fragment.SearchFragment;
 import com.vac.musicplayer.fragment.TabMainFra;
 import com.vac.musicplayer.fragment.TabMusicLocalFra;
+import com.vac.musicplayer.fragment.localmusic.ArtistFragment;
+import com.vac.musicplayer.listener.OnPageAddListener;
 import com.vac.musicplayer.listener.OnPlayMusicStateListener;
 import com.vac.musicplayer.listener.OnSkinChangerListener;
 import com.vac.musicplayer.loader.MusicLoader;
@@ -41,7 +44,7 @@ import com.vac.musicplayer.service.MusicService.MusicServiceBinder;
 import com.vac.musicplayer.service.MusicService.PlayState;
 import com.vac.musicplayer.utils.PreferHelper;
 
-public class Main extends FragmentActivity implements OnPlayMusicStateListener,OnLocalViewClickListener,OnSkinChangerListener{
+public class Main extends FragmentActivity implements OnPlayMusicStateListener,OnPageAddListener,OnSkinChangerListener{
 	private final static String TAG = Main.class.getSimpleName();
 	private static final int PRIVATE_LOCAL_MUSIC=100;
 	
@@ -72,6 +75,13 @@ public class Main extends FragmentActivity implements OnPlayMusicStateListener,O
 	
 	private int currentColor;
 	
+	
+	
+	private Fragment mContent;
+	
+	private FragmentManager fm;
+	
+	
 	private ServiceConnection mServiceConnection = new ServiceConnection() {
 		
 		@Override
@@ -87,19 +97,19 @@ public class Main extends FragmentActivity implements OnPlayMusicStateListener,O
 			currentMusicBundle = mBinder.getCurrentPlayMusicInfo();
 			
 			mBinder.registerOnPlayMusicStateListener(Main.this);
-			toLoadMusic();
-//			Music mMusic = null;
-//			currentMusicBundle = mBinder.getCurrentPlayMusicInfo();
-//			if (currentMusicBundle!=null) {
-//				int playState = currentMusicBundle.getInt(Constant.PLAYING_MUSIC_STATE);
-//				if (playState==MusicService.PlayState.Playing||playState == MusicService.PlayState.Paused) {
-//					mMusic = currentMusicBundle.getParcelable(Constant.PLAYING_MUSIC_ITEM);
-//					song_name_textview.setText(mMusic.getTitle());
-//					artist_name_textview.setText(mMusic.getArtist());
-//				}else{
-//					toLoadMusic();
-//				}
-//			}
+//			toLoadMusic();
+			Music mMusic = null;
+			currentMusicBundle = mBinder.getCurrentPlayMusicInfo();
+			if (currentMusicBundle!=null) {
+				int playState = currentMusicBundle.getInt(Constant.PLAYING_MUSIC_STATE);
+				if (playState==MusicService.PlayState.Playing||playState == MusicService.PlayState.Paused) {
+					mMusic = currentMusicBundle.getParcelable(Constant.PLAYING_MUSIC_ITEM);
+					song_name_textview.setText(mMusic.getTitle());
+					artist_name_textview.setText(mMusic.getArtist());
+				}else{
+					toLoadMusic();
+				}
+			}
 		}
 	};
 	
@@ -111,12 +121,14 @@ public class Main extends FragmentActivity implements OnPlayMusicStateListener,O
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 		initView();
-		FragmentManager fm = getSupportFragmentManager();
+		fm = getSupportFragmentManager();
 		FragmentTransaction ft = fm.beginTransaction();
 		tmf = new TabMainFra();
-		ft.add(R.id.main_content, tmf);
-		ft.show(tmf);
-		ft.commit();
+//		ft.add(R.id.main_content, tmf);
+//		ft.show(tmf);
+//		ft.commit();
+//		mContent = tmf;
+		ft.replace(R.id.main_content, tmf).commit();
 		
 		String urlAndColor = PreferHelper.readString(this.getApplicationContext(), Constant.MAIN_BG_COLOR, Constant.MAIN_BG_COLOR);
 		if (urlAndColor!=null) {
@@ -129,6 +141,7 @@ public class Main extends FragmentActivity implements OnPlayMusicStateListener,O
 		myPausebtn.setColor(currentColor);
 		myMenubtn.setColor(currentColor);
 		main_progress.setProgressColor(currentColor);
+		
 	}
 	private void initView() {
 	
@@ -353,25 +366,78 @@ public class Main extends FragmentActivity implements OnPlayMusicStateListener,O
 		main_progress.setProgress((int)(currenMillis*1.0/mMusic.getDuration() *main_progress.getMax()));
 	}
 	@Override
-	public void onLocalViewClickListener() {
-		TabMusicLocalFra tmlf = new TabMusicLocalFra();
-		Bundle bundle = new Bundle();
-		bundle.putInt("color", currentColor);
-		tmlf.setArguments(bundle);
-		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-			transaction.setCustomAnimations(R.anim.push_right_in, R.anim.push_right_in, 
-				R.anim.push_right_out, R.anim.push_right_out);
-		transaction.add(R.id.main_content, tmlf);
-		transaction.hide(tmf);
-		transaction.show(tmlf);
-		transaction.addToBackStack(null);
-		transaction.commit();
+	public void onPageAddListener(int type,Bundle b) {
+		switch (type) {
+		case OnPageAddListener.TABMUSICLOCALFRA:
+			Log.d(TAG, "onPageAddListener-->"+OnPageAddListener.TABMUSICLOCALFRA);
+			TabMusicLocalFra tmlf = new TabMusicLocalFra();
+			Bundle bundle = new Bundle();
+			bundle.putInt("color", currentColor);
+			tmlf.setArguments(bundle);
+			tmlf.setPageAddListener(this);
+			FragmentTransaction transaction = fm.beginTransaction();
+				transaction.setCustomAnimations(R.anim.push_right_in, R.anim.push_right_in, 
+					R.anim.push_right_out, R.anim.push_right_out);
+//			transaction.add(R.id.main_content, tmlf);
+//			transaction.hide(tmf);
+//			if (af_!=null) {
+////				transaction.hide(af_);
+//				transaction.remove(af_);
+//			}
+//			transaction.show(tmlf);
+//			transaction.addToBackStack(null);
+//			transaction.commit();
+			transaction.replace(R.id.main_content, tmlf).addToBackStack(null).commit();
+			
+//			switchContent(tmf, tmlf);
+			break;
+		case OnPageAddListener.SONGOFSINGERARTIST:
+			Log.d(TAG, "onPageAddListener-->"+OnPageAddListener.SONGOFSINGERARTIST);
+			ArtistFragment af = new ArtistFragment();
+			af.setArguments(b);
+			FragmentTransaction transaction1 = fm.beginTransaction();
+//			transaction1.add(R.id.main_content, af);
+//			transaction1.hide(tmf);
+//			transaction1.hide(tmlf_);
+//			transaction1.show(af);
+//			transaction1.addToBackStack(null);
+//			transaction1.commit();
+			
+			transaction1.replace(R.id.main_content, af).addToBackStack(null).commit();
+			break;
+		case OnPageAddListener.SEARCHFRAGMENT:
+			Log.d(TAG, "onPageAddListener-->"+OnPageAddListener.SEARCHFRAGMENT);
+			SearchFragment sf = new SearchFragment();
+			Bundle sf_b = new Bundle();
+			sf_b.putInt("color", currentColor);
+			sf.setArguments(sf_b);
+			FragmentTransaction transaction2 = fm.beginTransaction();
+			transaction2.setCustomAnimations(R.anim.push_right_in, R.anim.push_right_in, 
+					R.anim.push_right_out, R.anim.push_right_out);
+			transaction2.replace(R.id.main_content, sf).addToBackStack(null).commit();
+			break;
+
+		default:
+			break;
+		}
 	}
+	
+	public void switchContent(Fragment from, Fragment to) {
+        if (mContent != to) {
+            mContent = to;
+            FragmentTransaction transaction = fm.beginTransaction().setCustomAnimations(
+                    R.anim.push_right_in, R.anim.push_right_out);
+            if (!to.isAdded()) {    // 先判断是否被add过
+                transaction.hide(from).add(R.id.main_content, to).commit(); // 隐藏当前的fragment，add下一个到Activity中
+            } else {
+                transaction.hide(from).show(to).commit(); // 隐藏当前的fragment，显示下一个
+            }
+        }
+    }
 
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode==KeyEvent.KEYCODE_BACK) {
-			
 		}
 		return super.onKeyDown(keyCode, event);
 	}

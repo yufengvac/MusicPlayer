@@ -2,7 +2,6 @@ package com.vac.musicplayer.fragment.localmusic;
 
 import java.util.List;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
@@ -16,11 +15,11 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
-import com.vac.musicplayer.ArtistActivity;
 import com.vac.musicplayer.R;
 import com.vac.musicplayer.adapter.ArtistAdapter;
 import com.vac.musicplayer.bean.Artist;
 import com.vac.musicplayer.bean.Constant;
+import com.vac.musicplayer.listener.OnPageAddListener;
 import com.vac.musicplayer.loader.ArtistLoader;
 
 public class Singerfra extends Fragment implements LoaderCallbacks<List<Artist>> {
@@ -30,6 +29,8 @@ public class Singerfra extends Fragment implements LoaderCallbacks<List<Artist>>
 	private final int ARTIST_RETRIEVE_LOADER = 0;
 	private String mSortOrder = MediaStore.Audio.Artists.NUMBER_OF_TRACKS
 			+ " desc";
+	
+	private OnPageAddListener mPageListener;
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -50,11 +51,17 @@ public class Singerfra extends Fragment implements LoaderCallbacks<List<Artist>>
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
-				Intent intent = new Intent(getActivity(),ArtistActivity.class);
-				intent.putExtra(Constant.ARTIST_LISTVIEW_ITEM, mAdapter.getItem(arg2));
-				startActivity(intent);
+				Bundle bundle = new Bundle();
+				bundle.putParcelable(Constant.ARTIST_LISTVIEW_ITEM, mAdapter.getItem(arg2));
+				mPageListener.onPageAddListener(OnPageAddListener.SONGOFSINGERARTIST,bundle);
+//				Intent intent = new Intent(getActivity(),ArtistActivity.class);
+//				startActivity(intent);
 			}
 		});
+	}
+	
+	public void setPageAddListener(OnPageAddListener listener){
+		this.mPageListener = listener;
 	}
 
 	@Override

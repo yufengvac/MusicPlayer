@@ -38,7 +38,7 @@
             android:launchMode="singleTop"
               android:theme="@style/MyDialogStyleBottom"></activity>
         
-        <activity android:name="com.vac.musicplayer.ArtistActivity"
+        <activity android:name="com.vac.musicplayer.ArtistFragment"
             android:launchMode="singleTop"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar" ></activity>
         

@@ -78,4 +78,21 @@ public class Constant {
 	/***我创建的歌单*/
 	public static final String MY_CREATE_SONG_LIST ="my_create_song_list";
 	
+	
+	/**搜索音乐*/
+//	http://s.music.163.com/search/get/
+//		获取方式：GET
+//		参数：
+//		src: lofter //可为空
+//		type: 1
+//		filterDj: true|false //可为空
+//		s: //关键词
+//		limit: 10 //限制返回结果数
+//		offset: 0 //偏移
+//		callback: //为空时返回json，反之返回jsonp callback
+//	http://s.music.163.com/search/get?type=1&filterDj=false&s=山水之间/许嵩
+	public static final String SEARCH_MUSIC = "http://s.music.163.com/search/get?type=1&filterDj=false&s=";
+	
+	/**歌曲详情*/
+//	http://music.163.com/api/song/detail/?id=33419619&ids=[33419619]
 }

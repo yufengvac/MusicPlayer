@@ -8,19 +8,27 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.vac.musicplayer.R;
+import com.vac.musicplayer.application.MyApplication;
 import com.vac.musicplayer.bean.Artist;
 
 public class ArtistAdapter extends BaseAdapter {
 	private List<Artist> mData = null;
 	private Context mContext = null;
+	private ImageLoader mImageLoader ;
+	private DisplayImageOptions mOptions;
 
 	/** 默认初始化构造一个长度为0的数据列表 */
 	public ArtistAdapter(Context context) {
 		mContext = context;
 		mData = new ArrayList<Artist>();
+		mImageLoader = ImageLoader.getInstance();
+		mOptions = new MyApplication().getImageOptions(R.drawable.avatar, 0);
 	}
 
 	public void setData(List<Artist> data) {
@@ -66,6 +74,7 @@ public class ArtistAdapter extends BaseAdapter {
 					.findViewById(R.id.artist_name);
 			holder.num_of_tracks = (TextView) convertView
 					.findViewById(R.id.num_of_tracks);
+			holder.headpotriate = (ImageView) convertView.findViewById(R.id.item_artist_head);
 			convertView.setTag(holder);
 		} else {
 			holder = (ViewHolder) convertView.getTag();
@@ -77,14 +86,15 @@ public class ArtistAdapter extends BaseAdapter {
 		} else {
 			holder.artist_name.setText(mData.get(position).getArtistName());
 		}
-		holder.num_of_tracks.setText(""
-				+ mData.get(position).getNumberOfTracks());
-
+		holder.num_of_tracks.setText(mData.get(position).getNumberOfTracks()+"首");
+//		String url = 
+//		mImageLoader.displayImage(uri, holder.headpotriate, mOptions);
 		return convertView;
 	}
 
 	static class ViewHolder {
 		TextView artist_name;
 		TextView num_of_tracks;
+		ImageView headpotriate;
 	}
 }

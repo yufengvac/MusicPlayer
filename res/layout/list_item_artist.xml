@@ -1,35 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:gravity="center_vertical"
-    android:paddingBottom="10dp"
-    android:paddingTop="10dp" >
+    android:orientation="horizontal"
+    android:padding="5dp"
+    android:background="@drawable/line_whitebg_bottom">
 
-    <TextView
-        android:id="@+id/num_of_tracks"
+    <ImageView
+        android:id="@+id/item_artist_head"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:contentDescription="@string/app_name"
+        android:scaleType="centerCrop"
+        android:src="@drawable/avatar" />
+
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingLeft="10dp"
+        android:layout_weight="1" >
+
+        <TextView
+            android:id="@+id/num_of_tracks"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/black"
+            android:text=""
+            android:textSize="17sp"
+            android:textIsSelectable="false" />
+
+        <TextView
+            android:id="@+id/artist_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/num_of_tracks"
+            android:ellipsize="marquee"
+            android:singleLine="true"
+            android:layout_marginTop="5dp"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/grey_dark"
+            android:text=""
+            android:textSize="13sp"
+            android:textIsSelectable="false" />
+    </RelativeLayout>
+    <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:layout_marginRight="15dp"
-        android:singleLine="true"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="@color/black"
-        android:textIsSelectable="false" />
+        android:layout_gravity="center"
+        android:contentDescription="@string/app_name"
+        android:src="@drawable/img_setting_right_arrow"/>
 
-    <TextView
-        android:id="@+id/artist_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_centerVertical="true"
-        android:layout_marginLeft="15dp"
-        android:layout_toLeftOf="@id/num_of_tracks"
-        android:ellipsize="marquee"
-        android:singleLine="true"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="@color/black"
-        android:textIsSelectable="false" />
-
-</RelativeLayout>
+</LinearLayout>

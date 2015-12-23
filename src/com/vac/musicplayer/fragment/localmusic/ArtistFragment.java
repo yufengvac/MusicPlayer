@@ -1,4 +1,4 @@
-package com.vac.musicplayer;
+package com.vac.musicplayer.fragment.localmusic;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,15 +12,18 @@ import android.os.Environment;
 import android.os.IBinder;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Audio.Media;
-import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.vac.musicplayer.R;
 import com.vac.musicplayer.adapter.MusicListAdapter;
 import com.vac.musicplayer.bean.Artist;
 import com.vac.musicplayer.bean.Constant;
@@ -30,11 +33,10 @@ import com.vac.musicplayer.loader.MusicLoader;
 import com.vac.musicplayer.service.MusicService;
 import com.vac.musicplayer.service.MusicService.MusicServiceBinder;
 import com.vac.musicplayer.service.MusicService.PlayState;
-import com.vac.musicplayer.utils.PreferHelper;
 
-public class ArtistActivity extends FragmentActivity implements LoaderCallbacks<List<Music>>, OnItemClickListener,OnPlayMusicStateListener{
+public class ArtistFragment extends Fragment implements LoaderCallbacks<List<Music>>, OnItemClickListener,OnPlayMusicStateListener{
 
-	private static final String TAG = ArtistActivity.class.getSimpleName();
+	private static final String TAG = ArtistFragment.class.getSimpleName();
 	private ListView artist_listView;
 	private Artist artist;
 	private MusicListAdapter mAdapter=null;
@@ -45,25 +47,27 @@ public class ArtistActivity extends FragmentActivity implements LoaderCallbacks<
 	private Bundle currentMusicBundle;
 	private List<Music> mCurrentMusicList = new ArrayList<Music>();
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.artist_activity);
-		artist = getIntent().getParcelableExtra(Constant.ARTIST_LISTVIEW_ITEM);
-		initView();
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		View view = inflater.inflate(R.layout.artist_activity, null);
+		Bundle bundle = getArguments();
+		artist = (Artist) bundle.get(Constant.ARTIST_LISTVIEW_ITEM);
+		initView(view);
+		return view;
 	}
 	@Override
 	public void onResume() {
 		super.onResume();
 		if(Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)){
-			getSupportLoaderManager().initLoader(PRIVATE_LOCAL_MUSIC, null, this);
+			getLoaderManager().initLoader(PRIVATE_LOCAL_MUSIC, null, this);
 		}else{//SD卡不可用
-			Toast.makeText(ArtistActivity.this, "SD卡不可用", Toast.LENGTH_SHORT).show();
+			Toast.makeText(getActivity(), "SD卡不可用", Toast.LENGTH_SHORT).show();
 		}
 	}
 	
-	private void initView(){
-		artist_listView = (ListView) findViewById(R.id.artist_activity_listview);
-		mAdapter  = new MusicListAdapter(ArtistActivity.this);
+	private void initView(View view){
+		artist_listView = (ListView) view.findViewById(R.id.artist_activity_listview);
+		mAdapter  = new MusicListAdapter(getActivity());
 		artist_listView.setAdapter(mAdapter);
 		artist_listView.setOnItemClickListener(this);
 	}
@@ -110,13 +114,13 @@ public class ArtistActivity extends FragmentActivity implements LoaderCallbacks<
 		sb.append("1=1");
 		sb.append(" and " +Media.ARTIST + " = '"
 				+ artist.getArtistName() + "'");
-		return new MusicLoader(ArtistActivity.this,sb.toString(),null,MediaStore.Audio.Media.DEFAULT_SORT_ORDER);
+		return new MusicLoader(getActivity(),sb.toString(),null,MediaStore.Audio.Media.DEFAULT_SORT_ORDER);
 	}
 
 	@Override
 	public void onStart() {
 		super.onStart();
-		bindService(new Intent(ArtistActivity.this,MusicService.class), mServiceConnection, Context.BIND_AUTO_CREATE);
+		getActivity().bindService(new Intent(getActivity(),MusicService.class), mServiceConnection, Context.BIND_AUTO_CREATE);
 	}
 	private ServiceConnection mServiceConnection = new ServiceConnection() {
 		
@@ -132,7 +136,7 @@ public class ArtistActivity extends FragmentActivity implements LoaderCallbacks<
 			
 			currentMusicBundle = mBinder.getCurrentPlayMusicInfo();
 			
-			mBinder.registerOnPlayMusicStateListener(ArtistActivity.this);
+			mBinder.registerOnPlayMusicStateListener(ArtistFragment.this);
 			if(currentMusicBundle!=null){
 				Log.d(TAG, "在此onServiceConnected设置currentMusicBundle");
 				Music mMusic = null;
@@ -140,7 +144,7 @@ public class ArtistActivity extends FragmentActivity implements LoaderCallbacks<
 				int currentPlayState = currentMusicBundle.getInt(Constant.PLAYING_MUSIC_STATE);
 				Log.v(TAG, "LocalMusicFragment.class====+currentPlayState==="+currentPlayState);
 //				if(currentPlayState==PlayState.Stopped){
-//					int SharePosition = PreferHelper.readInt(ArtistActivity.this, Constant.SHARE_NMAE_MUSIC,
+//					int SharePosition = PreferHelper.readInt(getActivity(), Constant.SHARE_NMAE_MUSIC,
 //							Constant.SHARE_NMAE_MUSIC_POSITION, -1);
 //					mAdapter.setSpecifiedIndicator(MusicListAdapter.ANIMATION_PAUSE,SharePosition);
 //					int offest = artist_listView.getHeight();
@@ -173,7 +177,7 @@ public class ArtistActivity extends FragmentActivity implements LoaderCallbacks<
 		}
 		if(mServiceConnection!=null){
 			Log.v(TAG, "LocalMusicFragment中解绑服务");
-			unbindService(mServiceConnection);
+			getActivity().unbindService(mServiceConnection);
 			isHasList =false;
 		}
 	}
@@ -220,12 +224,12 @@ public class ArtistActivity extends FragmentActivity implements LoaderCallbacks<
 			mBinder.setCurrentPlayList(mCurrentMusicList);
 		}
 		isHasList =false;
-		Intent intent = new Intent(ArtistActivity.this,MusicService.class);
+		Intent intent = new Intent(getActivity(),MusicService.class);
 		intent.setAction(MusicService.ACTION_PLAY);
 		intent.putExtra(Constant.CLICK_MUSIC_LIST, true);
 		intent.putExtra(Constant.PLAYLIST_MUSIC_REQUEST_ID, mAdapter.getItemId(position));
 		intent.putExtra(Constant.MUSIC_LIST_TYPE, artist.getArtistName());
-		startService(intent);
+		getActivity().startService(intent);
 	}
 	
 	/**
@@ -239,11 +243,11 @@ public class ArtistActivity extends FragmentActivity implements LoaderCallbacks<
 			mBinder.setCurrentPlayList(mCurrentMusicList);
 		}
 		isHasList =false;
-		Intent intent = new Intent(ArtistActivity.this,MusicService.class);
+		Intent intent = new Intent(getActivity(),MusicService.class);
 		intent.setAction(MusicService.ACTION_PLAY);
 		intent.putExtra(Constant.CLICK_MUSIC_LIST, true);
 		intent.putExtra(Constant.PLAYLIST_MUSIC_REQUEST_ID, mAdapter.getItemId(0));
 		intent.putExtra(Constant.MUSIC_LIST_TYPE, artist.getArtistName());
-		startService(intent);
+		getActivity().startService(intent);
 	}
 }
