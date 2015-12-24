@@ -18,10 +18,12 @@
             android:paddingRight="10dp"
             android:src="@drawable/back_sele"/>
         <EditText
+            android:id="@+id/search_fragment_edit"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
+            android:singleLine="true"
             android:background="@drawable/search_edit_bg"
             android:hint="搜索歌手/歌曲"
             android:paddingLeft="35dp" />
@@ -37,5 +39,15 @@
             android:paddingRight="15dp"
             android:src="@drawable/selector_main_head_search" />
     </LinearLayout>
+    
+   <!--  <zrc.widget.ZrcListView
+        android:id="@+id/search_fra_zrclistview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/> -->
+        <LinearLayout
+            android:id="@+id/search_fragment_content" 
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"></LinearLayout>
 
 </LinearLayout>

@@ -91,7 +91,8 @@ public class Constant {
 //		offset: 0 //偏移
 //		callback: //为空时返回json，反之返回jsonp callback
 //	http://s.music.163.com/search/get?type=1&filterDj=false&s=山水之间/许嵩
-	public static final String SEARCH_MUSIC = "http://s.music.163.com/search/get?type=1&filterDj=false&s=";
+//  http://s.music.163.com/search/get?type=1&filterDj=false&s=许嵩&limit=20&offset=0
+	public static final String SEARCH_MUSIC = "http://s.music.163.com/search/get";
 	
 	/**歌曲详情*/
 //	http://music.163.com/api/song/detail/?id=33419619&ids=[33419619]
