@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="10dp"
+    android:background="@drawable/line_whitebg_bottom"
+    android:orientation="horizontal" >
+    
+    <TextView
+        android:id="@+id/item_search_result_num" 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:textSize="16sp"
+        android:textColor="@color/grey_white_"
+        android:text="1"/>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginLeft="10dp"
+        android:orientation="vertical" >
+
+        <LinearLayout 
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+        <TextView
+            android:id="@+id/item_search_result_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="千古"
+            android:singleLine="true"
+            android:textSize="17sp"
+            android:textColor="@color/black" />
+        <TextView 
+            android:id="@+id/item_search_result_hq"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="4dp"
+            android:visibility="gone"
+            android:text="HQ"/>
+        <TextView 
+            android:id="@+id/item_search_result_mv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="4dp"
+            android:visibility="gone"
+            android:text="MV"/>
+	</LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:id="@+id/item_search_result_artist"
+                android:layout_width="wrap_content"
+                android:text="许嵩"
+                android:singleLine="true"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/item_search_result_album"
+                android:layout_width="wrap_content"
+                android:text="·不如吃茶去"
+                android:singleLine="true"
+                android:maxEms="10"
+                android:textColor="@color/grey_white_"
+                android:layout_height="wrap_content" />
+            <ImageView 
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="5dp"
+                android:src="@drawable/img_favorite_count"/>
+            <TextView
+                android:id="@+id/item_search_result_favor"
+                android:layout_width="wrap_content"
+                android:text="3.4万"
+                android:textSize="10sp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="3dp"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+    </LinearLayout>
+    <ImageView 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:src="@drawable/img_arrow_down"/>
+
+</LinearLayout>

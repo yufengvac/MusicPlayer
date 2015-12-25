@@ -18,6 +18,7 @@ import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.nostra13.universalimageloader.core.download.BaseImageDownloader;
 import com.nostra13.universalimageloader.utils.StorageUtils;
 import com.vac.musicplayer.bean.Constant;
+import com.vac.musicplayer.utils.ACache;
 
 public class MyApplication extends Application {
 
@@ -49,6 +50,7 @@ public class MyApplication extends Application {
 	    	        .writeDebugLogs() // 打印debug log
 	    	        .build(); //开始构建
 	    	ImageLoader.getInstance().init(config); 
+	    	
 	}
 	
 	public DisplayImageOptions getImageOptions(int resId,int time){

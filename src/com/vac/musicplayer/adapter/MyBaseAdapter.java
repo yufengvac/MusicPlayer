@@ -9,7 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.vac.musicplayer.R;
+import com.vac.musicplayer.application.MyApplication;
 /***
  * @title MyBaseAdapter<T>
  * @author vac
@@ -23,11 +26,13 @@ public abstract class MyBaseAdapter<T> extends BaseAdapter {
 	protected List<T> mData = new ArrayList<T>();
 	protected LayoutInflater mlayoutInflater;
 	protected ImageLoader mImageLoader ;
+	protected DisplayImageOptions mOptions;
 	
 	public MyBaseAdapter(Context mContext) {
 		this.mContext = mContext;
 		mlayoutInflater = LayoutInflater.from(mContext);
 		mImageLoader = ImageLoader.getInstance();
+		mOptions = new MyApplication().getImageOptions(R.drawable.launcher, 0);
 	}
 
 	@Override

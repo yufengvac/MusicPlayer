@@ -75,6 +75,9 @@ public class Constant {
 	/**图片缓存地址*/
 	public static final String IMAGECACHE = Environment.getExternalStorageDirectory().getAbsolutePath()+"yufengvac"+File.separator+"cache"+File.separator+"image";
 	
+	/**文件缓存地址*/
+	public static final String FILECACHE = Environment.getExternalStorageDirectory().getAbsolutePath()+"yufengvac"+File.separator+"cache"+File.separator+"file";
+	
 	/***我创建的歌单*/
 	public static final String MY_CREATE_SONG_LIST ="my_create_song_list";
 	
@@ -94,6 +97,47 @@ public class Constant {
 //  http://s.music.163.com/search/get?type=1&filterDj=false&s=许嵩&limit=20&offset=0
 	public static final String SEARCH_MUSIC = "http://s.music.163.com/search/get";
 	
+	/**
+	 * 天天动听接口 搜索单曲
+	 * http://search.dongting.com/song/search?uid=000000000000000
+	 * & page=1&id=4241599212142040&from=android&resolution=720x1280
+	 * &net=2&api_version=1.0&utdid=VVwoC4pkXHwDAKnEMyIDH0ka
+	 * &longitude=0.0&user_id=0&splus=4.4.4%252F19&tid=0
+	 * &client_id=a4b1447f2bf664a4640c5af030e9fed1&f=f0&os=4.4.4
+	 * &app=ttpod
+	 * &rom=generic%252Fvbox86p%252Fvbox86p%253A4.4.4%252FKTU84P%252Feng.buildbot.20150216.120346%253Auserdebug%252Ftest-keys
+	 * &alf=alf10001791&imei=000000000000000&agent=none&size=50&v=v8.2.0.2015091720
+	 * &s=s200&ram=1028940+kB
+	 * &q=%E8%AE%B8%E5%B5%A9
+	 * &active=0&latitude=0.0
+	 * &language=zh&imsi=310260000000000
+	 * &mid=HTC%2BOne%2B-%2B4.4.4%2B-%2BAPI%2B19%2B-%2B1080x1920
+	 */
+	public static final String TING_SINGER_SONG = "http://search.dongting.com/song/search?uid=000000000000000&&id=4241599212142040&from=android&resolution=720x1280&net=2&api_version=1.0&utdid=VVwoC4pkXHwDAKnEMyIDH0ka&longitude=0.0&user_id=0&splus=4.4.4%252F19&tid=0&client_id=a4b1447f2bf664a4640c5af030e9fed1&f=f0&os=4.4.4&app=ttpod&rom=generic%252Fvbox86p%252Fvbox86p%253A4.4.4%252FKTU84P%252Feng.buildbot.20150216.120346%253Auserdebug%252Ftest-keys&alf=alf10001791&imei=000000000000000&agent=none&size=50&v=v8.2.0.2015091720&s=s200&ram=1028940+kB&active=0&latitude=0.0&language=zh&imsi=310260000000000&mid=HTC%2BOne%2B-%2B4.4.4%2B-%2BAPI%2B19%2B-%2B1080x1920";
+	
+	/**搜索专辑
+	 * http://search.dongting.com/album/search?uid=000000000000000&f=f0&app=ttpod&hid=4241599212142040&rom=generic%252Fvbox86p%252Fvbox86p%253A4.4.4%252FKTU84P%252Feng.buildbot.20150216.120346%253Auserdebug%252Ftest-keys&alf=alf10001791&resolution=720x1280&net=2&size=50&v=v8.2.0.2015091720&utdid=VVwoC4pkXHwDAKnEMyIDH0ka&s=s200&ram=1028940+kB&page=1&q=%E8%AE%B8%E5%B5%A9&active=0&tid=0&mid=HTC%2BOne%2B-%2B4.4.4%2B-%2BAPI%2B19%2B-%2B1080x1920&imsi=310260000000000&splus=4.4.4%252F19
+	 * page = 1
+	 * q = 许嵩
+	 * */
+	public static final String TING_ALBUM ="http://search.dongting.com/album/search?uid=000000000000000&f=f0&app=ttpod&hid=4241599212142040&rom=generic%252Fvbox86p%252Fvbox86p%253A4.4.4%252FKTU84P%252Feng.buildbot.20150216.120346%253Auserdebug%252Ftest-keys&alf=alf10001791&resolution=720x1280&net=2&size=50&v=v8.2.0.2015091720&utdid=VVwoC4pkXHwDAKnEMyIDH0ka&s=s200&ram=1028940+kB&active=0&tid=0&mid=HTC%2BOne%2B-%2B4.4.4%2B-%2BAPI%2B19%2B-%2B1080x1920&imsi=310260000000000&splus=4.4.4%252F19";
+	
+	
+	/**
+	 * 搜索歌单
+	 * http://search.dongting.com/songlist/search?uid=000000000000000&f=f0&app=ttpod&rom=generic%252Fvbox86p%252Fvbox86p%253A4.4.4%252FKTU84P%252Feng.buildbot.20150216.120346%253Auserdebug%252Ftest-keys&hid=4241599212142040&alf=alf10001791&resolution=720x1280&net=2&size=50&v=v8.2.0.2015091720&utdid=VVwoC4pkXHwDAKnEMyIDH0ka&s=s200&ram=1028940+kB&page=1&q=xusong&active=0&mid=HTC%2BOne%2B-%2B4.4.4%2B-%2BAPI%2B19%2B-%2B1080x1920&splus=4.4.4%252F19&imsi=310260000000000&tid=0
+	 * page = 1
+	 * q = 许嵩
+	 */
+	public static final String TING_SONGLIST = "http://search.dongting.com/songlist/search?uid=000000000000000&f=f0&app=ttpod&rom=generic%252Fvbox86p%252Fvbox86p%253A4.4.4%252FKTU84P%252Feng.buildbot.20150216.120346%253Auserdebug%252Ftest-keys&hid=4241599212142040&alf=alf10001791&resolution=720x1280&net=2&size=50&v=v8.2.0.2015091720&utdid=VVwoC4pkXHwDAKnEMyIDH0ka&s=s200&ram=1028940+kB&active=0&mid=HTC%2BOne%2B-%2B4.4.4%2B-%2BAPI%2B19%2B-%2B1080x1920&splus=4.4.4%252F19&imsi=310260000000000&tid=0";
+	
+	/**
+	 * 搜索MV
+	 * http://search.dongting.com/mv/search?uid=000000000000000&f=f0&app=ttpod&hid=4241599212142040&alf=alf10001791&net=2&size=50&v=v8.2.0.2015091720&utdid=VVwoC4pkXHwDAKnEMyIDH0ka&s=s200&page=1&q=%E8%AE%B8%E5%B5%A9&imsi=310260000000000&tid=0
+	 * page = 1
+	 * q = 许嵩
+	 */
+	public static final String TING_MV = "http://search.dongting.com/mv/search?uid=000000000000000&f=f0&app=ttpod&hid=4241599212142040&alf=alf10001791&net=2&size=50&v=v8.2.0.2015091720&utdid=VVwoC4pkXHwDAKnEMyIDH0ka&s=s200&imsi=310260000000000&tid=0";
 	/**歌曲详情*/
 //	http://music.163.com/api/song/detail/?id=33419619&ids=[33419619]
 }

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/line_whitebg_bottom"
+    android:orientation="horizontal"
+    android:padding="10dp" >
+
+    <RelativeLayout 
+        android:layout_width="160dp"
+        android:layout_height="90dp">
+    <ImageView
+        android:id="@+id/item_search_mv_pic"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop" />
+    <TextView
+        android:id="@+id/item_search_mv_size" 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"   
+        android:background="#4000"  
+        android:textColor="@color/white"
+        android:paddingLeft="4dp"
+        android:paddingRight="4dp"
+        android:layout_margin="3dp"
+        android:textSize="12sp"
+         android:text="04:45"/>
+</RelativeLayout>
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:paddingLeft="10dp" >
+
+        <TextView
+            android:id="@+id/item_search_mv_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="千古"
+            android:textSize="17sp" />
+
+        <TextView
+            android:id="@+id/item_search_mv_singer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="许嵩"
+            android:textColor="@color/grey_white_" />
+        
+        <LinearLayout 
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal">
+            <ImageView 
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/icon_mv_play_count"/>
+            <TextView
+            android:id="@+id/item_search_mv_playnum"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="2074"
+            android:layout_marginLeft="5dp"
+            android:textColor="@color/grey_white_" />
+        </LinearLayout>
+         
+    </LinearLayout>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:src="@drawable/img_setting_right_arrow" />
+
+</LinearLayout>

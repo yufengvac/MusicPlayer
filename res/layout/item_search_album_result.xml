@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal" 
+    android:padding="10dp"
+    android:background="@drawable/line_whitebg_bottom">
+    <ImageView
+        android:id="@+id/item_search_album_pic" 
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:scaleType="centerCrop"/>
+    
+    <LinearLayout 
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_gravity="center_vertical"
+        android:layout_height="wrap_content"
+        android:paddingLeft="10dp"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/item_search_album_name" 
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="千古"
+            android:textSize="17sp"/>
+        <LinearLayout 
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+            <TextView
+            android:id="@+id/item_search_album_singer" 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="许嵩"/>
+            <TextView
+            android:id="@+id/item_search_album_publishdate" 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="2015-09-11"/>
+        </LinearLayout>
+    </LinearLayout>
+    <ImageView 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/img_setting_right_arrow"/>
+
+</LinearLayout>

@@ -5,8 +5,6 @@ import java.util.ArrayList;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
-import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,10 +17,12 @@ import android.widget.TextView;
 
 import com.vac.musicplayer.R;
 import com.vac.musicplayer.adapter.MyPagerAdapter;
+import com.vac.musicplayer.myview.LazyViewPager;
+import com.vac.musicplayer.myview.LazyViewPager.OnPageChangeListener;
 
 public class TabSearchFra extends Fragment {
 
-	private ViewPager viewPager;
+	private LazyViewPager viewPager;
 	private RadioGroup rg;
 	private RadioButton rb1,rb2,rb3,rb4;
 	private TextView cursor;
@@ -43,7 +43,7 @@ public class TabSearchFra extends Fragment {
 		return view;
 	}
 	private void initView(View view) {
-		viewPager = (ViewPager) view.findViewById(R.id.tab_search_viewPager);
+		viewPager = (LazyViewPager) view.findViewById(R.id.tab_search_viewPager);
 		
 		SearchSingleSongFra sssf = new SearchSingleSongFra();
 		Bundle bundle = new Bundle();
@@ -52,10 +52,17 @@ public class TabSearchFra extends Fragment {
 		sssf.setArguments(bundle);
 		fraList.add(sssf);
 		
+		SearchAlbumFra saf = new SearchAlbumFra();
+		saf.setArguments(bundle);
+		fraList.add(saf);
 		
-		fraList.add(new SearchAlbumFra());
-		fraList.add(new SearchSongListFra());
-		fraList.add(new SearchMVFra());
+		SearchSongListFra sslf =new SearchSongListFra();
+		sslf.setArguments(bundle);
+		fraList.add(sslf);
+		
+		SearchMVFra smf = new SearchMVFra();
+		smf.setArguments(bundle);
+		fraList.add(smf);
 		mAdapter = new MyPagerAdapter(getChildFragmentManager(), fraList);
 		viewPager.setAdapter(mAdapter);
 		
@@ -104,6 +111,7 @@ public class TabSearchFra extends Fragment {
 			public void onPageScrolled(int arg0, float arg1, int arg2) {
 				LinearLayout.LayoutParams params = (LayoutParams) cursor.getLayoutParams();
 				params.leftMargin = (int) (cursor.getWidth()*(arg1+arg0));
+			
 				cursor.setLayoutParams(params);
 			}
 			
