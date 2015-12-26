@@ -2,7 +2,6 @@ package com.vac.musicplayer.fragment.search;
 
 import java.util.ArrayList;
 
-import org.apache.http.Header;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -11,33 +10,68 @@ import zrc.widget.SimpleFooter;
 import zrc.widget.SimpleHeader;
 import zrc.widget.ZrcListView;
 import zrc.widget.ZrcListView.OnStartListener;
+import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.AsyncHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
 import com.vac.musicplayer.R;
 import com.vac.musicplayer.adapter.SearchSingleSongAdapter;
 import com.vac.musicplayer.bean.Constant;
+import com.vac.musicplayer.bean.NetParam;
 import com.vac.musicplayer.bean.TingSingleSong;
+import com.vac.musicplayer.utils.HttpUtils;
 
 public class SearchSingleSongFra extends Fragment {
 
-	private static final String TAG = SearchSingleSongFra.class.getSimpleName();
+	public static final String TAG = SearchSingleSongFra.class.getSimpleName();
 	private ZrcListView zrcListview;
-//	private SearchAdapter mAdapter;
 	private SearchSingleSongAdapter mSingleSongAdapter;
 	private int colorValue=-1;
 	private String searchContent;
 	private int index=1;
-	private int limit =20;
+	private boolean isLoadMore;
 	private TextView total_count_textview;
+	@SuppressLint("HandlerLeak")
+	private Handler mHandler = new Handler(){
+		public void handleMessage(android.os.Message msg) {
+			if (msg.what==HttpUtils.NETSUCCESS) {
+				try {
+					String json = (String) msg.obj;
+					JSONObject obj = new JSONObject(json);
+					int pageCount = obj.getInt("pageCount");
+					int totalCount = obj.getInt("totalCount");
+					total_count_textview.setText("已经为你找到"+totalCount+"首相关歌曲");
+						JSONArray array = obj.getJSONArray("data");
+						ArrayList<TingSingleSong> tingSingleSongList = new ArrayList<TingSingleSong>();
+						tingSingleSongList.clear();
+						for (int i = 0; i < array.length(); i++) {
+							JSONObject obj1= array.getJSONObject(i);
+							tingSingleSongList.add(TingSingleSong.jsonToBean(obj1));
+						}
+						if (isLoadMore) {
+							setTingData(tingSingleSongList,false);
+								if (index>=pageCount) {
+									zrcListview.stopLoadMore();
+								}else{
+									zrcListview.startLoadMore(); // 开启LoadingMore功能
+								}
+						}else{
+							setTingData(tingSingleSongList, true);
+							 zrcListview.startLoadMore(); // 开启LoadingMore功能
+						}
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			}else{
+				zrcListview.setRefreshFail("加载失败");
+			}
+		};
+	};
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -47,9 +81,9 @@ public class SearchSingleSongFra extends Fragment {
 		searchContent = bundle.getString("search");
 		initView(view);
 		
-//		search(searchContent,0,false);
 		index = 1;
-		searchTing(searchContent, index, false);
+//		searchTing(searchContent, index, false);
+		searchTing(searchContent, index, true, true);
 		return view;
 	}
 	private void initView(View view) {
@@ -72,9 +106,9 @@ public class SearchSingleSongFra extends Fragment {
 			
 			@Override
 			public void onStart() {
-//				refresh();
 				index = 1;
-				searchTing(searchContent,index,false);
+				isLoadMore = false;
+				searchTing(searchContent,index,false,true);
 			}
 		});
         
@@ -84,7 +118,8 @@ public class SearchSingleSongFra extends Fragment {
 			@Override
 			public void onStart() {
 				index++;
-				searchTing(searchContent, index,true);
+				isLoadMore = true;
+				searchTing(searchContent, index,false,true);
 			}
 		});
         
@@ -175,56 +210,12 @@ public class SearchSingleSongFra extends Fragment {
 //		});
 //	}
 	
-	
-	private void searchTing(String trim,int page,final boolean isLoadMore) {
-		AsyncHttpClient mClient = new AsyncHttpClient();
-		RequestParams params = new RequestParams();
-		params.add("q", ""+trim);
-		params.add("page",""+page);
-		Log.d(TAG, "page="+page);
-		mClient.get(Constant.TING_SINGER_SONG,params,new AsyncHttpResponseHandler(){
-			@Override
-			public void onStart() {
-				super.onStart();
-			}
-			@Override
-			public void onSuccess(int arg0, Header[] arg1, byte[] arg2) {
-				super.onSuccess(arg0, arg1, arg2);
-				String result = new String(arg2);
-				Log.d(TAG, result);
-				try {
-					JSONObject obj = new JSONObject(result);
-					int pageCount = obj.getInt("pageCount");
-					int totalCount = obj.getInt("totalCount");
-					total_count_textview.setText("已经为你找到"+totalCount+"首相关歌曲");
-						JSONArray array = obj.getJSONArray("data");
-						ArrayList<TingSingleSong> tingSingleSongList = new ArrayList<TingSingleSong>();
-						tingSingleSongList.clear();
-						for (int i = 0; i < array.length(); i++) {
-							JSONObject obj1= array.getJSONObject(i);
-							tingSingleSongList.add(TingSingleSong.jsonToBean(obj1));
-						}
-						if (isLoadMore) {
-							setTingData(tingSingleSongList,false);
-								if (index>=pageCount) {
-									zrcListview.stopLoadMore();
-								}else{
-									zrcListview.startLoadMore(); // 开启LoadingMore功能
-								}
-						}else{
-							setTingData(tingSingleSongList, true);
-							 zrcListview.startLoadMore(); // 开启LoadingMore功能
-						}
-					
-				} catch (JSONException e) {
-					e.printStackTrace();
-				}
-			}
-			@Override
-			public void onFailure(int arg0, Header[] arg1, byte[] arg2,
-					Throwable arg3) {
-				super.onFailure(arg0, arg1, arg2, arg3);
-			}
-		});
+	private void searchTing(String trim,int page,boolean isUseCache,boolean isToCache) {
+		HttpUtils hu = new HttpUtils(getActivity(), mHandler);
+		ArrayList<NetParam> paramsList = new ArrayList<NetParam>();
+		paramsList.add(new NetParam("q", trim));
+		paramsList.add(new NetParam("page", ""+page));
+		hu.get(Constant.TING_SINGER_SONG, paramsList, isUseCache, isToCache);
 	}
+
 }

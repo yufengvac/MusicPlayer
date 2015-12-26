@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal" 
+    android:background="@drawable/line_whitebg_bottom">
+    <TextView
+        android:id="@+id/item_search_history_title" 
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:padding="15dp"
+        android:layout_gravity="center_vertical"
+        android:layout_height="wrap_content"
+        android:text="黑鸟单车"/>
+	<ImageView
+	    android:id="@+id/item_search_delete"
+	    android:layout_width="wrap_content"
+	    android:layout_height="match_parent"
+	    android:layout_gravity="center_vertical"
+	    android:paddingRight="15dp"
+	    android:paddingLeft="15dp"
+	    android:contentDescription="@string/app_name"
+	    android:src="@drawable/icon_clear_edit"/>
+</LinearLayout>

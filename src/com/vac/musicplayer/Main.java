@@ -3,6 +3,11 @@ package com.vac.musicplayer;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import android.annotation.SuppressLint;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -10,6 +15,7 @@ import android.content.ServiceConnection;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.IBinder;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
@@ -21,12 +27,14 @@ import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.vac.musicplayer.bean.Constant;
 import com.vac.musicplayer.bean.Music;
+import com.vac.musicplayer.bean.NetParam;
 import com.vac.musicplayer.fragment.SearchFragment;
 import com.vac.musicplayer.fragment.TabMainFra;
 import com.vac.musicplayer.fragment.TabMusicLocalFra;
@@ -42,6 +50,7 @@ import com.vac.musicplayer.myview.MyTriangle;
 import com.vac.musicplayer.service.MusicService;
 import com.vac.musicplayer.service.MusicService.MusicServiceBinder;
 import com.vac.musicplayer.service.MusicService.PlayState;
+import com.vac.musicplayer.utils.HttpUtils;
 import com.vac.musicplayer.utils.PreferHelper;
 
 public class Main extends FragmentActivity implements OnPlayMusicStateListener,OnPageAddListener,OnSkinChangerListener{
@@ -74,14 +83,36 @@ public class Main extends FragmentActivity implements OnPlayMusicStateListener,O
 	private TabMainFra tmf ;
 	
 	private int currentColor;
-	
+	private ImageLoader mImageLoader = ImageLoader.getInstance();
+	@SuppressLint("HandlerLeak")
+	private Handler mHandler = new Handler(){
+		public void handleMessage(android.os.Message msg) {
+			if (msg.what==HttpUtils.NETSUCCESS) {
+				try {
+					String result = (String) msg.obj;
+					JSONObject obj = new JSONObject(result);
+					if (obj.getInt("rows")>=1) {
+						JSONArray array = obj.getJSONArray("data");
+						if (array.length()>=1) {
+							JSONObject obj_ = array.getJSONObject(0);
+							String picUrl = obj_.getString("pic_url");
+							mImageLoader.displayImage(picUrl, singerLogoImageView);
+						}
+					}
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+				
+			}
+		};
+	};
 	
 	
 	private Fragment mContent;
 	
 	private FragmentManager fm;
 	
-	
+	private ImageView singerLogoImageView;
 	private ServiceConnection mServiceConnection = new ServiceConnection() {
 		
 		@Override
@@ -158,6 +189,8 @@ public class Main extends FragmentActivity implements OnPlayMusicStateListener,O
 		myMenubtn = (MyMenuButton) findViewById(R.id.main_menu_mymenubtn);
 		
 		main_content = (LinearLayout) findViewById(R.id.main_content);
+		
+		singerLogoImageView = (ImageView) findViewById(R.id.main_singer_logo);
 	}
 	
 	@Override
@@ -253,9 +286,11 @@ public class Main extends FragmentActivity implements OnPlayMusicStateListener,O
 								mMusic =currentMusicBundle.getParcelable(Constant.PLAYING_MUSIC_ITEM);
 								song_name_textview.setText(mMusic.getTitle());
 								artist_name_textview.setText(mMusic.getArtist());
+								searchSingerPic(mMusic.getArtist());
 							}else{
 								song_name_textview.setText(mCurrentMusicList.get(SharePosition).getTitle());
 								artist_name_textview.setText(mCurrentMusicList.get(SharePosition).getArtist());
+								searchSingerPic(mCurrentMusicList.get(SharePosition).getArtist());
 							}
 						}
 						
@@ -279,6 +314,17 @@ public class Main extends FragmentActivity implements OnPlayMusicStateListener,O
 		}else{//SD卡不可用
 			
 		}
+	}
+	
+	/***
+	 * @description 搜索歌手图片
+	 * @param artist
+	 */
+	protected void searchSingerPic(String artist) {
+		HttpUtils httpUtils = new HttpUtils(Main.this, mHandler);
+		ArrayList<NetParam> params = new ArrayList<NetParam>();
+		params.add(new NetParam("q", ""+artist));
+		httpUtils.get(Constant.SEARCH_SINGER,params, true, true);
 	}
 	/***
 	 * @author vac
@@ -338,6 +384,7 @@ public class Main extends FragmentActivity implements OnPlayMusicStateListener,O
 //		main_play_imageview.setImageResource(R.drawable.img_media_controller_play);
 		myTriangle.setVisibility(View.GONE);
 		myPausebtn.setVisibility(View.VISIBLE);
+		 searchSingerPic(mMusic.getArtist());
 	}
 	@Override
 	public void onMusicPaused(Music music) {
@@ -360,6 +407,7 @@ public class Main extends FragmentActivity implements OnPlayMusicStateListener,O
 		mMusic = music;
 		song_name_textview.setText(mMusic.getTitle());
 		artist_name_textview.setText(mMusic.getArtist());
+		searchSingerPic(mMusic.getArtist());
 	}
 	@Override
 	public void onPlayProgressUpdate(long currenMillis) {

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical" >
+    <TextView
+        android:id="@+id/search_hot_fra_title" 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="热门搜索"
+        android:paddingLeft="15dp"
+        android:paddingTop="15dp"
+        android:paddingBottom="10dp"
+        />
+
+    <com.vac.musicplayer.myview.WordWrapView
+        android:id="@+id/search_hot_wordwrapview"
+        android:layout_width="match_parent"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginBottom="15dp"
+        android:layout_height="wrap_content"/>
+    
+     <TextView
+        android:id="@+id/search_hot_fra_title_history" 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="搜索历史"
+        android:paddingLeft="15dp"
+        android:paddingTop="15dp"
+        android:paddingBottom="10dp"
+        />
+     <ListView
+         android:id="@+id/search_hot_fra_history_listview" 
+         android:layout_width="match_parent"
+         android:layout_height="match_parent"
+         android:divider="@color/transparent"></ListView>
+</LinearLayout>

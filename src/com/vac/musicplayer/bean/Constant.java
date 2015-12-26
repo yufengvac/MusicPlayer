@@ -81,6 +81,8 @@ public class Constant {
 	/***我创建的歌单*/
 	public static final String MY_CREATE_SONG_LIST ="my_create_song_list";
 	
+	/**搜索历史记录*/
+	public static final String SEARCH_HISTORY = "search_history";
 	
 	/**搜索音乐*/
 //	http://s.music.163.com/search/get/
@@ -140,4 +142,18 @@ public class Constant {
 	public static final String TING_MV = "http://search.dongting.com/mv/search?uid=000000000000000&f=f0&app=ttpod&hid=4241599212142040&alf=alf10001791&net=2&size=50&v=v8.2.0.2015091720&utdid=VVwoC4pkXHwDAKnEMyIDH0ka&s=s200&imsi=310260000000000&tid=0";
 	/**歌曲详情*/
 //	http://music.163.com/api/song/detail/?id=33419619&ids=[33419619]
+	
+	/***
+	 * 搜索歌手
+	 * http://search.dongting.com/artist/search?uid=000000000000000&f=f0&app=ttpod&hid=4241599212142040&alf=alf10001791&net=2&size=1&v=v8.2.0.2015091720&utdid=VVwoC4pkXHwDAKnEMyIDH0ka&s=s200&page=1&q=%E5%91%A8%E6%9D%B0%E4%BC%A6&imsi=310260000000000&tid=0
+	 * q=周杰伦
+	 */
+	public static final String SEARCH_SINGER = "http://search.dongting.com/artist/search?uid=000000000000000&f=f0&app=ttpod&hid=4241599212142040&alf=alf10001791&net=2&size=1&v=v8.2.0.2015091720&utdid=VVwoC4pkXHwDAKnEMyIDH0ka&s=s200&page=1&imsi=310260000000000&tid=0";
+
+	
+	/***
+	 * 热门搜索
+	 * http://api.dongting.com/misc/sug/billboard?uid=000000000000000&f=f0&v=v8.2.0.2015091720&app=ttpod&utdid=VVwoC4pkXHwDAKnEMyIDH0ka&hid=4241599212142040&s=s200&alf=alf10001791&imsi=310260000000000&tid=0&net=2&size=20
+	 */
+	public static final String SEARCH_HOT = "http://api.dongting.com/misc/sug/billboard?uid=000000000000000&f=f0&v=v8.2.0.2015091720&app=ttpod&utdid=VVwoC4pkXHwDAKnEMyIDH0ka&hid=4241599212142040&s=s200&alf=alf10001791&imsi=310260000000000&tid=0&net=2&size=20";
 }

@@ -46,6 +46,7 @@
             android:orientation="horizontal" >
 
             <ImageView
+                android:id="@+id/main_singer_logo"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_gravity="center_vertical"

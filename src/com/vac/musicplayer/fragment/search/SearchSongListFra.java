@@ -1,31 +1,27 @@
 package com.vac.musicplayer.fragment.search;
 
 import java.util.ArrayList;
-
-import org.apache.http.Header;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import zrc.widget.SimpleFooter;
 import zrc.widget.SimpleHeader;
 import zrc.widget.ZrcListView;
 import zrc.widget.ZrcListView.OnStartListener;
+import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
-import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.AsyncHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
 import com.vac.musicplayer.R;
 import com.vac.musicplayer.adapter.SearchSongListAdapter;
 import com.vac.musicplayer.bean.Constant;
+import com.vac.musicplayer.bean.NetParam;
 import com.vac.musicplayer.bean.TingSongList;
+import com.vac.musicplayer.utils.HttpUtils;
 
 public class SearchSongListFra extends Fragment {
 
@@ -35,64 +31,12 @@ public class SearchSongListFra extends Fragment {
 	private ZrcListView mZrcListView;
 	private TextView totalTextview;
 	private SearchSongListAdapter mSongListAdapter;
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-		View view = inflater.inflate(R.layout.search_result_songlist_fra, null);
-		searchContent = getArguments().getString("search");
-		colorValue = getArguments().getInt("color");
-		initView(view);
-		page = 1;
-		searchSongList(searchContent,page,false);
-		return view;
-	}
-	private void initView(View view) {
-		mZrcListView = (ZrcListView) view.findViewById(R.id.search_result_songlist_zrclistview);
-//		mZrcListView.setDivider(null);
-		totalTextview = (TextView) view.findViewById(R.id.search_result_songlist_totalcount);
-		mSongListAdapter = new SearchSongListAdapter(getActivity());
-		mZrcListView.setAdapter(mSongListAdapter);
-		mZrcListView.setDivider(null);
-		
-		 // 设置下拉刷新的样式（可选，但如果没有Header则无法下拉刷新）
-        SimpleHeader header = new SimpleHeader(getActivity());
-        header.setTextColor(colorValue);
-        header.setCircleColor(colorValue);
-        mZrcListView.setHeadable(header);
-        
-        // 设置加载更多的样式（可选）
-        SimpleFooter footer = new SimpleFooter(getActivity());
-        footer.setCircleColor(colorValue);
-        mZrcListView.setFootable(footer);
-		
-        mZrcListView.setOnRefreshStartListener(new OnStartListener() {
-			
-			@Override
-			public void onStart() {
-				page = 1;
-				searchSongList(searchContent, page, false);
-			}
-		});
-        
-        mZrcListView.setOnLoadMoreStartListener(new OnStartListener() {
-			
-			@Override
-			public void onStart() {
-				searchSongList(searchContent, page, true);
-			}
-		});
-	}
-	private void searchSongList(String searchContent, int index,final boolean isLoadMore) {
-		AsyncHttpClient mClient = new AsyncHttpClient();
-		RequestParams params = new RequestParams();
-		params.add("page", index+"");
-		params.add("q", searchContent);
-		mClient.get(Constant.TING_SONGLIST, params, new AsyncHttpResponseHandler(){
-			@Override
-			public void onSuccess(int arg0, Header[] arg1, byte[] arg2) {
-				super.onSuccess(arg0, arg1, arg2);
-				String result = new String(arg2);
-				Log.v("TAG","结果是："+result);
+	private boolean isLoadMore;
+	@SuppressLint("HandlerLeak")
+	private Handler mHandler = new Handler(){
+		public void handleMessage(android.os.Message msg) {
+			if (msg.what == HttpUtils.NETSUCCESS) {
+				String result = (String) msg.obj;
 				try {
 					JSONObject obj = new JSONObject(result);
 					int pageCount = obj.getInt("pages");
@@ -119,14 +63,64 @@ public class SearchSongListFra extends Fragment {
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
-				
 			}
-			@Override
-			public void onFailure(int arg0, Header[] arg1, byte[] arg2,
-					Throwable arg3) {
-				super.onFailure(arg0, arg1, arg2, arg3);
+		};
+	};
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		View view = inflater.inflate(R.layout.search_result_songlist_fra, null);
+		searchContent = getArguments().getString("search");
+		colorValue = getArguments().getInt("color");
+		initView(view);
+		page = 1;
+		searchSongList(searchContent,page,true,false);
+		return view;
+	}
+	private void initView(View view) {
+		mZrcListView = (ZrcListView) view.findViewById(R.id.search_result_songlist_zrclistview);
+//		mZrcListView.setDivider(null);
+		totalTextview = (TextView) view.findViewById(R.id.search_result_songlist_totalcount);
+		mSongListAdapter = new SearchSongListAdapter(getActivity());
+		mZrcListView.setAdapter(mSongListAdapter);
+		mZrcListView.setDivider(null);
+		
+		 // 设置下拉刷新的样式（可选，但如果没有Header则无法下拉刷新）
+        SimpleHeader header = new SimpleHeader(getActivity());
+        header.setTextColor(colorValue);
+        header.setCircleColor(colorValue);
+        mZrcListView.setHeadable(header);
+        
+        // 设置加载更多的样式（可选）
+        SimpleFooter footer = new SimpleFooter(getActivity());
+        footer.setCircleColor(colorValue);
+        mZrcListView.setFootable(footer);
+		
+        mZrcListView.setOnRefreshStartListener(new OnStartListener() {
 			
+			@Override
+			public void onStart() {
+				page = 1;
+				isLoadMore = false;
+				searchSongList(searchContent, page, false,true);
 			}
 		});
+        
+        mZrcListView.setOnLoadMoreStartListener(new OnStartListener() {
+			
+			@Override
+			public void onStart() {
+				isLoadMore = true;
+				searchSongList(searchContent, page, false,true);
+			}
+		});
+	}
+	private void searchSongList(String searchContent, int index, boolean isUseCache,boolean isToCache) {
+		
+		HttpUtils hu = new HttpUtils(getActivity(), mHandler);
+		ArrayList<NetParam> params = new ArrayList<NetParam>();
+		params.add(new NetParam("q", searchContent));
+		params.add(new NetParam("page", ""+page));
+		hu.get(Constant.TING_SONGLIST,params, isUseCache, isToCache);
 	}
 }

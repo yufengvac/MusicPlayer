@@ -4,6 +4,7 @@ import java.io.File;
 
 import android.app.Application;
 import android.graphics.Bitmap;
+import android.util.Log;
 
 import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiskCache;
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
@@ -18,7 +19,6 @@ import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.nostra13.universalimageloader.core.download.BaseImageDownloader;
 import com.nostra13.universalimageloader.utils.StorageUtils;
 import com.vac.musicplayer.bean.Constant;
-import com.vac.musicplayer.utils.ACache;
 
 public class MyApplication extends Application {
 
@@ -27,6 +27,7 @@ public class MyApplication extends Application {
 		super.onCreate();
 			if (!new File(Constant.IMAGECACHE).exists()) {
 				new File(Constant.IMAGECACHE).mkdirs(); 
+				Log.d("MyApplication", "cache directory :"+Constant.IMAGECACHE);
 			}
 		   File cacheDir =StorageUtils.getOwnCacheDirectory(this, Constant.IMAGECACHE);
 	        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this)
@@ -47,7 +48,7 @@ public class MyApplication extends Application {
 	    	        .imageDecoder(new BaseImageDecoder(false)) // default
 	    	        .defaultDisplayImageOptions(DisplayImageOptions.createSimple()) // default
 	    	        .imageDownloader(new BaseImageDownloader(this,15 * 1000, 30 * 1000)) // connectTimeout (5 s), readTimeout (30 s)超时时间   
-	    	        .writeDebugLogs() // 打印debug log
+//	    	        .writeDebugLogs() // 打印debug log
 	    	        .build(); //开始构建
 	    	ImageLoader.getInstance().init(config); 
 	    	

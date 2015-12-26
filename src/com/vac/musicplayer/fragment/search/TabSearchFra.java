@@ -44,7 +44,7 @@ public class TabSearchFra extends Fragment {
 	}
 	private void initView(View view) {
 		viewPager = (LazyViewPager) view.findViewById(R.id.tab_search_viewPager);
-		
+		viewPager.setOffscreenPageLimit(3);
 		SearchSingleSongFra sssf = new SearchSingleSongFra();
 		Bundle bundle = new Bundle();
 		bundle.putInt("color", colorValue);
