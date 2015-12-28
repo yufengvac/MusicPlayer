@@ -1,6 +1,5 @@
 package com.vac.musicplayer.bean;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 

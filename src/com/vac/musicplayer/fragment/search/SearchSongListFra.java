@@ -1,12 +1,15 @@
 package com.vac.musicplayer.fragment.search;
 
 import java.util.ArrayList;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import zrc.widget.SimpleFooter;
 import zrc.widget.SimpleHeader;
 import zrc.widget.ZrcListView;
+import zrc.widget.ZrcListView.OnItemClickListener;
 import zrc.widget.ZrcListView.OnStartListener;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
@@ -16,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
 import com.vac.musicplayer.R;
 import com.vac.musicplayer.adapter.SearchSongListAdapter;
 import com.vac.musicplayer.bean.Constant;
@@ -112,6 +116,13 @@ public class SearchSongListFra extends Fragment {
 			public void onStart() {
 				isLoadMore = true;
 				searchSongList(searchContent, page, false,true);
+			}
+		});
+        mZrcListView.setOnItemClickListener(new OnItemClickListener() {
+			
+			@Override
+			public void onItemClick(ZrcListView parent, View view, int position, long id) {
+				
 			}
 		});
 	}

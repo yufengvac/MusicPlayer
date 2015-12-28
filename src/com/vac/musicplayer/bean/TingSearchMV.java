@@ -89,13 +89,19 @@ public class TingSearchMV {
 			tsm.setBulletCount(obj.getInt("bulletCount"));
 		}
 		if (obj.has("mvList")) {
-			JSONArray array = obj.getJSONArray("mvList");
-			ArrayList<TingMV> mvList = new ArrayList<TingMV>();
-			for (int i = 0; i < array.length(); i++) {
-				JSONObject obj_ = array.getJSONObject(i);
-				mvList.add(TingMV.jsonToBean(obj_));
+			try {
+				JSONArray array = obj.getJSONArray("mvList");
+				ArrayList<TingMV> mvList = new ArrayList<TingMV>();
+				for (int i = 0; i < array.length(); i++) {
+					JSONObject obj_ = array.getJSONObject(i);
+					mvList.add(TingMV.jsonToBean(obj_));
+				}
+				tsm.setMvList(mvList);
+			} catch (Exception e) {
+				ArrayList<TingMV> mvList = new ArrayList<TingMV>();
+				tsm.setMvList(mvList);
 			}
-			tsm.setMvList(mvList);
+			
 		}
 		
 		return tsm;

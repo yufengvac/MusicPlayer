@@ -9,11 +9,13 @@ import org.json.JSONObject;
 import zrc.widget.SimpleFooter;
 import zrc.widget.SimpleHeader;
 import zrc.widget.ZrcListView;
+import zrc.widget.ZrcListView.OnItemClickListener;
 import zrc.widget.ZrcListView.OnStartListener;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +26,8 @@ import com.vac.musicplayer.adapter.SearchAlbumAdapter;
 import com.vac.musicplayer.bean.Constant;
 import com.vac.musicplayer.bean.NetParam;
 import com.vac.musicplayer.bean.TingAlbum;
+import com.vac.musicplayer.fragment.search.detail.SearchAlbumDetailFra;
+import com.vac.musicplayer.listener.OnPageAddListener;
 import com.vac.musicplayer.utils.HttpUtils;
 
 public class SearchAlbumFra extends Fragment {
@@ -35,6 +39,7 @@ public class SearchAlbumFra extends Fragment {
 	private TextView totalTextview;
 	private SearchAlbumAdapter mAlbumAdapter;
 	private boolean isLoadMore;
+	private OnPageAddListener mPageListener;
 	@SuppressLint("HandlerLeak")
 	private Handler mHandler = new Handler(){
 		public void handleMessage(android.os.Message msg) {
@@ -116,6 +121,16 @@ public class SearchAlbumFra extends Fragment {
 				searchAlbum(searchContent, index, false,true);
 			}
 		});
+        
+        mZrcListView.setOnItemClickListener(new OnItemClickListener() {
+			
+			@Override
+			public void onItemClick(ZrcListView parent, View view, int position, long id) {
+				Bundle bundle = new Bundle();
+				bundle.putLong("albumId", mAlbumAdapter.getItemId(position));
+				mPageListener.onPageAddListener(OnPageAddListener.SEARCHALBUMDETAIL, bundle);
+			}
+		});
 	}
 
 	public void searchAlbum(String trim,int page,boolean isUseCache,boolean isToCache){
@@ -124,5 +139,9 @@ public class SearchAlbumFra extends Fragment {
 		paramsList.add(new NetParam("q", trim));
 		paramsList.add(new NetParam("page", ""+page));
 		hu.get(Constant.TING_ALBUM,paramsList, isUseCache, isToCache);
+	}
+	
+	public void setOnPageListener(OnPageAddListener listener){
+		this.mPageListener = listener;
 	}
 }

@@ -5,6 +5,7 @@ import java.text.DecimalFormat;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.vac.musicplayer.R;
@@ -24,6 +25,9 @@ public class SearchSingleSongAdapter extends MyBaseAdapter<TingSingleSong> {
 	public long getItemId(int position) {
 		return mData.get(position).getSongId();
 	}
+	public TingSingleSong getItem(int arg0) {
+		return mData.get(arg0);
+	};
 
 	ViewHolder holder;
 	@Override
@@ -34,8 +38,8 @@ public class SearchSingleSongAdapter extends MyBaseAdapter<TingSingleSong> {
 			holder.name = (TextView) convertView.findViewById(R.id.item_search_result_name);
 			holder.artist = (TextView) convertView.findViewById(R.id.item_search_result_artist);
 			holder.album = (TextView) convertView.findViewById(R.id.item_search_result_album);
-			holder.hq = (TextView) convertView.findViewById(R.id.item_search_result_hq);
-			holder.mv = (TextView) convertView.findViewById(R.id.item_search_result_mv);
+			holder.hq = (ImageView) convertView.findViewById(R.id.item_search_result_hq);
+			holder.mv = (ImageView) convertView.findViewById(R.id.item_search_result_mv);
 			holder.num = (TextView) convertView.findViewById(R.id.item_search_result_num);
 			holder.favor = (TextView) convertView.findViewById(R.id.item_search_result_favor);
 			convertView.setTag(holder);
@@ -76,6 +80,7 @@ public class SearchSingleSongAdapter extends MyBaseAdapter<TingSingleSong> {
 
 	private class ViewHolder{
 		private TextView name,artist,album;
-		private TextView hq,mv,num,favor;
+		private TextView num,favor;
+		private ImageView mv,hq;
 	}
 }

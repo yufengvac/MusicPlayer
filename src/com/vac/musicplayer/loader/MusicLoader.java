@@ -69,6 +69,7 @@ public class MusicLoader extends AsyncTaskLoader<List<Music>> {
 				music.setArtist(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ARTIST)));
 				music.setDuration(cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION)));
 				music.setSize(cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.SIZE)));
+				music.setType(Music.TYPE_LOCAL);
 				musicList.add(music);
 			}
 			cursor.close();

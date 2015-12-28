@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.vac.musicplayer.R;
+import com.vac.musicplayer.bean.TingSingleSong;
 import com.vac.musicplayer.bean.TingSongList;
 
 public class SearchSongListAdapter extends MyBaseAdapter<TingSongList>{
@@ -21,7 +22,7 @@ public class SearchSongListAdapter extends MyBaseAdapter<TingSongList>{
 	public long getItemId(int position) {
 		return 0;
 	}
-
+	
 	ViewHolder holder;
 	@Override
 	public View getView(int position, View convertView, ViewGroup viewGroup) {

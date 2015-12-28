@@ -61,6 +61,8 @@ public class MusicService extends Service implements OnPreparedListener,OnComple
 	public static final String ACTION_PRIVIOUS= "com.vac.musicplayer.service.privious";
 	public static final String ACTION_NEXT ="com.vac.musicplayer.service.next";
 	
+	/**歌曲是来自于网络*/
+	public static final String TYPE_NETURL = "fromNetMusic";
 	
 	/**handler消息类型*/
 	public static final int MESSAGE_UPDATE_PLAYING_SONG_PROGRESS = 1;
@@ -395,18 +397,28 @@ public class MusicService extends Service implements OnPreparedListener,OnComple
 		Log.i(TAG, "service onStartCommand");
 		String action = intent.getAction();
 		if(action.equals(ACTION_PLAY)){//播放音乐的消息
-
-			if(intent.getBooleanExtra(Constant.CLICK_MUSIC_LIST, false)){//如果是从播放列表点击
+			String fromType = intent.getStringExtra(Constant.PLAYING_MUSIC_TYPE);
+			if (fromType!=null&&fromType.equals(TYPE_NETURL)) {
 				music_list_type = intent.getStringExtra(Constant.MUSIC_LIST_TYPE);
+				ArrayList<Music> netMusicList = intent.getParcelableArrayListExtra("NetMusicList");
+				mCurrentPlayList.clear();
+				mCurrentPlayList.addAll(netMusicList);
 				mRequestPlayMusicId = intent.getLongExtra(Constant.PLAYLIST_MUSIC_REQUEST_ID, -1);
+				Log.i(TAG, "mRequestPlayMusicId="+mRequestPlayMusicId+",mCurrentPlayList.size()="+mCurrentPlayList.size());
 				mRequestMusicPosition = findPositionByMusicId(mCurrentPlayList, mRequestPlayMusicId);
-				if(mRequestMusicPosition==-1){//没有找到该歌曲
-					mBinder.addOneMusicIntoCurrentMusicList();
-				}
+				Log.i(TAG, "mRequestMusicPosition="+mRequestMusicPosition);
 			}else{
-				mRequestPlayMusicId = mCurrentPlayList.get(mRequestMusicPosition).getId();
+				if(intent.getBooleanExtra(Constant.CLICK_MUSIC_LIST, false)){//如果是从播放列表点击
+					music_list_type = intent.getStringExtra(Constant.MUSIC_LIST_TYPE);
+					mRequestPlayMusicId = intent.getLongExtra(Constant.PLAYLIST_MUSIC_REQUEST_ID, -1);
+					mRequestMusicPosition = findPositionByMusicId(mCurrentPlayList, mRequestPlayMusicId);
+					if(mRequestMusicPosition==-1){//没有找到该歌曲
+						mBinder.addOneMusicIntoCurrentMusicList();
+					}
+				}else{
+					mRequestPlayMusicId = mCurrentPlayList.get(mRequestMusicPosition).getId();
+				}
 			}
-			
 			if(mRequestMusicPosition!=-1){
 				requestToPlay();
 			}

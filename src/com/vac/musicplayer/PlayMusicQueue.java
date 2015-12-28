@@ -109,8 +109,6 @@ public class PlayMusicQueue extends Activity implements OnPlayMusicStateListener
 		view.setPadding(0, 0, 0, 0);
 		WindowManager.LayoutParams lp = (LayoutParams) view.getLayoutParams();
 		lp.gravity = Gravity.BOTTOM|Gravity.RIGHT;
-//		lp.x = getResources().getDimensionPixelSize(R.dimen.playqueue_dialog_marginright);
-//		lp.y = getResources().getDimensionPixelSize(R.dimen.playqueue_dialog_marginbottom);
 		lp.width = LayoutParams.MATCH_PARENT;
 		lp.height = getResources().getDisplayMetrics().heightPixels/2;
 		getWindowManager().updateViewLayout(view, lp);

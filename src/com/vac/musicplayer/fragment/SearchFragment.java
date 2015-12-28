@@ -1,8 +1,10 @@
 package com.vac.musicplayer.fragment;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -18,6 +20,7 @@ import com.vac.musicplayer.bean.Constant;
 import com.vac.musicplayer.fragment.search.SearchHotFra;
 import com.vac.musicplayer.fragment.search.SearchHotFra.OnHotClickListener;
 import com.vac.musicplayer.fragment.search.TabSearchFra;
+import com.vac.musicplayer.listener.OnPageAddListener;
 import com.vac.musicplayer.utils.PreferHelper;
 
 public class SearchFragment extends Fragment implements OnHotClickListener{
@@ -29,6 +32,14 @@ public class SearchFragment extends Fragment implements OnHotClickListener{
 	private FragmentManager fm;
 	private ImageView clearEditImageView;
 	private boolean afterSearch  =false;
+	private OnPageAddListener mPageListener;
+	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+		if (activity instanceof OnPageAddListener) {
+			mPageListener = (OnPageAddListener) activity;
+		}
+	}
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -43,7 +54,7 @@ public class SearchFragment extends Fragment implements OnHotClickListener{
 		b.putInt("color", colorValue);
 		shf.setArguments(b);
 		shf.setOnHotListener(this);
-		fm.beginTransaction().replace(R.id.search_fragment_content, shf).commit();
+		fm.beginTransaction().replace(R.id.search_fragment_content, shf).addToBackStack(null).commit();
 		afterSearch =false;
 		return view;
 	}
@@ -110,7 +121,10 @@ public class SearchFragment extends Fragment implements OnHotClickListener{
 		bundle.putInt("color", colorValue);
 		bundle.putString("search", trim);
 		tsf.setArguments(bundle);
-		fm.beginTransaction().replace(R.id.search_fragment_content, tsf).commit();
+		tsf.setOnPageListener(mPageListener);
+		FragmentTransaction ft = fm.beginTransaction();
+		ft.replace(R.id.search_fragment_content, tsf);
+		ft.commit();
 		String history = PreferHelper.readString(getActivity(), Constant.SEARCH_HISTORY, Constant.SEARCH_HISTORY);
 		if (history!=null) {
 			if (!history.contains(trim)) {

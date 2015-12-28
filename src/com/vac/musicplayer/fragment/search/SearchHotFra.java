@@ -22,6 +22,7 @@ import android.widget.TextView;
 import com.vac.musicplayer.R;
 import com.vac.musicplayer.adapter.SearchHistoryAdapter;
 import com.vac.musicplayer.bean.Constant;
+import com.vac.musicplayer.listener.OnPageAddListener;
 import com.vac.musicplayer.myview.WordWrapView;
 import com.vac.musicplayer.utils.HttpUtils;
 import com.vac.musicplayer.utils.PreferHelper;
@@ -40,6 +41,7 @@ public class SearchHotFra extends Fragment {
 	private ArrayList<String> historyList  = new ArrayList<String>();
 	private int color = -1;
 	private OnHotClickListener mHotListener;
+	
 	@SuppressLint("HandlerLeak")
 	private Handler mHandler = new Handler(){
 		public void handleMessage(android.os.Message msg) {
@@ -84,6 +86,7 @@ public class SearchHotFra extends Fragment {
 	public void setOnHotListener(OnHotClickListener listener){
 		this.mHotListener = listener;
 	}
+	
 	private void initView(View view) {
 		mWordWrapView = (WordWrapView) view.findViewById(R.id.search_hot_wordwrapview);
 		HttpUtils httpUtils = new HttpUtils(getActivity(), mHandler);

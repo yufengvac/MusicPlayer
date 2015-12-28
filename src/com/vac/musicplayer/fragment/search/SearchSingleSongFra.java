@@ -9,11 +9,14 @@ import org.json.JSONObject;
 import zrc.widget.SimpleFooter;
 import zrc.widget.SimpleHeader;
 import zrc.widget.ZrcListView;
+import zrc.widget.ZrcListView.OnItemClickListener;
 import zrc.widget.ZrcListView.OnStartListener;
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,8 +25,11 @@ import android.widget.TextView;
 import com.vac.musicplayer.R;
 import com.vac.musicplayer.adapter.SearchSingleSongAdapter;
 import com.vac.musicplayer.bean.Constant;
+import com.vac.musicplayer.bean.Music;
 import com.vac.musicplayer.bean.NetParam;
+import com.vac.musicplayer.bean.TingAudition;
 import com.vac.musicplayer.bean.TingSingleSong;
+import com.vac.musicplayer.service.MusicService;
 import com.vac.musicplayer.utils.HttpUtils;
 
 public class SearchSingleSongFra extends Fragment {
@@ -123,10 +129,46 @@ public class SearchSingleSongFra extends Fragment {
 			}
 		});
         
-//        mAdapter = new SearchAdapter(getActivity());
-//        mAdapter.setColor(colorValue);
-//        zrcListview.setAdapter(mAdapter);
-//        zrcListview.setDivider(null);
+        zrcListview.setOnItemClickListener(new OnItemClickListener() {
+			
+			@Override
+			public void onItemClick(ZrcListView parent, View view, int position, long id) {
+				
+//				intent.putExtra(Constant.CLICK_MUSIC_LIST, true);
+				Intent intent = new Intent(getActivity(),MusicService.class);
+				intent.setAction(MusicService.ACTION_PLAY);
+				intent.putExtra(Constant.PLAYING_MUSIC_TYPE, MusicService.TYPE_NETURL);
+				ArrayList<Music> musicList = new ArrayList<Music>();
+				TingSingleSong tss_ = mSingleSongAdapter.getItem(position);
+				long playMusicId= -1l;
+				for (int i = 0; i < mSingleSongAdapter.getCount(); i++) {
+					TingSingleSong tss = mSingleSongAdapter.getItem(i);
+					ArrayList<TingAudition> auditonList  =tss.getAuditionList();
+					if (auditonList.size()>0) {
+						Music music = new Music();
+						music.setId(tss.getSongId());
+						music.setArtist(tss.getSingerName());
+						music.setTitle(tss.getName());
+						music.setData(auditonList.get(auditonList.size()-1).getUrl());
+						music.setDuration(auditonList.get(auditonList.size()-1).getDuration());
+						music.setSize(auditonList.get(auditonList.size()-1).getSize());
+						music.setType(Music.TYPE_NET);
+						music.setAlbum(tss.getAlbumName());
+						musicList.add(music);
+						if (tss_.getSongId()==tss.getSongId()) {
+							playMusicId = tss_.getSongId();
+						}
+					}
+				}
+				intent.putParcelableArrayListExtra("NetMusicList", musicList);
+				if (playMusicId!=-1) {
+					intent.putExtra(Constant.PLAYLIST_MUSIC_REQUEST_ID,playMusicId);
+					intent.putExtra(Constant.MUSIC_LIST_TYPE, searchContent);
+					getActivity().startService(intent);
+				}
+				
+			}
+		});
         
         mSingleSongAdapter = new SearchSingleSongAdapter(getActivity());
         mSingleSongAdapter.setColor(colorValue);

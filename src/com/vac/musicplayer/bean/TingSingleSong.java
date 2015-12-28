@@ -34,6 +34,13 @@ public class TingSingleSong {
 	private int status;
 	private ArrayList<TingAudition> auditionList;
 	private ArrayList<TingMV> mvList;
+	private ArrayList<TingOut > outList;
+	public ArrayList<TingOut> getOutList() {
+		return outList;
+	}
+	public void setOutList(ArrayList<TingOut> outList) {
+		this.outList = outList;
+	}
 	public long getSongId() {
 		return songId;
 	}
@@ -238,6 +245,22 @@ public class TingSingleSong {
 				tingMvList.add(TingMV.jsonToBean(obj_));
 			}
 			tss.setMvList(tingMvList);
+		}
+		
+		if (obj.has("outList")) {
+			try {
+				JSONArray array = obj.getJSONArray("outList");
+				ArrayList<TingOut> tingOutList  = new ArrayList<TingOut>();
+				for (int i = 0; i < array.length(); i++) {
+					JSONObject obj_ = array.getJSONObject(i);
+					tingOutList.add(TingOut.jsonToBean(obj_));
+				}
+				tss.setOutList(tingOutList);
+			} catch (Exception e) {
+				ArrayList<TingOut> tingOutList  = new ArrayList<TingOut>();
+				tss.setOutList(tingOutList);
+			}
+			
 		}
 		return tss;
 	}

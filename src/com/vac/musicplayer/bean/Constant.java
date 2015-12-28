@@ -17,6 +17,12 @@ public class Constant {
 	
 	public static final String PLAYLIST_MUISC ="playlist_music";
 	
+	/**音乐来源 网络、本地*/
+	public static final String PLAYING_MUSIC_TYPE = "playing_music_type";
+	
+	/**音乐来源 网络*/
+	public static final String PLAYING_MUSIC_TYPE_NET = "playing_music_type_net";
+	
 	/**是从播放列表点击过去   value ->True*/
 	public static final String CLICK_MUSIC_LIST = "click_music_list";
 	
@@ -73,10 +79,10 @@ public class Constant {
 	public static final String MAIN_BG_COLOR = "main_bg_color";
 	
 	/**图片缓存地址*/
-	public static final String IMAGECACHE = Environment.getExternalStorageDirectory().getAbsolutePath()+"yufengvac"+File.separator+"cache"+File.separator+"image";
+	public static final String IMAGECACHE = Environment.getExternalStorageDirectory()+"yufengvac"+File.separator+"cache"+File.separator+"image";
 	
 	/**文件缓存地址*/
-	public static final String FILECACHE = Environment.getExternalStorageDirectory().getAbsolutePath()+"yufengvac"+File.separator+"cache"+File.separator+"file";
+	public static final String FILECACHE = Environment.getExternalStorageDirectory()+"yufengvac"+File.separator+"cache"+File.separator+"file";
 	
 	/***我创建的歌单*/
 	public static final String MY_CREATE_SONG_LIST ="my_create_song_list";
@@ -156,4 +162,12 @@ public class Constant {
 	 * http://api.dongting.com/misc/sug/billboard?uid=000000000000000&f=f0&v=v8.2.0.2015091720&app=ttpod&utdid=VVwoC4pkXHwDAKnEMyIDH0ka&hid=4241599212142040&s=s200&alf=alf10001791&imsi=310260000000000&tid=0&net=2&size=20
 	 */
 	public static final String SEARCH_HOT = "http://api.dongting.com/misc/sug/billboard?uid=000000000000000&f=f0&v=v8.2.0.2015091720&app=ttpod&utdid=VVwoC4pkXHwDAKnEMyIDH0ka&hid=4241599212142040&s=s200&alf=alf10001791&imsi=310260000000000&tid=0&net=2&size=20";
+	
+	/***
+	 * 根据AlbumId搜索专辑详细
+	 * 
+	 */
+	public static final String SEARCH_ALBUM_PATE1= "http://api.dongting.com/song/album/";
+	
+	public static final String SEARCH_ALBUM_PATE2= "http://api.dongting.com/song/album/306233?f=0&os=4.4.4&alf=10001791&imei=000000000000000&from=android&resolution=720x1280&net=2&api_version=1.0&agent=none&v=v8.2.0.2015091720&utdid=VVwoC4pkXHwDAKnEMyIDH0ka&userId=0&longitude=0.0&user_id=0&latitude=0.0&language=zh";
 }

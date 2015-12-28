@@ -18,7 +18,6 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.provider.MediaStore;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -28,7 +27,6 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -39,6 +37,7 @@ import com.vac.musicplayer.fragment.SearchFragment;
 import com.vac.musicplayer.fragment.TabMainFra;
 import com.vac.musicplayer.fragment.TabMusicLocalFra;
 import com.vac.musicplayer.fragment.localmusic.ArtistFragment;
+import com.vac.musicplayer.fragment.search.detail.SearchAlbumDetailFra;
 import com.vac.musicplayer.listener.OnPageAddListener;
 import com.vac.musicplayer.listener.OnPlayMusicStateListener;
 import com.vac.musicplayer.listener.OnSkinChangerListener;
@@ -78,8 +77,6 @@ public class Main extends FragmentActivity implements OnPlayMusicStateListener,O
 	private MusicServiceBinder mBinder=null;
 	private Bundle currentMusicBundle = null;
 	
-	private LinearLayout main_content;
-	
 	private TabMainFra tmf ;
 	
 	private int currentColor;
@@ -108,8 +105,6 @@ public class Main extends FragmentActivity implements OnPlayMusicStateListener,O
 	};
 	
 	
-	private Fragment mContent;
-	
 	private FragmentManager fm;
 	
 	private ImageView singerLogoImageView;
@@ -137,6 +132,9 @@ public class Main extends FragmentActivity implements OnPlayMusicStateListener,O
 					mMusic = currentMusicBundle.getParcelable(Constant.PLAYING_MUSIC_ITEM);
 					song_name_textview.setText(mMusic.getTitle());
 					artist_name_textview.setText(mMusic.getArtist());
+					ArrayList<Music> list = currentMusicBundle.getParcelableArrayList(Constant.PLAYING_MUSIC_CURRENT_LIST);
+					mCurrentMusicList.clear();
+					mCurrentMusicList.addAll(list);
 				}else{
 					toLoadMusic();
 				}
@@ -187,8 +185,6 @@ public class Main extends FragmentActivity implements OnPlayMusicStateListener,O
 		myPausebtn = (MyPauseButton) findViewById(R.id.main_play_pause_mypausebtn);
 		
 		myMenubtn = (MyMenuButton) findViewById(R.id.main_menu_mymenubtn);
-		
-		main_content = (LinearLayout) findViewById(R.id.main_content);
 		
 		singerLogoImageView = (ImageView) findViewById(R.id.main_singer_logo);
 	}
@@ -258,10 +254,11 @@ public class Main extends FragmentActivity implements OnPlayMusicStateListener,O
 					Log.i(TAG, "onLoadFinished---------------"+Thread.currentThread().getName());
 					mCurrentMusicList.clear();
 					if(data!=null&&data.size()>0){
-						mCurrentMusicList.addAll(data);
-						Log.i(TAG, "main中的音乐列表数是："+mCurrentMusicList.size());
-						mBinder.setCurrentPlayList(data);
-						
+						if (currentMusicBundle==null||currentMusicBundle.getParcelableArrayList(Constant.PLAYING_MUSIC_CURRENT_LIST).size()==0) {
+							mBinder.setCurrentPlayList(data);
+							mCurrentMusicList.addAll(data);
+							Log.i(TAG, "main中的音乐列表数是："+mCurrentMusicList.size());
+						}
 //						((TextView)(fraList.get(0).getView().findViewById(R.id.my_music_fra_totalnumber))).setText(data.size()+"首");
 //						List<Fragment> FraList = getSupportFragmentManager().getFragments();
 //						for (int i = 0; i < FraList.size(); i++) {
@@ -288,9 +285,16 @@ public class Main extends FragmentActivity implements OnPlayMusicStateListener,O
 								artist_name_textview.setText(mMusic.getArtist());
 								searchSingerPic(mMusic.getArtist());
 							}else{
-								song_name_textview.setText(mCurrentMusicList.get(SharePosition).getTitle());
-								artist_name_textview.setText(mCurrentMusicList.get(SharePosition).getArtist());
-								searchSingerPic(mCurrentMusicList.get(SharePosition).getArtist());
+								try {
+									song_name_textview.setText(mCurrentMusicList.get(SharePosition).getTitle());
+									artist_name_textview.setText(mCurrentMusicList.get(SharePosition).getArtist());
+									searchSingerPic(mCurrentMusicList.get(SharePosition).getArtist());
+								} catch (IndexOutOfBoundsException e) {
+									song_name_textview.setText(mCurrentMusicList.get(mCurrentMusicList.size()-1).getTitle());
+									artist_name_textview.setText(mCurrentMusicList.get(mCurrentMusicList.size()-1).getArtist());
+									searchSingerPic(mCurrentMusicList.get(mCurrentMusicList.size()-1).getArtist());
+								}
+								
 							}
 						}
 						
@@ -308,7 +312,6 @@ public class Main extends FragmentActivity implements OnPlayMusicStateListener,O
 					Log.i(TAG, "onLoaderReset");
 //					mAdapter.setData(null);
 				}
-
 				
 			});
 		}else{//SD卡不可用
@@ -335,9 +338,14 @@ public class Main extends FragmentActivity implements OnPlayMusicStateListener,O
 		if (SharePosition==-1) {
 			playSongInPosition(mCurrentMusicList.get(0).getId());
 		}else{
-			int share = PreferHelper.readInt(Main.this, Constant.SHARE_NMAE_MUSIC,
-					Constant.SHARE_NMAE_MUSIC_POSITION, -1);
-			playSongInPosition(mCurrentMusicList.get(share).getId());
+			try {
+				int share = PreferHelper.readInt(Main.this, Constant.SHARE_NMAE_MUSIC,
+						Constant.SHARE_NMAE_MUSIC_POSITION, -1);
+				playSongInPosition(mCurrentMusicList.get(share).getId());
+			} catch (IndexOutOfBoundsException e) {
+				playSongInPosition(mCurrentMusicList.get(mCurrentMusicList.size()-1).getId());
+			}
+			
 		}
 	}
 	
@@ -411,7 +419,9 @@ public class Main extends FragmentActivity implements OnPlayMusicStateListener,O
 	}
 	@Override
 	public void onPlayProgressUpdate(long currenMillis) {
-		main_progress.setProgress((int)(currenMillis*1.0/mMusic.getDuration() *main_progress.getMax()));
+		if (main_progress!=null&&mMusic!=null) {
+			main_progress.setProgress((int)(currenMillis*1.0/mMusic.getDuration() *main_progress.getMax()));
+		}
 	}
 	@Override
 	public void onPageAddListener(int type,Bundle b) {
@@ -426,31 +436,13 @@ public class Main extends FragmentActivity implements OnPlayMusicStateListener,O
 			FragmentTransaction transaction = fm.beginTransaction();
 				transaction.setCustomAnimations(R.anim.push_right_in, R.anim.push_right_in, 
 					R.anim.push_right_out, R.anim.push_right_out);
-//			transaction.add(R.id.main_content, tmlf);
-//			transaction.hide(tmf);
-//			if (af_!=null) {
-////				transaction.hide(af_);
-//				transaction.remove(af_);
-//			}
-//			transaction.show(tmlf);
-//			transaction.addToBackStack(null);
-//			transaction.commit();
 			transaction.replace(R.id.main_content, tmlf).addToBackStack(null).commit();
-			
-//			switchContent(tmf, tmlf);
 			break;
 		case OnPageAddListener.SONGOFSINGERARTIST:
 			Log.d(TAG, "onPageAddListener-->"+OnPageAddListener.SONGOFSINGERARTIST);
 			ArtistFragment af = new ArtistFragment();
 			af.setArguments(b);
 			FragmentTransaction transaction1 = fm.beginTransaction();
-//			transaction1.add(R.id.main_content, af);
-//			transaction1.hide(tmf);
-//			transaction1.hide(tmlf_);
-//			transaction1.show(af);
-//			transaction1.addToBackStack(null);
-//			transaction1.commit();
-			
 			transaction1.replace(R.id.main_content, af).addToBackStack(null).commit();
 			break;
 		case OnPageAddListener.SEARCHFRAGMENT:
@@ -464,13 +456,19 @@ public class Main extends FragmentActivity implements OnPlayMusicStateListener,O
 					R.anim.push_right_out, R.anim.push_right_out);
 			transaction2.replace(R.id.main_content, sf).addToBackStack(null).commit();
 			break;
+		case OnPageAddListener.SEARCHALBUMDETAIL:
+			SearchAlbumDetailFra sadf = new SearchAlbumDetailFra();
+			b.putInt("color", currentColor);
+			sadf.setArguments(b);
+			fm.beginTransaction().replace(R.id.main_content, sadf)
+			.addToBackStack(null).commit();
+			break;
 
 		default:
 			break;
 		}
 	}
-	
-	public void switchContent(Fragment from, Fragment to) {
+/*	private void switchContent(Fragment from, Fragment to) {
         if (mContent != to) {
             mContent = to;
             FragmentTransaction transaction = fm.beginTransaction().setCustomAnimations(
@@ -481,11 +479,13 @@ public class Main extends FragmentActivity implements OnPlayMusicStateListener,O
                 transaction.hide(from).show(to).commit(); // 隐藏当前的fragment，显示下一个
             }
         }
-    }
+    }*/
 
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode==KeyEvent.KEYCODE_BACK) {
+			int count= fm.getBackStackEntryCount();
+			Log.v(TAG, "回退栈中已经有了"+count+"个Fragment");
 		}
 		return super.onKeyDown(keyCode, event);
 	}

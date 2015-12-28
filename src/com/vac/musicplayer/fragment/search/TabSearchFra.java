@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.vac.musicplayer.R;
 import com.vac.musicplayer.adapter.MyPagerAdapter;
+import com.vac.musicplayer.listener.OnPageAddListener;
 import com.vac.musicplayer.myview.LazyViewPager;
 import com.vac.musicplayer.myview.LazyViewPager.OnPageChangeListener;
 
@@ -30,7 +31,7 @@ public class TabSearchFra extends Fragment {
 	private ArrayList<Fragment> fraList = new ArrayList<Fragment>();
 	private int colorValue=-1;
 	private String search;
-	
+	private OnPageAddListener mPageListener;
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -54,6 +55,7 @@ public class TabSearchFra extends Fragment {
 		
 		SearchAlbumFra saf = new SearchAlbumFra();
 		saf.setArguments(bundle);
+		saf.setOnPageListener(mPageListener);
 		fraList.add(saf);
 		
 		SearchSongListFra sslf =new SearchSongListFra();
@@ -151,6 +153,10 @@ public class TabSearchFra extends Fragment {
 				}
 			}
 		});
+	}
+	
+	public void setOnPageListener(OnPageAddListener listener){
+		this.mPageListener = listener;
 	}
 	
 }

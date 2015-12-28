@@ -6,10 +6,12 @@ import android.os.Parcelable;
 
 public class Music implements Parcelable{
 
+	public static final int TYPE_LOCAL = 1;
+	public static final int TYPE_NET = 2;
 	/**
 	 * 
 	 */
-	private int id ;//歌曲编号
+	private long id ;//歌曲编号
 	private String title;//歌曲标题
 	private String album;//歌曲专辑
 	private String artist;//歌手
@@ -21,6 +23,14 @@ public class Music implements Parcelable{
 	
 	private String path;
 	
+	private int type;
+	
+	public int getType() {
+		return type;
+	}
+	public void setType(int type) {
+		this.type = type;
+	}
 	public String getPath() {
 		return path;
 	}
@@ -40,10 +50,10 @@ public class Music implements Parcelable{
 	public void setData_modify(long data_modify) {
 		this.data_modify = data_modify;
 	}
-	public int getId() {
+	public long getId() {
 		return id;
 	}
-	public void setId(int id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 	public String getTitle() {
@@ -90,12 +100,14 @@ public class Music implements Parcelable{
 	public void setSize(long size) {
 		this.size = size;
 	}
+	
 	@Override
 	public String toString() {
 		return "Music [id=" + id + ", title=" + title + ", album=" + album
 				+ ", artist=" + artist + ", data=" + data + ", duration="
 				+ duration + ", size=" + size + ", date_add=" + date_add
-				+ ", data_modify=" + data_modify + "]";
+				+ ", data_modify=" + data_modify + ", path=" + path + ", type="
+				+ type + "]";
 	}
 	@Override
 	public int describeContents() {
@@ -104,7 +116,7 @@ public class Music implements Parcelable{
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
 		Bundle bundle = new Bundle();
-		bundle.putInt("id", id);
+		bundle.putLong("id", id);
 		bundle.putString("title", title);
 		bundle.putString("album", album);
 		bundle.putString("artist", artist);
@@ -131,7 +143,7 @@ public class Music implements Parcelable{
 	// 读数据进行恢复
 	private Music(Parcel in) {
 		Bundle bundle = in.readBundle();
-		id = bundle.getInt("id");
+		id = bundle.getLong("id");
 		title = bundle.getString("title");
 		album = bundle.getString("album");
 		artist = bundle.getString("artist");

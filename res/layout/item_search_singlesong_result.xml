@@ -34,20 +34,22 @@
             android:singleLine="true"
             android:textSize="17sp"
             android:textColor="@color/black" />
-        <TextView 
+         <ImageView 
             android:id="@+id/item_search_result_hq"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="4dp"
             android:visibility="gone"
-            android:text="HQ"/>
-        <TextView 
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/single_song_list_hq"/>
+        <ImageView 
             android:id="@+id/item_search_result_mv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="4dp"
             android:visibility="gone"
-            android:text="MV"/>
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/mv_song_list_tip_icon"/>
 	</LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
