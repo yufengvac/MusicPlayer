@@ -15,7 +15,6 @@ import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,7 +25,6 @@ import com.vac.musicplayer.adapter.SearchAlbumAdapter;
 import com.vac.musicplayer.bean.Constant;
 import com.vac.musicplayer.bean.NetParam;
 import com.vac.musicplayer.bean.TingAlbum;
-import com.vac.musicplayer.fragment.search.detail.SearchAlbumDetailFra;
 import com.vac.musicplayer.listener.OnPageAddListener;
 import com.vac.musicplayer.utils.HttpUtils;
 

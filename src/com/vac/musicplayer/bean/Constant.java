@@ -79,10 +79,13 @@ public class Constant {
 	public static final String MAIN_BG_COLOR = "main_bg_color";
 	
 	/**图片缓存地址*/
-	public static final String IMAGECACHE = Environment.getExternalStorageDirectory()+"yufengvac"+File.separator+"cache"+File.separator+"image";
+	public static final String IMAGECACHE = Environment.getExternalStorageDirectory()+ File.separator+"yufengvac"+File.separator+"cache"+File.separator+"image";
 	
-	/**文件缓存地址*/
-	public static final String FILECACHE = Environment.getExternalStorageDirectory()+"yufengvac"+File.separator+"cache"+File.separator+"file";
+	/**网络临时文件缓存地址*/
+	public static final String FILECACHE = Environment.getExternalStorageDirectory()+ File.separator+"yufengvac"+File.separator+"cache";
+	
+	/**json文件缓存地址*/
+	public static final String JSONFILECACHE = Environment.getExternalStorageDirectory()+ File.separator+"yufengvac"+File.separator+"cache"+File.separator+"jsonfile";
 	
 	/***我创建的歌单*/
 	public static final String MY_CREATE_SONG_LIST ="my_create_song_list";

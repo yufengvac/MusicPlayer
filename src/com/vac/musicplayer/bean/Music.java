@@ -1,8 +1,11 @@
 package com.vac.musicplayer.bean;
 
+import com.google.gson.Gson;
+
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 public class Music implements Parcelable{
 
@@ -20,9 +23,7 @@ public class Music implements Parcelable{
 	private long size;//歌曲文件的总大小
 	private long date_add;
 	private long data_modify;
-	
 	private String path;
-	
 	private int type;
 	
 	public int getType() {
@@ -153,5 +154,13 @@ public class Music implements Parcelable{
 		date_add = bundle.getLong("date_add");
 		data_modify = bundle.getLong("data_modify");
 		path = bundle.getString("path");
+	}
+	
+	public static String beanToJson(Music m){
+		String json = "";
+		Gson gson = new Gson();
+		json = gson.toJson(m);
+		Log.v("TAG", "转成的json="+json);
+		return json;
 	}
 }

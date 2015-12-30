@@ -11,6 +11,14 @@ public class Artist implements Parcelable {
 	private String artist_name;
 	private int number_of_tracks;
 	private int number_of_albums;
+	private String url;
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
+	}
 
 	public Artist() {
 
@@ -52,6 +60,7 @@ public class Artist implements Parcelable {
 		bundle.putString("artist_name", artist_name);
 		bundle.putInt("number_of_albums", number_of_albums);
 		bundle.putInt("number_of_tracks", number_of_tracks);
+		bundle.putString("url", url);
 		dest.writeBundle(bundle);
 
 	}
@@ -73,6 +82,6 @@ public class Artist implements Parcelable {
 		artist_name = bundle.getString("artist_name");
 		number_of_albums = bundle.getInt("number_of_albums");
 		number_of_tracks = bundle.getInt("number_of_tracks");
-
+		url = bundle.getString("url");
 	}
 }

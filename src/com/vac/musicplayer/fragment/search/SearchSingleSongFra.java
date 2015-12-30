@@ -31,6 +31,7 @@ import com.vac.musicplayer.bean.TingAudition;
 import com.vac.musicplayer.bean.TingSingleSong;
 import com.vac.musicplayer.service.MusicService;
 import com.vac.musicplayer.utils.HttpUtils;
+import com.vac.musicplayer.utils.JsonCacheFileUtils;
 
 public class SearchSingleSongFra extends Fragment {
 

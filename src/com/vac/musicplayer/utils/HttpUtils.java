@@ -30,10 +30,12 @@ public class HttpUtils {
 	public static final int NETNOTWORK = 1003;
 	
 	public HttpUtils(Context mContext,Handler handler){
-		aCache = ACache.get(mContext, Constant.FILECACHE);
+//		aCache = ACache.get(mContext, Constant.FILECACHE);
+		aCache = ACache.get (Constant.FILECACHE,"file");
 		this.mContext = mContext;
 		this.mHandler = handler;
 	}
+	
 	public void get(String url,boolean isUseCache,boolean isToCache){
 		Log.d(TAG, "request url :"+url);
 		if (isUseCache) {//使用缓存

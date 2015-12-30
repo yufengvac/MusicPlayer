@@ -1,4 +1,4 @@
-package com.vac.musicplayer.fragment;
+package com.vac.musicplayer.fragment.search;
 
 import android.app.Activity;
 import android.os.Bundle;

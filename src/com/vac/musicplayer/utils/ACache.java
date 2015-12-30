@@ -72,6 +72,11 @@ public class ACache {
 		File f = new File(ctx.getCacheDir(), cacheName);
 		return get(f, MAX_SIZE, MAX_COUNT);
 	}
+	
+	public static ACache get(String directory, String cacheName) {
+		File f = new File(directory, cacheName);
+		return get(f, MAX_SIZE, MAX_COUNT);
+	}
 
 	public static ACache get(File cacheDir) {
 		return get(cacheDir, MAX_SIZE, MAX_COUNT);
@@ -674,7 +679,7 @@ public class ACache {
 			while (curCacheCount + 1 > countLimit) {
 				long freedSize = removeNext();
 				cacheSize.addAndGet(-freedSize);
-
+				
 				curCacheCount = cacheCount.addAndGet(-1);
 			}
 			cacheCount.addAndGet(1);

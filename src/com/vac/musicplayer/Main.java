@@ -33,10 +33,10 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.vac.musicplayer.bean.Constant;
 import com.vac.musicplayer.bean.Music;
 import com.vac.musicplayer.bean.NetParam;
-import com.vac.musicplayer.fragment.SearchFragment;
 import com.vac.musicplayer.fragment.TabMainFra;
-import com.vac.musicplayer.fragment.TabMusicLocalFra;
 import com.vac.musicplayer.fragment.localmusic.ArtistFragment;
+import com.vac.musicplayer.fragment.localmusic.TabMusicLocalFra;
+import com.vac.musicplayer.fragment.search.SearchFragment;
 import com.vac.musicplayer.fragment.search.detail.SearchAlbumDetailFra;
 import com.vac.musicplayer.listener.OnPageAddListener;
 import com.vac.musicplayer.listener.OnPlayMusicStateListener;
@@ -463,7 +463,9 @@ public class Main extends FragmentActivity implements OnPlayMusicStateListener,O
 			fm.beginTransaction().replace(R.id.main_content, sadf)
 			.addToBackStack(null).commit();
 			break;
-
+		case OnPageAddListener.RECENTPLAYMUSIC:
+			
+			break;
 		default:
 			break;
 		}

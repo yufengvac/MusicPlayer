@@ -39,6 +39,7 @@ import com.vac.musicplayer.listener.OnPageAddListener;
 import com.vac.musicplayer.listener.OnSkinChangerListener;
 import com.vac.musicplayer.myview.ListViewForScrollView;
 import com.vac.musicplayer.service.MusicService.MusicServiceBinder;
+import com.vac.musicplayer.utils.JsonCacheFileUtils;
 import com.vac.musicplayer.utils.PreferHelper;
 /**
  * @title MyMusicFra
@@ -67,6 +68,7 @@ public class MyMusicFra extends Fragment implements OnClickListener , OnSkinChan
 	
 	private MusicServiceBinder mBinder = null;
 	private TextView total_music_number_textivew;
+	private TextView recent_play_music_textview;
 	
 	private int currColorValue = -1;
 	private OnPageAddListener mPageListener;
@@ -161,6 +163,17 @@ public class MyMusicFra extends Fragment implements OnClickListener , OnSkinChan
 				mPageListener.onPageAddListener(OnPageAddListener.TABMUSICLOCALFRA,null);
 			}
 		});
+		
+		content4.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				mPageListener.onPageAddListener(OnPageAddListener.RECENTPLAYMUSIC, null);
+			}
+		});
+		
+		recent_play_music_textview = (TextView) view.findViewById(R.id.my_music_fra_recentplay_count);
+		recent_play_music_textview.setText(JsonCacheFileUtils.getCountOfRecentPlayMusic()+"首");
 	}
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {

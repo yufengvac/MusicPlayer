@@ -3,6 +3,11 @@ package com.vac.musicplayer.adapter;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.http.Header;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,11 +16,16 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.vac.musicplayer.R;
 import com.vac.musicplayer.application.MyApplication;
 import com.vac.musicplayer.bean.Artist;
+import com.vac.musicplayer.bean.Constant;
+import com.vac.musicplayer.utils.ACache;
+import com.vac.musicplayer.utils.HttpUtils;
 
 public class ArtistAdapter extends BaseAdapter {
 	private List<Artist> mData = null;
@@ -87,9 +97,63 @@ public class ArtistAdapter extends BaseAdapter {
 			holder.artist_name.setText(mData.get(position).getArtistName());
 		}
 		holder.num_of_tracks.setText(mData.get(position).getNumberOfTracks()+"首");
-//		String url = 
-//		mImageLoader.displayImage(uri, holder.headpotriate, mOptions);
+		
+		if (!mData.get(position).getArtistName().equals(R.string.unknown_artist)) {
+			holder.headpotriate.setTag(mData.get(position).getArtistName());
+			toGetSingerPic(position,mData.get(position).getArtistName(),holder.headpotriate);
+		}
 		return convertView;
+	}
+
+	private void toGetSingerPic(final int position,final String artistName, final ImageView headpotriate) {
+		AsyncHttpClient httpClient = new AsyncHttpClient();
+		final ACache aCache = ACache.get(Constant.FILECACHE,"file");
+		String json = aCache.getAsString(Constant.SEARCH_SINGER+"&q="+HttpUtils.encode(artistName));
+		if (json!=null) {
+			try {
+				JSONObject obj = new JSONObject(json);
+				if (obj.getInt("rows")>=1) {
+					JSONArray array = obj.getJSONArray("data");
+					if (array.length()>=1) {
+						JSONObject obj_ = array.getJSONObject(0);
+						String picUrl = obj_.getString("pic_url");
+						String singerName = obj_.getString("singer_name");
+						String tag = (String) headpotriate.getTag();
+						if (tag.equals(singerName)) {
+							mImageLoader.displayImage(picUrl, headpotriate,mOptions);
+						}
+					}
+				}
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+			return;
+		}
+		httpClient.get(Constant.SEARCH_SINGER+"&q="+HttpUtils.encode(artistName), new AsyncHttpResponseHandler(){
+			@Override
+			public void onSuccess(int arg0, Header[] arg1, byte[] arg2) {
+				super.onSuccess(arg0, arg1, arg2);
+				try {
+					String result = new String(arg2);
+					JSONObject obj = new JSONObject(result);
+					if (obj.getInt("rows")>=1) {
+						JSONArray array = obj.getJSONArray("data");
+						if (array.length()>=1) {
+							JSONObject obj_ = array.getJSONObject(0);
+							String picUrl = obj_.getString("pic_url");
+							String singerName = obj_.getString("singer_name");
+							String tag = (String) headpotriate.getTag();
+							if (tag.equals(singerName)) {
+								mImageLoader.displayImage(picUrl, headpotriate,mOptions);
+							}
+						}
+						aCache.put(Constant.SEARCH_SINGER+"&q="+HttpUtils.encode(artistName), result);
+					}
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			}
+		});
 	}
 
 	static class ViewHolder {

@@ -70,6 +70,7 @@ public class ArtistLoader extends AsyncTaskLoader<List<Artist>> {
 				item.setArtistName(cursor.getString(index_artist));
 				item.setNumberOfTracks(cursor.getInt(index_number_of_tracks));
 				item.setNumberOfAlbums(cursor.getInt(index_number_of_albums));
+				item.setUrl(null);
 				itemsList.add(item);
 			}
 			cursor.close();

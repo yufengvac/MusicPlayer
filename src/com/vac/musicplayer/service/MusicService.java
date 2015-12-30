@@ -35,6 +35,7 @@ import com.vac.musicplayer.bean.Music;
 import com.vac.musicplayer.listener.AudioFocusHelper;
 import com.vac.musicplayer.listener.AudioFocusHelper.MusicFocusable;
 import com.vac.musicplayer.listener.OnPlayMusicStateListener;
+import com.vac.musicplayer.utils.JsonCacheFileUtils;
 import com.vac.musicplayer.utils.LyricDownloadManager;
 import com.vac.musicplayer.utils.LyricLoadHelper;
 import com.vac.musicplayer.utils.LyricLoadHelper.LyricListener;
@@ -738,7 +739,6 @@ public class MusicService extends Service implements OnPreparedListener,OnComple
 		mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 		try {
 			Log.i(TAG, ContentUris.withAppendedId(Media.EXTERNAL_CONTENT_URI, mPlayingMusic.getId())+"-000");
-//			mPlayer.setDataSource(getApplicationContext(), ContentUris.withAppendedId(Media.EXTERNAL_CONTENT_URI, mPlayingMusic.getId()));
 			mPlayer.setDataSource(mPlayingMusic.getData());
 			mState = PlayState.Prepraing;
 			if (mLyricListener != null) {
@@ -748,6 +748,7 @@ public class MusicService extends Service implements OnPreparedListener,OnComple
 			setServiceAsForeground(mPlayingMusic.getTitle() + " (loading)");
 			
 			mPlayer.prepareAsync();
+			JsonCacheFileUtils.writeRecentPlayMusic(mPlayingMusic);
 		} catch (Exception e) {
 			e.printStackTrace();
 			Log.e(TAG, "paly song Exception"+e.getMessage());
