@@ -6,12 +6,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /***
  * 天天动听单曲
  * @author vac
  *
  */
-public class TingSingleSong {
+public class TingSingleSong{
 
 	private long songId;
 	private String name;
@@ -264,4 +267,5 @@ public class TingSingleSong {
 		}
 		return tss;
 	}
+
 }

@@ -36,6 +36,7 @@ import com.vac.musicplayer.bean.NetParam;
 import com.vac.musicplayer.fragment.TabMainFra;
 import com.vac.musicplayer.fragment.localmusic.ArtistFragment;
 import com.vac.musicplayer.fragment.localmusic.TabMusicLocalFra;
+import com.vac.musicplayer.fragment.recentmusicplay.RecentMusicPlayFra;
 import com.vac.musicplayer.fragment.search.SearchFragment;
 import com.vac.musicplayer.fragment.search.detail.SearchAlbumDetailFra;
 import com.vac.musicplayer.listener.OnPageAddListener;
@@ -464,7 +465,13 @@ public class Main extends FragmentActivity implements OnPlayMusicStateListener,O
 			.addToBackStack(null).commit();
 			break;
 		case OnPageAddListener.RECENTPLAYMUSIC:
-			
+			RecentMusicPlayFra rmpf = new RecentMusicPlayFra();
+			Bundle bundle_recent = new Bundle();
+			bundle_recent.putInt("color", currentColor);
+			rmpf.setBinder(mBinder);
+			rmpf.setArguments(bundle_recent);
+			fm.beginTransaction().replace(R.id.main_content, rmpf)
+			.addToBackStack(null).commit();
 			break;
 		default:
 			break;

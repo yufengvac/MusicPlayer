@@ -377,6 +377,14 @@ public class MusicService extends Service implements OnPreparedListener,OnComple
 		public void addOneMusicIntoCurrentMusicList(){
 			
 		}
+		
+		public void resetAndPlayFirstSong(){
+			if (mCurrentPlayList!=null&&mCurrentPlayList.size()>0) {
+				mRequestPlayMusicId = mCurrentPlayList.get(0).getId();
+				mRequestMusicPosition = findPositionByMusicId(mCurrentPlayList, mRequestPlayMusicId);
+				requestToPlay();
+			}
+		}
 	}
 	
 	@Override

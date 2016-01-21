@@ -21,7 +21,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.vac.musicplayer.R;
-import com.vac.musicplayer.adapter.SearchSongListAdapter;
+import com.vac.musicplayer.adapter.search.SearchSongListAdapter;
 import com.vac.musicplayer.bean.Constant;
 import com.vac.musicplayer.bean.NetParam;
 import com.vac.musicplayer.bean.TingSongList;

@@ -20,7 +20,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.vac.musicplayer.R;
-import com.vac.musicplayer.adapter.SearchMVAdapter;
+import com.vac.musicplayer.adapter.search.SearchMVAdapter;
 import com.vac.musicplayer.bean.Constant;
 import com.vac.musicplayer.bean.NetParam;
 import com.vac.musicplayer.bean.TingSearchMV;

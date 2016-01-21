@@ -46,6 +46,8 @@
         
         <activity android:name="com.vac.musicplayer.dialogactivity.ChangeSkinDialogActivity"
             android:theme="@style/MyDialogStyleBottom"></activity>
+        <activity android:name="com.vac.musicplayer.dialogactivity.SingleSongMoreOption"
+            android:theme="@style/MyDialogStyleBottom"></activity>
         
         <service android:name="com.vac.musicplayer.service.MusicService" 
             android:exported="false">

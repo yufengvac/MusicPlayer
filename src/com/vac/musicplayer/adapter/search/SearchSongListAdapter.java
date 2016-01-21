@@ -1,4 +1,4 @@
-package com.vac.musicplayer.adapter;
+package com.vac.musicplayer.adapter.search;
 
 import java.text.DecimalFormat;
 
@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.vac.musicplayer.R;
-import com.vac.musicplayer.bean.TingSingleSong;
+import com.vac.musicplayer.adapter.MyBaseAdapter;
 import com.vac.musicplayer.bean.TingSongList;
 
 public class SearchSongListAdapter extends MyBaseAdapter<TingSongList>{

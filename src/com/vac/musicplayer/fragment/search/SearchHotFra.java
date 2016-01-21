@@ -20,9 +20,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.vac.musicplayer.R;
-import com.vac.musicplayer.adapter.SearchHistoryAdapter;
+import com.vac.musicplayer.adapter.search.SearchHistoryAdapter;
 import com.vac.musicplayer.bean.Constant;
-import com.vac.musicplayer.listener.OnPageAddListener;
 import com.vac.musicplayer.myview.WordWrapView;
 import com.vac.musicplayer.utils.HttpUtils;
 import com.vac.musicplayer.utils.PreferHelper;

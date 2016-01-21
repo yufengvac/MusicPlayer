@@ -16,14 +16,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.vac.musicplayer.R;
-import com.vac.musicplayer.adapter.SearchSingleSongAdapter;
+import com.vac.musicplayer.adapter.search.SearchSingleSongAdapter;
 import com.vac.musicplayer.bean.Constant;
 import com.vac.musicplayer.bean.Music;
 import com.vac.musicplayer.bean.NetParam;
@@ -31,7 +30,6 @@ import com.vac.musicplayer.bean.TingAudition;
 import com.vac.musicplayer.bean.TingSingleSong;
 import com.vac.musicplayer.service.MusicService;
 import com.vac.musicplayer.utils.HttpUtils;
-import com.vac.musicplayer.utils.JsonCacheFileUtils;
 
 public class SearchSingleSongFra extends Fragment {
 

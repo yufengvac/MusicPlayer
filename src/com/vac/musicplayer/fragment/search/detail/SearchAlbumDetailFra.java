@@ -16,7 +16,7 @@ import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.vac.musicplayer.R;
-import com.vac.musicplayer.adapter.SearchSingleSongAdapter;
+import com.vac.musicplayer.adapter.search.SearchSingleSongAdapter;
 import com.vac.musicplayer.bean.Constant;
 import com.vac.musicplayer.bean.TingAlbumDetail;
 import com.vac.musicplayer.utils.HttpUtils;

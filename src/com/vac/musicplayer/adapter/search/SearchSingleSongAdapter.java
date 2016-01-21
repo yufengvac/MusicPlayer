@@ -1,15 +1,19 @@
-package com.vac.musicplayer.adapter;
+package com.vac.musicplayer.adapter.search;
 
 import java.text.DecimalFormat;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.vac.musicplayer.R;
+import com.vac.musicplayer.adapter.MyBaseAdapter;
 import com.vac.musicplayer.bean.TingSingleSong;
+import com.vac.musicplayer.dialogactivity.SingleSongMoreOption;
 
 public class SearchSingleSongAdapter extends MyBaseAdapter<TingSingleSong> {
 
@@ -31,7 +35,7 @@ public class SearchSingleSongAdapter extends MyBaseAdapter<TingSingleSong> {
 
 	ViewHolder holder;
 	@Override
-	public View getView(int position, View convertView, ViewGroup viewGroup) {
+	public View getView(final int position, View convertView, ViewGroup viewGroup) {
 		if (convertView==null) {
 			holder= new ViewHolder();
 			convertView = mlayoutInflater.inflate(R.layout.item_search_singlesong_result, null);
@@ -42,6 +46,7 @@ public class SearchSingleSongAdapter extends MyBaseAdapter<TingSingleSong> {
 			holder.mv = (ImageView) convertView.findViewById(R.id.item_search_result_mv);
 			holder.num = (TextView) convertView.findViewById(R.id.item_search_result_num);
 			holder.favor = (TextView) convertView.findViewById(R.id.item_search_result_favor);
+			holder.more = (ImageView) convertView.findViewById(R.id.item_search_singlesong_result_more);
 			convertView.setTag(holder);
 		}else{
 			holder = (ViewHolder) convertView.getTag();
@@ -75,12 +80,27 @@ public class SearchSingleSongAdapter extends MyBaseAdapter<TingSingleSong> {
 			holder.name.setTextColor(mContext.getResources().getColor(R.color.black));
 			holder.artist.setTextColor(colorValue);
 		}
+		
+		holder.more.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				showMore(position);
+			}
+		});
 		return convertView;
+	}
+
+	protected void showMore(int position) {
+		Intent intent = new Intent(mContext,SingleSongMoreOption.class);
+		intent.putExtra("color", colorValue);
+		mContext.startActivity(intent);
 	}
 
 	private class ViewHolder{
 		private TextView name,artist,album;
 		private TextView num,favor;
 		private ImageView mv,hq;
+		private ImageView more;
 	}
 }

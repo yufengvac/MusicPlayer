@@ -3,6 +3,83 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
+
+    <RelativeLayout
+        android:id="@+id/activity_main_titlebar_content"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:background="#7f00"
+        android:orientation="horizontal" >
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/back_normal"
+                android:gravity="center_vertical"
+                android:text="@string/recent_music_play_fra_title"
+                android:textColor="@color/white"
+                android:textSize="17sp" />
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:layout_gravity="center_vertical"
+            android:clickable="true"
+            android:contentDescription="@string/app_name"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:src="@drawable/selector_main_head_search" />
+    </RelativeLayout>
     
+    <RelativeLayout 
+        android:layout_width="match_parent"
+        android:layout_height="40dp">
+        <LinearLayout
+            android:id="@+id/recent_music_play_fra_playall_linea" 
+            android:layout_width="150dp"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:paddingLeft="20dp"
+            android:clickable="true"
+            android:orientation="horizontal">
+            <TextView 
+                android:id="@+id/recent_music_play_fra_play"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:gravity="center"
+                android:text="@string/recent_music_play_fra_playall"/>
+        </LinearLayout>
+        <LinearLayout 
+            android:layout_width="80dp"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_alignParentRight="true">
+            <TextView 
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:gravity="center"
+                android:text="@string/recent_music_play_fra_manage"/>
+        </LinearLayout>
+            
+    </RelativeLayout>
+    
+    
+    <ListView
+        android:id="@+id/recent_music_play_fra_listview" 
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:divider="@color/transparent"></ListView>
 
 </LinearLayout>

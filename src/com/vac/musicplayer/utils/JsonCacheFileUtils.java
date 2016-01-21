@@ -36,7 +36,7 @@ public class JsonCacheFileUtils {
 		ArrayList<Music> musicList = new ArrayList<Music>();
 		File file = new File(recentPlayMusicPath);
 		String[] files = file.list();
-		for (int i = 0; i < files.length; i++) {
+		for (int i = files.length-1; i >=0; i--) {
 			File file_ = new File(recentPlayMusicPath+File.separator+files[i]);
 			String json = readJson(file_);
 			Gson gson = new Gson();

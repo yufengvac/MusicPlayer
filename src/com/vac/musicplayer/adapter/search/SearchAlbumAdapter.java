@@ -1,4 +1,4 @@
-package com.vac.musicplayer.adapter;
+package com.vac.musicplayer.adapter.search;
 
 import android.content.Context;
 import android.view.View;
@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.vac.musicplayer.R;
+import com.vac.musicplayer.adapter.MyBaseAdapter;
 import com.vac.musicplayer.application.MyApplication;
 import com.vac.musicplayer.bean.TingAlbum;
 
