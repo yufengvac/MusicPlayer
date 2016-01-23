@@ -5,6 +5,7 @@ import java.util.List;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
@@ -18,6 +19,9 @@ import com.vac.musicplayer.R;
 import com.vac.musicplayer.adapter.search.SingleSongMoreAdapter;
 import com.vac.musicplayer.adapter.search.SingleSongMoreAdapter.SingleSongMore;
 import com.vac.musicplayer.bean.TingAudition;
+import com.vac.musicplayer.bean.TingSingleSong;
+import com.vac.musicplayer.downloadmanager.DownLoadManager;
+import com.vac.musicplayer.downloadmanager.DownLoadManagerFactory;
 
 public class SingleSongMoreOption extends Activity {
 
@@ -29,11 +33,21 @@ public class SingleSongMoreOption extends Activity {
 	private String[] title = new String[]{"收藏","加入歌单","下载","分享","插队播放","歌手","专辑","评论","MV"};
 	private String musicName;
 	private ArrayList<TingAudition> auditionList = new ArrayList<TingAudition>();
+	private DownLoadManager mDownLoadM = null;
+//	private TingSingleSong mTingSong = null;
+	private long id;
+	private String name;
+	private String url;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.single_song_more_option);
 		colorValue = getIntent().getIntExtra("color", -1);
+//		mTingSong = getIntent().getParcelableExtra("TingSingleSong");
+		id = getIntent().getLongExtra("id", -1);
+		name = getIntent().getStringExtra("name");
+		url = getIntent().getStringExtra("url");
+		mDownLoadM =DownLoadManagerFactory.getInstance(this);
 		initView();
 	}
 	private void initView() {
@@ -55,7 +69,10 @@ public class SingleSongMoreOption extends Activity {
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
-				
+					if (arg2==2&&url!=null) {//下载
+						mDownLoadM.addTask(id+"", url, name);
+					}
+			
 			}
 		});
 	}

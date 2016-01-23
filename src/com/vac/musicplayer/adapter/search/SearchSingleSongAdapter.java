@@ -94,6 +94,12 @@ public class SearchSingleSongAdapter extends MyBaseAdapter<TingSingleSong> {
 	protected void showMore(int position) {
 		Intent intent = new Intent(mContext,SingleSongMoreOption.class);
 		intent.putExtra("color", colorValue);
+//		intent.putExtra("TingSingleSong", mData.get(position));
+		if (mData.get(position).getAuditionList().size()>0) {
+			intent.putExtra("url", mData.get(position).getAuditionList().get(mData.get(position).getAuditionList().size()-1).getUrl());
+		}
+		intent.putExtra("name", mData.get(position).getName());
+		intent.putExtra("id", mData.get(position).getSongId());
 		mContext.startActivity(intent);
 	}
 

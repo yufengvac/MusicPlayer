@@ -47,8 +47,10 @@ public class SearchMVAdapter extends MyBaseAdapter<TingSearchMV> {
 		mImageLoader.displayImage(tsm.getPicUrl(), holder.pic, mOptions);
 		
 		SimpleDateFormat formatter = new SimpleDateFormat("mm:ss");
-		String hms = formatter.format(tsm.getMvList().get(0).getDuration()); 
-		holder.size.setText(hms);
+		if (tsm.getMvList().size()>0) {
+			String hms = formatter.format(tsm.getMvList().get(0).getDuration()); 
+			holder.size.setText(hms);
+		}
 		
 		return convertView;
 	}

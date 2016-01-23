@@ -49,8 +49,10 @@ public class JsonCacheFileUtils {
 	public static int getCountOfRecentPlayMusic(){
 		int count = 0;
 		File file = new File(recentPlayMusicPath);
-		String[] files = file.list();
-		count = files.length;
+		if (file.exists()) {
+			String[] files = file.list();
+			count = files.length;
+		}
 		return count;
 	}
 	

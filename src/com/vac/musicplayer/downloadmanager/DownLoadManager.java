@@ -59,7 +59,7 @@ public class DownLoadManager {
                 }
             }
         };
-        recoverData(mycontext);
+        recoverData(context);
     }
     
    

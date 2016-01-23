@@ -3,12 +3,15 @@ package com.vac.musicplayer.bean;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /***
  * 天天动听MV
  * @author vac
  *
  */
-public class TingMV {
+public class TingMV implements Parcelable{
 
 	private long id;
 	private long songId;
@@ -164,4 +167,58 @@ public class TingMV {
 		}
 		return tmv;
 	}
+
+	public TingMV(Parcel arg0) {
+		id = arg0.readLong();
+		songId = arg0.readLong();
+		videoId = arg0.readLong();
+		picUrl = arg0.readString();
+		durationMilliSecond = arg0.readLong();
+		duration = arg0.readLong();
+		bitRate = arg0.readInt();
+		path = arg0.readString();
+		size = arg0.readLong();
+		suffix = arg0.readString();
+		horizontal =arg0.readInt();
+		vertical = arg0.readInt();
+		url = arg0.readString();
+		type = arg0.readInt();
+		typeDescription = arg0.readString();
+	}
+	public TingMV() {
+	}
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+	@Override
+	public void writeToParcel(Parcel arg0, int arg1) {
+		arg0.writeLong(id);
+		arg0.writeLong(songId);
+		arg0.writeLong(videoId);
+		arg0.writeString(picUrl);
+		arg0.writeLong(durationMilliSecond);
+		arg0.writeLong(duration);
+		arg0.writeInt(bitRate);
+		arg0.writeString(path);
+		arg0.writeLong(size);
+		arg0.writeString(suffix);
+		arg0.writeInt(horizontal);
+		arg0.writeInt(vertical);
+		arg0.writeString(url);
+		arg0.writeInt(type);
+		arg0.writeString(typeDescription);
+	}
+	public static final Parcelable.Creator<TingMV> CREATOR = new Creator<TingMV>() {
+
+		@Override
+		public TingMV createFromParcel(Parcel arg0) {
+			return new TingMV(arg0);
+		}
+
+		@Override
+		public TingMV[] newArray(int arg0) {
+			return new TingMV[arg0];
+		}
+	};
 }

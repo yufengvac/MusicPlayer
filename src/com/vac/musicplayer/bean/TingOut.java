@@ -3,11 +3,17 @@ package com.vac.musicplayer.bean;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class TingOut {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class TingOut implements Parcelable{
 
 	private String name;
 	private String url;
 	private String logo;
+	
+	public TingOut() {
+	}
 	public String getName() {
 		return name;
 	}
@@ -39,4 +45,31 @@ public class TingOut {
 		}
 		return to;
 	}
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+	public TingOut(Parcel arg0) {
+		name = arg0.readString();
+		url = arg0.readString();
+		logo = arg0.readString();
+	}
+	@Override
+	public void writeToParcel(Parcel arg0, int arg1) {
+		arg0.writeString(name);
+		arg0.writeString(url);
+		arg0.writeString(logo);
+	}
+	public static final Parcelable.Creator<TingOut> CREATOR = new Creator<TingOut>() {
+
+		@Override
+		public TingOut createFromParcel(Parcel arg0) {
+			return new TingOut(arg0);
+		}
+
+		@Override
+		public TingOut[] newArray(int arg0) {
+			return new TingOut[arg0];
+		}
+	}; 
 }

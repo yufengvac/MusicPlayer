@@ -6,6 +6,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.vac.musicplayer.bean.SQLDownLoadInfo;
 
@@ -18,6 +19,7 @@ public class DataKeeper {
     private SQLiteHelper dbhelper;
     private SQLiteDatabase db;
     private int doSaveTimes = 0;
+    
     public DataKeeper(Context context){
         this.dbhelper = new SQLiteHelper(context);
     }
@@ -83,21 +85,26 @@ public class DataKeeper {
     }
     public ArrayList<SQLDownLoadInfo> getAllDownLoadInfo(){
         ArrayList<SQLDownLoadInfo> downloadinfoList = new ArrayList<SQLDownLoadInfo>();
-        db = dbhelper.getWritableDatabase();
-        Cursor cursor = db.rawQuery(
-                "SELECT * from " + SQLiteHelper.TABLE_NAME, null);
-        while(cursor.moveToNext()){
-            SQLDownLoadInfo downloadinfo = new SQLDownLoadInfo();
-            downloadinfo.setDownloadSize(cursor.getLong(cursor.getColumnIndex("downLoadSize")));
-            downloadinfo.setFileName(cursor.getString(cursor.getColumnIndex("fileName")));
-            downloadinfo.setFilePath(cursor.getString(cursor.getColumnIndex("filePath")));
-            downloadinfo.setFileSize(cursor.getLong(cursor.getColumnIndex("fileSize")));
-            downloadinfo.setUrl(cursor.getString(cursor.getColumnIndex("url")));
-            downloadinfo.setTaskID(cursor.getString(cursor.getColumnIndex("taskID")));
-            downloadinfoList.add(downloadinfo);
-        }
-        cursor.close();
-        db.close();
+       try {
+    	   db = dbhelper.getWritableDatabase();
+    	   
+    	   Cursor cursor = db.rawQuery(
+                   "SELECT * from " + SQLiteHelper.TABLE_NAME, null);
+           while(cursor.moveToNext()){
+               SQLDownLoadInfo downloadinfo = new SQLDownLoadInfo();
+               downloadinfo.setDownloadSize(cursor.getLong(cursor.getColumnIndex("downLoadSize")));
+               downloadinfo.setFileName(cursor.getString(cursor.getColumnIndex("fileName")));
+               downloadinfo.setFilePath(cursor.getString(cursor.getColumnIndex("filePath")));
+               downloadinfo.setFileSize(cursor.getLong(cursor.getColumnIndex("fileSize")));
+               downloadinfo.setUrl(cursor.getString(cursor.getColumnIndex("url")));
+               downloadinfo.setTaskID(cursor.getString(cursor.getColumnIndex("taskID")));
+               downloadinfoList.add(downloadinfo);
+           }
+           cursor.close();
+           db.close();
+		} catch (NullPointerException e) {
+			Log.e("TAG", "dbhelper==null");
+		}
         return downloadinfoList;
 
     }
