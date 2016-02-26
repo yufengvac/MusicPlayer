@@ -276,7 +276,7 @@ public class Main extends FragmentActivity implements OnPlayMusicStateListener,O
 							SharePosition = PreferHelper.readInt(Main.this, Constant.SHARE_NMAE_MUSIC,
 									Constant.SHARE_NMAE_MUSIC_POSITION, -1);
 						}
-						if (SharePosition==-1) {
+						if (SharePosition==-1&&mCurrentMusicList.size()>0) {
 							song_name_textview.setText(mCurrentMusicList.get(0).getTitle());
 							artist_name_textview.setText(mCurrentMusicList.get(0).getArtist());
 						}else if (SharePosition!=-2&&SharePosition>=0) {
@@ -453,8 +453,11 @@ public class Main extends FragmentActivity implements OnPlayMusicStateListener,O
 			sf_b.putInt("color", currentColor);
 			sf.setArguments(sf_b);
 			FragmentTransaction transaction2 = fm.beginTransaction();
-			transaction2.setCustomAnimations(R.anim.push_right_in, R.anim.push_right_in, 
-					R.anim.push_right_out, R.anim.push_right_out);
+//			transaction2.setCustomAnimations(R.animator.slide_fragment_horizontal_right_in,
+//					R.animator.slide_fragment_horizontal_left_out, 
+//					R.animator.slide_fragment_horizontal_left_in, 
+//					R.animator.slide_fragment_horizontal_right_out);
+			transaction2.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
 			transaction2.replace(R.id.main_content, sf).addToBackStack(null).commit();
 			break;
 		case OnPageAddListener.SEARCHALBUMDETAIL:
@@ -495,6 +498,7 @@ public class Main extends FragmentActivity implements OnPlayMusicStateListener,O
 		if (keyCode==KeyEvent.KEYCODE_BACK) {
 			int count= fm.getBackStackEntryCount();
 			Log.v(TAG, "回退栈中已经有了"+count+"个Fragment");
+//			fm.popBackStack();
 		}
 		return super.onKeyDown(keyCode, event);
 	}
